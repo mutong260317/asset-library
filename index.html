@@ -15,6 +15,7 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1080px;margin:0 auto;padding:16px 14px 48px}
+  /* ===== Header ===== */
   .hd{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:6px 2px 14px}
   .logo{display:flex;align-items:center;gap:10px}
   .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2E6BE6,#7B5CD6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 4px 12px rgba(46,107,230,.35)}
@@ -24,12 +25,14 @@
   .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:5px 10px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--sub)}
   .badge.live{background:var(--green-soft);color:var(--green);border-color:transparent}
   .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(30,158,98,.18)}
+  /* ===== Cards grid ===== */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
   .stat{background:var(--card);border-radius:var(--r);padding:13px 14px;box-shadow:var(--shadow);border:1px solid var(--line)}
   .stat .n{font-size:22px;font-weight:800;color:var(--ink)}
   .stat .n small{font-size:12px;font-weight:600;color:var(--sub)}
   .stat .l{font-size:11px;color:var(--sub);margin-top:2px}
   .stat .s{font-size:10.5px;color:#93A0B8;margin-top:3px}
+  /* ===== Section ===== */
   .sec{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
   .sec-h{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}
   .sec-h h2{font-size:15px;display:flex;align-items:center;gap:8px}
@@ -38,6 +41,7 @@
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--sub);margin:2px 0 8px}
   .lg{display:inline-flex;align-items:center;gap:5px}
   .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+  /* ===== Chart ===== */
   .chartwrap{display:flex;gap:14px;align-items:stretch}
   #chart{flex:1;min-width:0;height:540px;border:1px solid var(--line);border-radius:10px;background:var(--gray-soft);cursor:crosshair}
   #chartlist{width:248px;flex-shrink:0;border:1px solid var(--line);border-radius:10px;background:#fff;overflow-y:auto;max-height:540px}
@@ -50,6 +54,7 @@
   .chart-note{font-size:10.5px;color:#93A0B8;margin-top:6px}
   .chart-tip{position:absolute;display:none;background:rgba(22,35,59,.92);color:#fff;font-size:11.5px;padding:5px 10px;border-radius:7px;pointer-events:none;z-index:5;white-space:nowrap}
   .poswrap{position:relative}
+  /* ===== Tabs ===== */
   .tabs{display:inline-flex;background:var(--gray-soft);border-radius:10px;padding:3px;border:1px solid var(--line);margin-bottom:12px}
   .tab{padding:6px 16px;font-size:12.5px;border-radius:8px;cursor:pointer;color:var(--sub);transition:.15s;user-select:none}
   .tab.on{background:#fff;color:var(--blue);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08)}
@@ -65,6 +70,7 @@
   .cfg-row .rl span{color:var(--sub)}
   .bar{height:7px;border-radius:4px;background:#EDF0F6;overflow:hidden}
   .bar i{display:block;height:100%;border-radius:4px}
+  /* ===== Table ===== */
   .tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
   .tools input[type=text]{flex:1;min-width:170px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;outline:none;transition:.15s}
   .tools input[type=text]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,107,230,.12)}
@@ -91,6 +97,7 @@
   .rk4{background:#FBE8E2;color:#C2583C}
   .rk5{background:var(--red-soft);color:var(--red)}
   .empty{text-align:center;color:#9AA6BC;padding:26px;font-size:13px}
+  /* ===== Detail panel ===== */
   .detail{display:none;margin-top:12px;border:1px solid var(--blue);border-radius:12px;background:linear-gradient(180deg,#F8FBFF,#fff);padding:16px;animation:fade .25s}
   .detail.show{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -112,6 +119,7 @@
   .hz .hzc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
   .hz .hzc .t{font-size:10.5px;color:var(--sub);margin-bottom:3px}
   .hz .hzc .d{font-size:12px;font-weight:600}
+  /* ===== 决策面板 / 雷达 ===== */
   .dec-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .dec-card{border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--gray-soft)}
   .dec-card h4{font-size:12.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
@@ -130,6 +138,7 @@
   .concl .t{font-size:11px;color:var(--blue);font-weight:700;margin-bottom:4px}
   .concl .b{font-size:13px;line-height:1.7;color:#33415C}
   .dec-note{font-size:10.5px;color:#93A0B8;margin-top:8px}
+  /* ===== 数据覆盖率 ===== */
   .cov{margin-top:8px}
   .cov-row{display:flex;align-items:center;gap:10px;margin-bottom:4px}
   .cov-row .cv-t{font-size:11px;color:var(--sub);flex-shrink:0}
@@ -137,17 +146,20 @@
   .cov-bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#2E6BE6,#7B5CD6)}
   .cov-row .cv-n{font-size:11px;font-weight:700;color:var(--ink);flex-shrink:0;min-width:64px;text-align:right}
   .cov-sub{font-size:10.5px;color:#93A0B8}
+  /* ===== 检查清单 ===== */
   .checklist{list-style:none}
   .checklist li{display:flex;align-items:flex-start;gap:9px;padding:7px 4px;border-bottom:1px dashed var(--line);font-size:12.5px;cursor:pointer}
   .checklist li:last-child{border-bottom:none}
   .checklist input{width:15px;height:15px;margin-top:2px;accent-color:var(--blue);cursor:pointer;flex-shrink:0}
   .checklist .ck-txt{flex:1;color:#3C4A63}
   .checklist li.done .ck-txt{color:#9AA6BC;text-decoration:line-through}
+  /* ===== Log ===== */
   .log{list-style:none}
   .log li{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
   .log li:last-child{border-bottom:none}
   .log .d{flex-shrink:0;color:var(--blue);font-weight:700;font-size:12px;min-width:74px}
   .log .t{color:#3C4A63}
+  /* ===== Footer ===== */
   .ft{text-align:center;font-size:11px;color:#93A0B8;margin-top:18px;line-height:1.8}
   .ft a{color:var(--blue);text-decoration:none}
   @media(max-width:520px){
@@ -160,6 +172,7 @@
 </head>
 <body>
 <div class="wrap">
+  <!-- Header -->
   <div class="hd">
     <div class="logo">
       <div class="mark">资</div>
@@ -172,8 +185,10 @@
     </div>
   </div>
 
+  <!-- Stats -->
   <div class="stats" id="stats"></div>
 
+  <!-- 周期温度计 -->
   <div class="sec">
     <div class="sec-h">
       <h2><span class="ic">◉</span>资产周期温度计</h2>
@@ -201,7 +216,7 @@
       <div class="cov-sub" id="covSub">正在统计…</div>
     </div>
   </div>
-
+  <!-- 本周结论 + 机会/风险雷达 -->
   <div class="sec">
     <div class="sec-h">
       <h2><span class="ic">◎</span>本周结论 · 机会 / 风险雷达</h2>
@@ -221,6 +236,7 @@
     <div class="dec-note">机会/风险清单按周期×估值四象限自动归类；中性资产未列入。点击任一条查看深度档案。每周日周报更新后自动重算。</div>
   </div>
 
+  <!-- 三档配置 -->
   <div class="sec">
     <div class="sec-h">
       <h2><span class="ic">≡</span>三档配置（保守 / 基准 / 激进）</h2>
@@ -232,7 +248,7 @@
     </div>
     <div class="cfg-grid" id="cfgGrid"></div>
   </div>
-
+  <!-- 检查清单 -->
   <div class="sec">
     <div class="sec-h">
       <h2><span class="ic">☑</span>投资检查清单 · 周期为王</h2>
@@ -241,6 +257,7 @@
     <ul class="checklist" id="checklist"></ul>
   </div>
 
+  <!-- 资产总表 + 深度档案 -->
   <div class="sec">
     <div class="sec-h">
       <h2><span class="ic">▤</span>资产总表 · 点击行看深度档案</h2>
@@ -275,6 +292,7 @@
     <div class="detail" id="detail"></div>
   </div>
 
+  <!-- 更新日志 -->
   <div class="sec">
     <div class="sec-h"><h2><span class="ic">↻</span>更新日志</h2><span class="hint">每周估值周报同步记录</span></div>
     <ul class="log" id="log"></ul>
@@ -287,8 +305,9 @@
 </div>
 
 <script>
+/* ================= 数据（规范源：data.js，更新后同步） ================= */
 var ASSETS = {
-  updated:"2026-09-06",
+  updated:"2026-09-11",
   note:"rk=风险等级1-5；ret=预期年化估算；mdd=潜在最大回撤估算；hz=三档推演（1-3/3-5/5-10年）。均标注为估算，随每周周报核验修正。",
   snap:{d:"2026-09-04",t:"基线快照（首份）· 下份周报起自动对比"},
   checklist:[
@@ -306,7 +325,8 @@ var ASSETS = {
     {d:"2026-09-04",t:"40 只资产完成建档（A股24 + 美股16），规模/费率/溢价逐只核验"},
     {d:"2026-09-04",t:"开启每周估值周报（每周日 20:00）+ 飞书推送 + GitHub 同步"},
     {d:"2026-09-04",t:"v3 升级：机会/风险雷达、数据覆盖率、每周结论、检查清单、快照基线、预设筛选"},
-    {d:"2026-09-06",t:"第36周估值周报：新增A500/科创50/创业板估值核验（已核验21/40）；高估警示科创50/半导体/黄金/美股CAPE42；低估机会恒生科技/A500/创业板/豆粕；飞书周报已推送"}
+    {d:"2026-09-06",t:"第36周估值周报：新增A500/科创50/创业板估值核验（已核验21/40）；高估警示科创50/半导体/黄金/美股CAPE42；低估机会恒生科技/A500/创业板/豆粕；飞书周报已推送"},
+    {d:"2026-09-11",t:"新增 VGT（Vanguard信息技术，MSCI US IMI 25/50，费率0.09%，约$147B）：与XLK同为低费科技，合并计算防重复稀释，XLK权重同步下调"}
   ],
   assets:[
     {c:"511520",n:"政金债ETF",m:"A",cat:"债券",sz:"422亿",fee:"0.20%",pm:"≈0",u:"政策性金融债（国开/进出/农发）",cyc:82,val:78,rk:2,ret:"3.0-4.0%",mdd:"-3~-5%",vd:"债牛走完，防御底仓",w:{c:16,y:12,a:8},hz:["降息尾声，债市震荡","利率中枢下行有支撑","跟随利率长周期温和上行"]},
@@ -345,13 +365,15 @@ var ASSETS = {
     {c:"VTWO",n:"VTWO",m:"US",cat:"指数",sz:"约$10B",fee:"0.06%",pm:"—",u:"Russell 2000（IWM低费版）",cyc:null,val:null,rk:4,ret:"6-10%",mdd:"-35~-45%",vd:"",w:{c:4,y:4,a:4},hz:["小盘周期","利率敏感","高弹性"]},
     {c:"SOXX",n:"SOXX",m:"US",cat:"行业",sz:"约$13B",fee:"0.35%",pm:"—",u:"费城半导体",cyc:86,val:85,rk:5,ret:"6-12%（高位）",mdd:"-50~-60%",vd:"周期已过，不追",w:{c:3,y:3,a:3},hz:["半导体周期见顶","AI资本开支支撑但贵","等周期回落"]},
     {c:"SMH",n:"SMH",m:"US",cat:"行业",sz:"约$20B",fee:"0.35%",pm:"—",u:"MVIS半导体（含台积电）",cyc:86,val:85,rk:5,ret:"6-12%",mdd:"-50~-60%",vd:"与SOXX高度相关，可合并",w:{c:2,y:3,a:3},hz:["同半导体","含台积电更集中","二选一"]},
-    {c:"XLK",n:"XLK",m:"US",cat:"行业",sz:"约$70B",fee:"0.08%",pm:"—",u:"标普信息技术",cyc:null,val:null,rk:4,ret:"7-12%",mdd:"-30~-45%",vd:"",w:{c:4,y:5,a:6},hz:["科技成长","AI主线","高弹性"]},
+    {c:"XLK",n:"XLK",m:"US",cat:"行业",sz:"约$70B",fee:"0.08%",pm:"—",u:"标普信息技术",cyc:72,val:80,rk:4,ret:"7-12%",mdd:"-30~-45%",vd:"与VGT高度重叠，二选一或合并计算，勿重复加码",w:{c:2,y:3,a:3},hz:["科技周期中后段","AI主线","高弹性"]},
+    {c:"VGT",n:"VGT",m:"US",cat:"行业",sz:"约$147B",fee:"0.09%",pm:"—",u:"MSCI US IMI信息技术25/50（319只，含中小盘科技）",cyc:72,val:80,rk:4,ret:"7-12%",mdd:"-30~-45%",vd:"与XLK高度重叠，二选一或合并计算，勿重复加码",w:{c:3,y:4,a:5},hz:["科技周期中后段，分批不追高","AI主线长期受益","高弹性成长核心"]},
     {c:"XLV",n:"XLV",m:"US",cat:"行业",sz:"约$43B",fee:"0.08%",pm:"—",u:"标普医疗保健（防御）",cyc:null,val:null,rk:2,ret:"5-8%",mdd:"-15~-25%",vd:"保守版债替代增强",w:{c:7,y:4,a:5},hz:["防御医药","降息利好","债替代"]},
     {c:"TQQQ",n:"TQQQ",m:"US",cat:"杠杆",sz:"约$36B",fee:"0.95%",pm:"—",u:"纳斯达克100三倍做多",cyc:72,val:80,rk:5,ret:"0-30%（波动巨大）",mdd:"-70~-85%",vd:"仅战术，设止损，不长期持有",w:{c:1,y:3,a:3},hz:["波动损耗巨大","仅牛市右侧战术","严格止损"]},
     {c:"SOXL",n:"SOXL",m:"US",cat:"杠杆",sz:"约$19B",fee:"0.75%",pm:"—",u:"费城半导体三倍做多",cyc:86,val:85,rk:5,ret:"0-30%（波动巨大）",mdd:"-80~-90%",vd:"仅战术，2022年回撤约-87%",w:{c:1,y:2,a:2},hz:["最极端波动","周期高位更危险","严格止损"]}
   ]
 };
 
+/* ================= 渲染 ================= */
 var L = ASSETS.assets;
 var cfgCat = {};
 L.forEach(function(x){ cfgCat[x.cat]=(cfgCat[x.cat]||0)+1; });
@@ -359,6 +381,7 @@ var catNames = Object.keys(cfgCat);
 
 document.getElementById('updBadge').textContent = '更新：' + ASSETS.updated;
 
+/* 统计卡 */
 (function(){
   var aN=L.filter(function(x){return x.m==='A';}).length;
   var uN=L.filter(function(x){return x.m==='US';}).length;
@@ -373,6 +396,7 @@ document.getElementById('updBadge').textContent = '更新：' + ASSETS.updated;
     '<div class="stat"><div class="n">每周日 20:00</div><div class="l">估值周报推送</div><div class="s">飞书 + GitHub 同步</div></div>';
 })();
 
+/* 周期温度计（Canvas 自绘 + 重合点散开 + 标签避让 + 右侧清单联动） */
 (function(){
   var cv=document.getElementById('chart');
   var ctx=cv.getContext('2d');
@@ -391,6 +415,7 @@ document.getElementById('updBadge').textContent = '更新：' + ASSETS.updated;
   function py(y){return padT+(100-y)/100*(H-padT-padB);}
   function zoneColor(p){ if(p.cyc<=40&&p.val<=45)return'#1E9E62'; if(p.cyc>=60&&p.val>=60)return'#D9574C'; return'#5B8DD6'; }
   L.forEach(function(x){ if(x.cyc!=null&&x.val!=null) pts.push({x:x.cyc,y:x.val,name:x.n,cd:x.c,color:zoneColor(x)}); });
+  /* 重合点散开 + 聚合分组：坐标相同的点组成一组，图上只显示一个代表标签（如 半导体×5） */
   (function(){
     var map={}, gmap={};
     pts.forEach(function(p){ var key=Math.round(p.x)+'_'+Math.round(p.y); (map[key]=map[key]||[]).push(p); gmap[key]=(gmap[key]||0)+1; });
@@ -458,7 +483,7 @@ document.getElementById('updBadge').textContent = '更新：' + ASSETS.updated;
     var order=pts.slice().sort(function(a,b){ return a.name.length-b.name.length; });
     ctx.font='600 11px sans-serif';
     order.forEach(function(p){
-      if(!p.rep){ p.lb=null; return; }
+      if(!p.rep){ p.lb=null; return; } /* 非组代表不显示标签，避免重叠 */
       var label=p.grp>1?p.name+'×'+p.grp:p.name;
       var idx=pts.indexOf(p);
       var tw=ctx.measureText(label).width+8, th=16;
@@ -508,10 +533,13 @@ document.getElementById('updBadge').textContent = '更新：' + ASSETS.updated;
     html+='<div class="li" data-cd="'+p.cd+'"><span class="dot" style="background:'+p.color+'"></span><span class="cd">'+p.cd+'</span><span class="nm">'+p.name+'</span></div>';
   });
   listEl.innerHTML=html;
-  listEl.querySelectorAll('.li[data-cd]').forEach(function(li){ li.addEventListener('click',function(){ openDetail(li.dataset.cd); }); });
+  listEl.querySelectorAll('.li[data-cd]').forEach(function(li){
+    li.addEventListener('click',function(){ openDetail(li.dataset.cd); });
+  });
   window.addEventListener('resize',function(){ size(); draw(); });
 })();
 
+/* 三档配置 */
 function cfgColor(k){ var m={债券:'#5B8DD6',宽基:'#2E6BE6',成长:'#7B5CD6',跨境:'#E8913A',板块:'#D9574C',商品:'#1E9E62',动量:'#8E6BD6',指数:'#2E6BE6',行业:'#E8913A',杠杆:'#D9574C'}; return m[k]||'#8A93A6'; }
 function renderCfg(m){
   var grid=document.getElementById('cfgGrid'),html='';
@@ -535,6 +563,7 @@ document.getElementById('cfgTabs').addEventListener('click',function(e){
 });
 renderCfg('A');
 
+/* 数据覆盖率 */
 (function(){
   var pN=L.filter(function(x){return x.cyc!=null&&x.val!=null;}).length;
   var pct=Math.round(pN/L.length*100);
@@ -544,7 +573,7 @@ renderCfg('A');
   var names=pend.slice(0,6).map(function(x){return x.c;}).join('、');
   document.getElementById('covSub').textContent='已核验 '+pN+' 只（'+pct+'%）· 待核验 '+(L.length-pN)+' 只：'+(names?names+' 等':'—')+'（每周日周报逐只补全）';
 })();
-
+/* 本周结论 + 机会/风险雷达 */
 (function(){
   var snapD=document.getElementById('snapD');
   if(ASSETS.snap){ snapD.textContent=ASSETS.snap.d+(ASSETS.snap.t?' · '+ASSETS.snap.t:''); }
@@ -576,7 +605,7 @@ renderCfg('A');
   );
   lists.forEach(function(li){ li.addEventListener('click',function(){ openDetail(li.dataset.c); }); });
 })();
-
+/* 检查清单（localStorage 保存勾选） */
 (function(){
   var el=document.getElementById('checklist');
   var KEY='al_check_v1', saved={};
@@ -595,6 +624,7 @@ renderCfg('A');
   });
 })();
 
+/* 资产总表 */
 (function(){
   var fCat=document.getElementById('fCat');
   catNames.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c+'（'+cfgCat[c]+'）'; fCat.appendChild(o); });
@@ -631,6 +661,7 @@ function renderTbl(){
   document.getElementById('rowCount').textContent='共 '+rows.length+' 只';
   document.querySelectorAll('#tbody tr').forEach(function(tr){ tr.addEventListener('click',function(){ openDetail(tr.dataset.c); }); });
 }
+/* 深度档案 */
 function openDetail(code){
   var x=null; L.forEach(function(a){ if(a.c===code)x=a; }); if(!x)return;
   var d=document.getElementById('detail');
@@ -664,6 +695,7 @@ document.getElementById('q').addEventListener('input',renderTbl);
 ['fPreset','fMarket','fCat','fSort'].forEach(function(id){ document.getElementById(id).addEventListener('change',renderTbl); });
 renderTbl();
 
+/* 更新日志 */
 (function(){
   document.getElementById('log').innerHTML=ASSETS.log.map(function(l){return '<li><span class="d">'+l.d+'</span><span class="t">'+l.t+'</span></li>';}).join('');
 })();
