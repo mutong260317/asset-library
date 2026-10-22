@@ -14,6 +14,7 @@
   - 加仓区间标签（美股20-30%为加仓区）
 ============================================================
 """
+import os
 import json
 import time
 import datetime as dt
@@ -21,6 +22,13 @@ import requests
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 RETRIES = 3
+
+# 路径（脚本位于 <repo>/scripts/）
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATE_FILE = os.path.join(BASE, "scripts", "level_state.json")
+ALERT_FILE = os.path.join(BASE, "scripts", "alerts.json")
+# 回撤档位（正数=回撤深度）
+LEVEL_DS = [0.10, 0.20, 0.30, 0.40, 0.50]
 
 # 标的定义：(展示代码, 名称, 市场, 数据源symbol, 币种)
 TARGETS = [
@@ -151,6 +159,23 @@ def zone_label(dd_pct):
     return "崩盘区", "回撤>50%，极端左侧"
 
 
+def max_hit_depth(levels):
+    """当前已跌破的最深回撤档（正数，如 0.2）；未跌破任何档返回 0"""
+    hit = [abs(l["d"]) for l in levels if l["hit"]]
+    return max(hit) if hit else 0.0
+
+
+def load_state():
+    """读取上一次各标的的最深回撤状态"""
+    if os.path.exists(STATE_FILE):
+        try:
+            with open(STATE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+
 def analyze(code, name, market, symbol, ccy):
     rows = fetch_us(symbol) if market == "US" else fetch_a(symbol)
     if not rows:
@@ -234,16 +259,57 @@ def main():
         except Exception as e:
             print(f"[FAIL] {name} {code}: {repr(e)}")
 
+    # ===== 档位跨越检测（对比上一次状态）=====
+    is_first_run = not os.path.exists(STATE_FILE)  # 首次运行只建基线，不追报历史回撤
+    old_state = load_state()
+    new_state = {}
+    alerts = []
+    for r in indices:
+        code = r["code"]
+        new_depth = max_hit_depth(r["levels"])
+        old_depth = old_state.get(code, {}).get("maxHit", 0.0)
+        new_state[code] = {"maxHit": new_depth, "asOf": r["asOf"]}
+        if (not is_first_run) and new_depth > old_depth + 1e-9:
+            # 新跌破了一个或多个档位
+            for d in LEVEL_DS:
+                if old_depth < d <= new_depth:
+                    lvl_price = next(l["price"] for l in r["levels"]
+                                     if abs(abs(l["d"]) - d) < 1e-9)
+                    alerts.append({
+                        "code": code,
+                        "name": r["name"],
+                        "market": r["market"],
+                        "level": round(-d, 2),
+                        "levelPrice": lvl_price,
+                        "price": r["price"],
+                        "drawdown": r["drawdown"],
+                        "asOf": r["asOf"],
+                        "zone": r["zone"],
+                    })
+                    print(f"[ALERT] {r['name']:8s} 新跌破 -{int(d*100)}% 档 "
+                          f"现价 {r['price']}（{r['zone']}）")
+
+    # 保存状态与提醒
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(new_state, f, ensure_ascii=False, indent=2)
+    with open(ALERT_FILE, "w", encoding="utf-8") as f:
+        json.dump({"asOf": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
+                   "alerts": alerts}, f, ensure_ascii=False, indent=2)
+    if is_first_run:
+        print(f"\n首次运行：已建立回撤基线（历史回撤不追报，状态存 {os.path.basename(STATE_FILE)}）")
+    else:
+        print(f"\n档位提醒：{len(alerts)} 条（状态已存 {os.path.basename(STATE_FILE)}）")
+
     payload = {
         "meta": {
             "asOf": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
             "generatedBy": "scripts/fetch_drawdown.py",
-            "refreshCadence": "每3天",
+            "refreshCadence": "每天",
             "sources": {
                 "US": "Yahoo Finance chart API（5y日线）",
                 "A": "腾讯证券 fqkline（约8年日线）",
             },
-            "note": "ATH为拉取范围内盘中最高；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离。",
+            "note": "ATH为拉取范围内盘中最高；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。",
         },
         "indices": indices,
     }
@@ -252,14 +318,14 @@ def main():
         "/* ============================================================\n"
         " * 宽基指数回撤分析数据（自动生成，请勿手改）\n"
         " * 生成脚本：scripts/fetch_drawdown.py\n"
-        " * 刷新频率：每3天\n"
+        " * 刷新频率：每天（15:40）\n"
         " * ============================================================ */\n"
     )
     body = "window.DRAWDOWN = " + json.dumps(payload, ensure_ascii=False, indent=2) + ";\n"
-    out_path = r"D:\ai\豆包\资产归类项目\drawdown.js"
+    out_path = os.path.join(BASE, "drawdown.js")
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(header + body)
-    print(f"\nWROTE {out_path}  ({len(indices)} indices)")
+    print(f"WROTE {out_path}  ({len(indices)} indices)")
 
 
 if __name__ == "__main__":
