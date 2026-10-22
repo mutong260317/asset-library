@@ -112,6 +112,26 @@
   .rk4{background:#FBE8E2;color:#C2583C}
   .rk5{background:var(--red-soft);color:var(--red)}
   .empty{text-align:center;color:#9AA6BC;padding:26px;font-size:13px}
+  /* 视图切换 */
+  .view-toggle{display:inline-flex;background:var(--gray-soft);border-radius:9px;padding:3px;border:1px solid var(--line)}
+  .view-toggle button{border:none;background:transparent;padding:6px 12px;font-size:12px;border-radius:7px;cursor:pointer;color:var(--sub);font-weight:600}
+  .view-toggle button.on{background:#fff;color:var(--blue);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .add-btn{border:none;background:var(--blue);color:#fff;padding:8px 14px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .add-btn:hover{background:#2459c9}
+  .cancel-btn{border:1px solid var(--line);background:#fff;color:var(--sub);padding:8px 14px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .draft-form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;padding:12px;background:var(--gray-soft);border:1px dashed var(--line);border-radius:11px}
+  .draft-form input[type=text]{flex:1;min-width:130px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;outline:none;background:#fff}
+  .draft-form select{padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:12.5px;background:#fff;outline:none}
+  .tag.draft{background:var(--orange-soft);color:var(--orange)}
+  tbody tr.draft-row td{background:#FFFBF5}
+  tbody tr.draft-row:hover td{background:#FEF6EA}
+  .del-draft{border:none;background:transparent;color:var(--orange);cursor:pointer;font-size:13px;padding:2px 4px}
+  .pager{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .pager button{min-width:32px;height:32px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:12.5px;color:var(--ink);cursor:pointer;font-weight:600;padding:0 8px}
+  .pager button:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
+  .pager button.cur{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .pager button:disabled{opacity:.4;cursor:default}
+  .pager .pinfo{font-size:11.5px;color:var(--sub);margin-right:6px}
   .detail{display:none;margin-top:12px;border:1px solid var(--blue);border-radius:12px;background:linear-gradient(180deg,#F8FBFF,#fff);padding:16px;animation:fade .25s}
   .detail.show{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -391,16 +411,28 @@
         <option value="fee">按费率升序</option>
         <option value="risk">按风险降序</option>
       </select>
+      <span class="view-toggle" id="viewToggle">
+        <button type="button" data-v="basic">基本信息</button>
+        <button type="button" data-v="full" class="on">完整信号</button>
+      </span>
+      <button type="button" id="addDraftBtn" class="add-btn">+ 观察标的</button>
+    </div>
+    <div class="draft-form" id="draftForm" style="display:none">
+      <input type="text" id="dfCode" placeholder="代码*（如 159949 / AVGO）">
+      <input type="text" id="dfName" placeholder="名称*">
+      <select id="dfMarket"><option value="A">A股</option><option value="US">美股</option></select>
+      <input type="text" id="dfCat" placeholder="分类（如 宽基/行业）">
+      <input type="text" id="dfU" placeholder="跟踪/备注（可选）">
+      <button type="button" id="dfSave" class="add-btn">保存草稿</button>
+      <button type="button" id="dfCancel" class="cancel-btn">取消</button>
     </div>
     <div class="tblwrap">
       <table>
-        <thead><tr>
-          <th>代码</th><th>名称</th><th>市场</th><th>分类</th>
-          <th>规模</th><th>费率</th><th>溢价/折价</th><th>风险</th><th>重叠</th><th>基准权重</th><th>动作</th><th>判断</th>
-        </tr></thead>
+        <thead id="tblHead"></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
+    <div class="pager" id="pager"></div>
     <div class="detail" id="detail"></div>
   </div>
 
@@ -602,7 +634,7 @@
   }
   try { renderSummary(); } catch (e) { console.error("summary", e); }
 
-  /* ---- 资产总表 ---- */
+  /* ---- 资产总表（分页 + 视图切换 + 草稿） ---- */
   function parseSizeNum(x) { return (x.aum && typeof x.aum.value === "number") ? x.aum.value : -1; }
   function rkTag(r) { return '<span class="rk rk' + r + '">' + r + '</span>'; }
   function actionTag(x) {
@@ -611,48 +643,204 @@
     var cls = a === "回避" ? "high" : (a === "分批" ? "low" : "warn");
     return '<span class="tag ' + cls + '">' + a + '</span>';
   }
-  function renderTbl() {
+
+  /* 视图与分页状态 */
+  var PAGE_SIZE = 15;
+  var ui = { view: "full", page: 1 };
+
+  /* 草稿（localStorage，不污染权威源） */
+  var DRAFT_KEY = "al_drafts_v1";
+  function loadDrafts() {
+    try { var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "[]"); return Array.isArray(d) ? d : []; }
+    catch (e) { return []; }
+  }
+  function saveDrafts(d) { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch (e) {} }
+  function draftToRow(d) {
+    return { c: d.c, n: d.n, m: d.m, cat: d.cat || "未分类", u: d.u || "",
+      structure: "—", fee: null, aum: null, rk: null, vd: d.u || "", _draft: true };
+  }
+
+  /* 列定义 */
+  var COLS = {
+    basic: [
+      { k: "code", t: "代码" }, { k: "name", t: "名称" }, { k: "market", t: "市场" },
+      { k: "cat", t: "分类" }, { k: "under", t: "跟踪底层" }, { k: "structure", t: "结构" },
+      { k: "fee", t: "费率" }, { k: "aum", t: "规模" }, { k: "risk", t: "风险" }, { k: "op", t: "" }
+    ],
+    full: [
+      { k: "code", t: "代码" }, { k: "name", t: "名称" }, { k: "market", t: "市场" },
+      { k: "cat", t: "分类" }, { k: "aum", t: "规模" }, { k: "fee", t: "费率" },
+      { k: "premium", t: "溢价/折价" }, { k: "risk", t: "风险" }, { k: "overlap", t: "重叠" },
+      { k: "weight", t: "基准权重" }, { k: "action", t: "动作" }, { k: "judge", t: "判断" }, { k: "op", t: "" }
+    ]
+  };
+  function renderHead() {
+    var cols = COLS[ui.view];
+    document.getElementById("tblHead").innerHTML = "<tr>" +
+      cols.map(function (c) { return "<th>" + c.t + "</th>"; }).join("") + "</tr>";
+  }
+
+  function cell(x, k) {
+    switch (k) {
+      case "code": return '<td class="code">' + x.c + '</td>';
+      case "name": return '<td>' + x.n + (x._draft ? ' <span class="tag draft">未入库</span>' : "") + '</td>';
+      case "market": return '<td><span class="tag ' + x.m + '">' + (x.m === "A" ? "A股" : "美股") + '</span></td>';
+      case "cat": return '<td>' + x.cat + '</td>';
+      case "under": return '<td style="max-width:200px;white-space:normal">' + (x.u || "—") + '</td>';
+      case "structure": return '<td>' + (x.structure || "—") + '</td>';
+      case "fee":
+        if (x._draft) return '<td>—</td>';
+        var ft = x.fee && x.fee.value <= 0.30 ? ' <span class="tag low">低费</span>' :
+          (x.fee && x.fee.value >= 0.60 ? ' <span class="tag warn">中高费</span>' : "");
+        return '<td>' + fmtFee(x) + ft + '</td>';
+      case "aum": return '<td>' + fmtAum(x) + '</td>';
+      case "premium":
+        if (x._draft) return '<td>—</td>';
+        var pt = fmtPremium(x), pp = "";
+        if (x.signal && x.signal.premium && x.signal.premium.value > 0.03) pp = ' <span class="tag high">溢价高</span>';
+        else if (x.signal && x.signal.premium && x.signal.premium.value < -0.02) pp = ' <span class="tag low">折价</span>';
+        return '<td>' + pt + pp + '</td>';
+      case "risk": return '<td>' + (x.rk ? rkTag(x.rk) : "—") + '</td>';
+      case "overlap": return '<td>' + (x._draft ? "—" : overlapTag(x)) + '</td>';
+      case "weight": return '<td>' + (x.decision && x.decision.w ? x.decision.w.y + "%" : "—") + '</td>';
+      case "action": return '<td>' + (x._draft ? "—" : actionTag(x)) + '</td>';
+      case "judge": return '<td style="max-width:170px;white-space:normal">' + (x.vd || "—") + '</td>';
+      case "op":
+        if (x._draft) return '<td><button type="button" class="del-draft" data-c="' + x.c + '" title="删除草稿">✕</button></td>';
+        return '<td></td>';
+      default: return '<td></td>';
+    }
+  }
+
+  function getFilteredRows() {
     var q = (document.getElementById("q").value || "").toLowerCase();
     var fp = document.getElementById("fPreset").value;
     var fm = document.getElementById("fMarket").value;
     var fc = document.getElementById("fCat").value;
     var fs = document.getElementById("fSort").value;
-    var rows = L.filter(function (x) {
+    var all = L.concat(loadDrafts().map(draftToRow));
+
+    var rows = all.filter(function (x) {
       var s = x.signal || {};
-      var hit = !q || (x.c + " " + x.n + " " + x.u + " " + (x.vd || "")).toLowerCase().indexOf(q) >= 0;
-      var preset = !fp || (fp === "low" && s.cyc <= 40 && s.val <= 45) || (fp === "high" && s.cyc >= 60 && s.val >= 60);
+      var hit = !q || (x.c + " " + x.n + " " + (x.u || "") + " " + (x.vd || "")).toLowerCase().indexOf(q) >= 0;
+      var preset = !fp || x._draft ||
+        ((fp === "low" && s.cyc <= 40 && s.val <= 45) || (fp === "high" && s.cyc >= 60 && s.val >= 60));
       return hit && preset && (!fm || x.m === fm) && (!fc || x.cat === fc);
     });
-    if (fs === "size") {
-      rows = rows.slice().sort(function (a, b) {
-        if (a.m !== b.m) return a.m === "A" ? -1 : 1;   // 同市场内排序，避免跨币种无意义比较
-        return parseSizeNum(b) - parseSizeNum(a);
-      });
-    } else if (fs === "fee") rows = rows.slice().sort(function (a, b) { return (a.fee ? a.fee.value : 0) - (b.fee ? b.fee.value : 0); });
-    else if (fs === "risk") rows = rows.slice().sort(function (a, b) { return b.rk - a.rk; });
-    else rows = rows.slice().sort(function (a, b) { return a.c < b.c ? -1 : 1; });
-    var html = "";
-    rows.forEach(function (x) {
-      var pmTxt = fmtPremium(x), pmTag = "";
-      if (x.signal && x.signal.premium && x.signal.premium.value > 0.03) pmTag = ' <span class="tag high">溢价高</span>';
-      else if (x.signal && x.signal.premium && x.signal.premium.value < -0.02) pmTag = ' <span class="tag low">折价</span>';
-      var feeTag = x.fee && x.fee.value <= 0.30 ? '<span class="tag low">低费</span>' : (x.fee && x.fee.value >= 0.60 ? '<span class="tag warn">中高费</span>' : "");
-      var w = x.decision && x.decision.w ? (x.decision.w.y + "%") : "—";
-      html += '<tr data-c="' + x.c + '"><td class="code">' + x.c + '</td><td>' + x.n + '</td>' +
-        '<td><span class="tag ' + x.m + '">' + (x.m === "A" ? "A股" : "美股") + '</span></td><td>' + x.cat + '</td>' +
-        '<td>' + fmtAum(x) + '</td><td>' + fmtFee(x) + ' ' + feeTag + '</td><td>' + pmTxt + pmTag + '</td>' +
-        '<td>' + rkTag(x.rk) + '</td><td>' + overlapTag(x) + '</td><td>' + w + '</td>' +
-        '<td>' + actionTag(x) + '</td><td style="max-width:170px;white-space:normal">' + (x.vd || "—") + '</td></tr>';
+
+    if (fs === "size") rows.sort(function (a, b) {
+      if (a.m !== b.m) return a.m === "A" ? -1 : 1;
+      return parseSizeNum(b) - parseSizeNum(a);
     });
-    document.getElementById("tbody").innerHTML = html || '<tr><td colspan="12" class="empty">无匹配资产</td></tr>';
-    document.getElementById("rowCount").textContent = "共 " + rows.length + " 只（总 " + L.length + "）";
-    document.querySelectorAll("#tbody tr").forEach(function (tr) { tr.addEventListener("click", function () { openDetail(tr.dataset.c); }); });
+    else if (fs === "fee") rows.sort(function (a, b) { return (a.fee ? a.fee.value : 0) - (b.fee ? b.fee.value : 0); });
+    else if (fs === "risk") rows.sort(function (a, b) { return (b.rk || 0) - (a.rk || 0); });
+    else rows.sort(function (a, b) { return a.c < b.c ? -1 : 1; });
+
+    /* 草稿始终排最后 */
+    var formal = rows.filter(function (x) { return !x._draft; });
+    var drafts = rows.filter(function (x) { return x._draft; });
+    return formal.concat(drafts);
+  }
+
+  function renderPager(total) {
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (ui.page > pages) ui.page = pages;
+    var box = document.getElementById("pager");
+    if (total <= PAGE_SIZE) { box.innerHTML = ""; return; }
+    var h = '<span class="pinfo">第 ' + ui.page + ' / ' + pages + ' 页</span>';
+    h += '<button type="button" data-p="prev"' + (ui.page === 1 ? " disabled" : "") + '>‹</button>';
+    var s = Math.max(1, ui.page - 2), e = Math.min(pages, s + 4); s = Math.max(1, e - 4);
+    for (var i = s; i <= e; i++) h += '<button type="button" data-p="' + i + '"' + (i === ui.page ? ' class="cur"' : "") + '>' + i + '</button>';
+    h += '<button type="button" data-p="next"' + (ui.page === pages ? " disabled" : "") + '>›</button>';
+    box.innerHTML = h;
+  }
+
+  function renderTbl() {
+    renderHead();
+    var rows = getFilteredRows();
+    var total = rows.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (ui.page > pages) ui.page = pages;
+    var slice = rows.slice((ui.page - 1) * PAGE_SIZE, ui.page * PAGE_SIZE);
+    var cols = COLS[ui.view];
+    var html = "";
+    slice.forEach(function (x) {
+      var cls = x._draft ? ' class="draft-row"' : "";
+      html += '<tr data-c="' + x.c + '"' + cls + ">" +
+        cols.map(function (c) { return cell(x, c.k); }).join("") + "</tr>";
+    });
+    document.getElementById("tbody").innerHTML = html ||
+      '<tr><td colspan="' + cols.length + '" class="empty">无匹配资产</td></tr>';
+    var draftN = loadDrafts().length;
+    document.getElementById("rowCount").textContent =
+      "共 " + total + " 只（已建档 " + L.length + " · 草稿 " + draftN + "）";
+    renderPager(total);
+
+    document.querySelectorAll("#tbody tr").forEach(function (tr) {
+      tr.addEventListener("click", function (e) {
+        if (e.target.closest(".del-draft")) return;
+        if (!tr.classList.contains("draft-row")) openDetail(tr.dataset.c);
+      });
+    });
+    document.querySelectorAll(".del-draft").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        saveDrafts(loadDrafts().filter(function (x) { return x.c !== btn.dataset.c; }));
+        renderTbl();
+      });
+    });
   }
   try { renderTbl(); } catch (e) { console.error("tbl", e); }
 
-  document.getElementById("q").addEventListener("input", function () { try { renderTbl(); } catch (e) {} });
+  document.getElementById("q").addEventListener("input", function () { ui.page = 1; try { renderTbl(); } catch (e) {} });
   ["fPreset", "fMarket", "fCat", "fSort"].forEach(function (id) {
-    document.getElementById(id).addEventListener("change", function () { try { renderTbl(); } catch (e) {} });
+    document.getElementById(id).addEventListener("change", function () { ui.page = 1; try { renderTbl(); } catch (e) {} });
+  });
+
+  /* 视图切换 */
+  document.getElementById("viewToggle").querySelectorAll("button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      ui.view = b.dataset.v;
+      document.getElementById("viewToggle").querySelectorAll("button").forEach(function (x) {
+        x.classList.toggle("on", x === b);
+      });
+      ui.page = 1; try { renderTbl(); } catch (e) {}
+    });
+  });
+
+  /* 分页（事件委托） */
+  document.getElementById("pager").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b || b.disabled) return;
+    var pages = Math.max(1, Math.ceil(getFilteredRows().length / PAGE_SIZE));
+    var p = b.dataset.p;
+    if (p === "prev") ui.page = Math.max(1, ui.page - 1);
+    else if (p === "next") ui.page = Math.min(pages, ui.page + 1);
+    else ui.page = parseInt(p, 10);
+    try { renderTbl(); } catch (err) {}
+  });
+
+  /* 草稿表单 */
+  document.getElementById("addDraftBtn").addEventListener("click", function () {
+    var f = document.getElementById("draftForm");
+    f.style.display = (f.style.display === "none") ? "flex" : "none";
+    if (f.style.display === "flex") document.getElementById("dfCode").focus();
+  });
+  document.getElementById("dfCancel").addEventListener("click", function () {
+    document.getElementById("draftForm").style.display = "none";
+  });
+  document.getElementById("dfSave").addEventListener("click", function () {
+    var code = document.getElementById("dfCode").value.trim();
+    var name = document.getElementById("dfName").value.trim();
+    if (!code || !name) { alert("请填写代码和名称"); return; }
+    if (loadDrafts().some(function (x) { return x.c === code; }) ||
+        L.some(function (x) { return x.c === code; })) { alert("该代码已存在（草稿或已建档）"); return; }
+    saveDrafts(loadDrafts().concat([{
+      c: code, n: name, m: document.getElementById("dfMarket").value,
+      cat: document.getElementById("dfCat").value.trim(), u: document.getElementById("dfU").value.trim()
+    }]));
+    ["dfCode", "dfName", "dfCat", "dfU"].forEach(function (id) { document.getElementById(id).value = ""; });
+    document.getElementById("draftForm").style.display = "none";
+    ui.page = 1; try { renderTbl(); } catch (e) {}
   });
 
   /* ---- 分类筛选填充 ---- */
