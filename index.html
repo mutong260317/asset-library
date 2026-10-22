@@ -323,7 +323,7 @@
   <div class="sec">
     <div class="sec-h">
       <h2><span class="ic">▼</span>宽基回撤分析 · 高点锚定关键价位</h2>
-      <span class="hint" id="ddMeta">从历史高点起算 · 每3天刷新 · 数据来源 Yahoo/腾讯</span>
+      <span class="hint" id="ddMeta">从历史高点起算 · 每天15:40刷新 · 数据来源 Yahoo/腾讯</span>
     </div>
     <div class="dd-tabs" id="ddTabs">
       <span class="tab on" data-m="">全部</span>
@@ -915,7 +915,7 @@
       return;
     }
     var meta = document.getElementById("ddMeta");
-    if (meta) meta.textContent = "生成于 " + D.meta.asOf + " · 每3天刷新 · 来源 Yahoo/腾讯 · ATH为盘中最高";
+    if (meta) meta.textContent = "生成于 " + D.meta.asOf + " · 每天15:40刷新 · 来源 Yahoo/腾讯 · ATH为盘中最高";
     var list = D.indices.filter(function (x) { return !ddFilter || x.market === ddFilter; });
     box.innerHTML = list.map(ddCard).join("");
   }
