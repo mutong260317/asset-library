@@ -57,7 +57,30 @@ def http_get(url, timeout=25):
     raise last
 
 
-def fetch_us(symbol):
+def data_fresh(date_str, max_age_days=10):
+    """数据最后日期是否在 max_age_days 内（防止备用源返回陈旧数据）"""
+    try:
+        d = dt.datetime.strptime(date_str, "%Y-%m-%d")
+        return (dt.datetime.now() - d).days <= max_age_days
+    except Exception:
+        return False
+
+
+def _df_to_rows(df):
+    """AkShare DataFrame(date,open,high,low,close[,volume]) -> list[(date,open,close,high,low)]"""
+    out = []
+    for _, r in df.iterrows():
+        d = r["date"]
+        d = d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else str(d)[:10]
+        try:
+            out.append((d, float(r["open"]), float(r["close"]),
+                        float(r["high"]), float(r["low"])))
+        except Exception:
+            continue
+    return out
+
+
+def fetch_us_yahoo(symbol):
     """Yahoo chart API，返回 list[(date, open, close, high, low)]"""
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=5y&interval=1d"
     j = http_get(url).json()
@@ -74,7 +97,7 @@ def fetch_us(symbol):
     return out
 
 
-def fetch_a(symbol):
+def fetch_a_tencent(symbol):
     """腾讯 fqkline，返回 list[(date, open, close, high, low)]"""
     url = f"http://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={symbol},day,2018-01-01,,2000,qfq"
     j = http_get(url).json()
@@ -85,6 +108,48 @@ def fetch_a(symbol):
         d, o, c, h, l = row[0], float(row[1]), float(row[2]), float(row[3]), float(row[4])
         out.append((d, o, c, h, l))
     return out
+
+
+def fetch_us_akshare(symbol):
+    """AkShare 新浪美股前复权日K，返回 list[(date, open, close, high, low)]"""
+    import akshare as ak
+    return _df_to_rows(ak.stock_us_daily(symbol=symbol, adjust="qfq"))
+
+
+def fetch_a_akshare(symbol):
+    """AkShare 新浪A股指数日K，返回 list[(date, open, close, high, low)]"""
+    import akshare as ak
+    return _df_to_rows(ak.stock_zh_index_daily(symbol=symbol))
+
+
+def fetch_us(symbol):
+    """美股：主 Yahoo，备 AkShare（新浪）；返回 (rows, source)"""
+    try:
+        rows = fetch_us_yahoo(symbol)
+        if rows and data_fresh(rows[-1][0]):
+            return rows, "Yahoo Finance"
+        raise RuntimeError("Yahoo 数据缺失或陈旧")
+    except Exception as e:
+        print(f"[WARN] Yahoo {symbol} 失败：{repr(e)[:80]}，切换 AkShare")
+    rows = fetch_us_akshare(symbol)
+    if rows and data_fresh(rows[-1][0]):
+        return rows, "AkShare(新浪)"
+    raise RuntimeError(f"美股 {symbol} 所有数据源均失败或数据陈旧")
+
+
+def fetch_a(symbol):
+    """A股：主 腾讯，备 AkShare（新浪）；返回 (rows, source)"""
+    try:
+        rows = fetch_a_tencent(symbol)
+        if rows and data_fresh(rows[-1][0]):
+            return rows, "腾讯证券"
+        raise RuntimeError("腾讯 数据缺失或陈旧")
+    except Exception as e:
+        print(f"[WARN] 腾讯 {symbol} 失败：{repr(e)[:80]}，切换 AkShare")
+    rows = fetch_a_akshare(symbol)
+    if rows and data_fresh(rows[-1][0]):
+        return rows, "AkShare(新浪)"
+    raise RuntimeError(f"A股 {symbol} 所有数据源均失败或数据陈旧")
 
 
 def find_platforms(dates, closes, highs, lookback=250, bin_pct=0.02):
@@ -177,7 +242,7 @@ def load_state():
 
 
 def analyze(code, name, market, symbol, ccy):
-    rows = fetch_us(symbol) if market == "US" else fetch_a(symbol)
+    rows, source = fetch_us(symbol) if market == "US" else fetch_a(symbol)
     if not rows:
         return None
     dates = [r[0] for r in rows]
@@ -234,6 +299,7 @@ def analyze(code, name, market, symbol, ccy):
         "name": name,
         "market": market,
         "ccy": ccy,
+        "source": source,
         "asOf": as_of,
         "price": round(price, 2),
         "ath": {"value": round(ath, 2), "date": ath_date},
@@ -255,7 +321,7 @@ def main():
                 indices.append(r)
                 print(f"[OK] {name:8s} {code:9s} price={r['price']:>9} "
                       f"dd={r['drawdown']*100:6.2f}% ma200={r['ma200']['value']:>9} "
-                      f"plats={len(r['platforms'])} zone={r['zone']}")
+                      f"plats={len(r['platforms'])} zone={r['zone']} src={r['source']}")
         except Exception as e:
             print(f"[FAIL] {name} {code}: {repr(e)}")
 
@@ -306,8 +372,8 @@ def main():
             "generatedBy": "scripts/fetch_drawdown.py",
             "refreshCadence": "每天",
             "sources": {
-                "US": "Yahoo Finance chart API（5y日线）",
-                "A": "腾讯证券 fqkline（约8年日线）",
+                "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily",
+                "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily",
             },
             "note": "ATH为拉取范围内盘中最高；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。",
         },

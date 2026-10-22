@@ -2,6 +2,11 @@
 scripts/level_state.json
 scripts/alerts.json
 
+# 券商 / API 凭证（严禁入库，asset-library 为公开仓库）
+.env
+*.env
+scripts/secrets.py
+
 # 本地验证截图（调试用，不入库）
 scripts/*.png
 
