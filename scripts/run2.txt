@@ -1,0 +1,11 @@
+﻿[OK] 纳斯达克100  QQQ       price=   717.63 dd= -5.93% ma200=   675.95 plats=3 zone=高位区
+[OK] 标普500    SPY       price=   769.05 dd= -1.61% ma200=   725.87 plats=3 zone=高位区
+[OK] 道琼斯工业    DIA       price=   524.36 dd= -4.10% ma200=   504.72 plats=3 zone=高位区
+[OK] 罗素2000   IWM       price=   275.78 dd= -9.63% ma200=   277.91 plats=4 zone=高位区
+[OK] 上证指数     SH000001  price=  3658.03 dd=-14.11% ma200=  4002.11 plats=2 zone=浅回调
+[OK] 沪深300    SH000300  price=   4036.3 dd=-31.94% ma200=  4670.85 plats=1 zone=深度机会
+[OK] 中证A500   SH000922  price=  5405.75 dd=-12.95% ma200=  5595.37 plats=1 zone=浅回调
+[OK] 创业板指     SZ399006  price=   2576.9 dd=-41.17% ma200=  3504.73 plats=3 zone=极端区
+[OK] 科创50     SH000688  price=  1305.87 dd=-42.10% ma200=  1589.37 plats=4 zone=极端区
+
+WROTE D:\ai\豆包\资产归类项目\drawdown.js  (9 indices)

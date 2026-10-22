@@ -191,7 +191,49 @@
     .hd-right{width:100%;margin-left:0}
     .pf-card{width:100%}
     #chart{height:320px}
+    .dd-body{grid-template-columns:1fr}
   }
+  /* ===== 宽基回撤分析 ===== */
+  .dd-tabs{display:inline-flex;background:var(--gray-soft);border-radius:10px;padding:3px;border:1px solid var(--line);margin-bottom:12px}
+  .dd-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:var(--gray-soft)}
+  .dd-card:last-child{margin-bottom:0}
+  .dd-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px}
+  .dd-top .nm{font-size:14px;font-weight:800}
+  .dd-top .cd{font-size:10.5px;color:var(--sub);border:1px solid var(--line);border-radius:6px;padding:1px 6px;background:#fff}
+  .dd-top .px{font-size:13px;font-weight:700}
+  .dd-top .ddv{font-size:12px;font-weight:700;color:var(--red)}
+  .dd-top .asof{font-size:10px;color:#93A0B8}
+  .dd-top .zn{margin-left:auto;font-size:10.5px;font-weight:700;padding:3px 11px;border-radius:20px;white-space:nowrap}
+  .zn-blue{background:var(--blue-soft);color:var(--blue)}
+  .zn-green{background:var(--green-soft);color:var(--green)}
+  .zn-orange{background:var(--orange-soft);color:var(--orange)}
+  .zn-purple{background:var(--purple-soft);color:var(--purple)}
+  .zn-red{background:var(--red-soft);color:var(--red)}
+  .dd-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;margin-top:10px}
+  .dd-ladder h4,.dd-kv h4{font-size:11.5px;color:var(--sub);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+  .dd-ladder h4::before,.dd-kv h4::before{content:"";width:4px;height:12px;border-radius:2px;background:var(--blue)}
+  .dd-track{position:relative;height:9px;border-radius:6px;background:linear-gradient(90deg,#E6F6EE 0%,#FDF1E3 45%,#FCEBE9 100%);margin:30px 20px 24px}
+  .dd-tick.edge-r .pr,.dd-tick.edge-r .lb{transform:none;right:0;left:auto}
+  .dd-tick.edge-l .pr,.dd-tick.edge-l .lb{transform:none;left:0}
+  .dd-cur.edge-r .lb{transform:none;left:6px}
+  .dd-cur.edge-l .lb{transform:none;left:auto;right:6px}
+  .dd-tick{position:absolute;top:-4px;width:1.5px;height:17px;background:#AEBBD2;transform:translateX(-1px)}
+  .dd-tick .pr{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;color:#8A97B0;white-space:nowrap}
+  .dd-tick .lb{position:absolute;top:17px;left:50%;transform:translateX(-50%);font-size:9.5px;color:var(--sub);white-space:nowrap;font-weight:700}
+  .dd-cur{position:absolute;top:-8px;width:3.5px;height:25px;background:var(--blue);border-radius:2px;transform:translateX(-1.5px);z-index:2}
+  .dd-cur .lb{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:800;color:var(--blue);white-space:nowrap;background:#fff;border:1px solid var(--blue);border-radius:5px;padding:0 4px;z-index:3}
+  .dd-ath{position:absolute;top:-4px;left:0;width:2px;height:17px;background:#AEBBD2}
+  .dd-ath .lb{position:absolute;top:-15px;left:2px;font-size:9px;color:#8A97B0;white-space:nowrap}
+  .dd-kv-row{display:flex;align-items:center;gap:8px;font-size:11.5px;padding:6px 2px;border-bottom:1px dashed #EDF0F6}
+  .dd-kv-row:last-child{border-bottom:none}
+  .dd-kv-row .ty{font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:8px;flex-shrink:0;white-space:nowrap}
+  .ty-ma{background:var(--blue-soft);color:var(--blue)}
+  .ty-sup{background:var(--green-soft);color:var(--green)}
+  .ty-cur{background:var(--blue-soft);color:var(--blue)}
+  .ty-res{background:var(--orange-soft);color:var(--orange)}
+  .dd-kv-row .vl{font-weight:800;flex-shrink:0;min-width:64px}
+  .dd-kv-row .ds{flex:1;color:var(--sub);font-size:10.5px}
+  .dd-kv-row .dt{font-size:9px;color:#9AA6BC;flex-shrink:0;text-align:right}
 </style>
 </head>
 <body>
@@ -269,6 +311,19 @@
       </div>
     </div>
     <div class="dec-note">档位规则：强机会=周期≤40+估值≤45+距高点回撤≥20%；机会=周期≤40+估值≤45；高风险=周期≥60+估值≥60；偏贵=估值≥80或周期≥75。点击任一条查看深度档案。</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">
+      <h2><span class="ic">▼</span>宽基回撤分析 · 高点锚定关键价位</h2>
+      <span class="hint" id="ddMeta">从历史高点起算 · 每3天刷新 · 数据来源 Yahoo/腾讯</span>
+    </div>
+    <div class="dd-tabs" id="ddTabs">
+      <span class="tab on" data-m="">全部</span>
+      <span class="tab" data-m="US">美股</span>
+      <span class="tab" data-m="A">A股</span>
+    </div>
+    <div id="ddBox"></div>
   </div>
 
   <div class="sec">
@@ -420,6 +475,7 @@
 
 <script src="./data.js"></script>
 <script src="./validate.js"></script>
+<script src="./drawdown.js"></script>
 <script>
 /* ============ 启动与数据安全层 ============ */
 (function () {
@@ -784,6 +840,88 @@
     }).join("");
   }
   try { renderOv(); } catch (e) { console.error("ov", e); }
+
+  /* ---- 宽基回撤分析 ---- */
+  function fmtPrice(v) {
+    if (v == null || isNaN(v)) return "—";
+    return Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function ddZoneCls(z) {
+    if (z === "高位区") return "zn-orange";
+    if (z === "浅回调") return "zn-blue";
+    if (z === "加仓区" || z === "深度机会") return "zn-green";
+    if (z === "极端区") return "zn-purple";
+    return "zn-red";
+  }
+  function tgtDist(d) {
+    if (Math.abs(d) < 0.005) return "当前价附近";
+    if (d < 0) return "需下跌 " + (Math.abs(d) * 100).toFixed(1) + "% 到达";
+    return "需上涨 " + (d * 100).toFixed(1) + "% 到达";
+  }
+  function maDist(d) {
+    if (d >= 0) return "价格在均线上方 +" + (d * 100).toFixed(1) + "%";
+    return "价格在均线下方 " + (d * 100).toFixed(1) + "%";
+  }
+  var DD_TY = { current: ["当前", "ty-cur"], support: ["支撑", "ty-sup"], resistance: ["阻力", "ty-res"] };
+  function ddCard(x) {
+    // 价位条：刻度位置 = 回撤/0.5
+    var ticks = x.levels.map(function (l) {
+      var pos = Math.abs(l.d) / 0.5 * 100;
+      var edge = l.d === -0.5 ? " edge-r" : "";
+      return '<div class="dd-tick' + edge + '" style="left:' + pos + '%">' +
+        '<span class="pr">' + fmtPrice(l.price) + '</span>' +
+        '<span class="lb">' + Math.round(l.d * 100) + '%</span></div>';
+    }).join("");
+    var curPos = Math.min(Math.abs(x.drawdown) / 0.5 * 100, 100);
+    var curEdge = curPos < 10 ? " edge-r" : (curPos > 90 ? " edge-l" : "");
+    var cur = '<div class="dd-cur' + curEdge + '" style="left:' + curPos + '%"><span class="lb">现价 ' + fmtPrice(x.price) + '</span></div>';
+    var athLine = '<div class="dd-ath"><span class="lb">ATH</span></div>';
+    var ladder = '<div class="dd-ladder"><h4>从高点回撤档位 · ATH ' + fmtPrice(x.ath.value) + '（' + x.ath.date + '）</h4>' +
+      '<div class="dd-track">' + athLine + ticks + cur + '</div></div>';
+    // 关键价位表
+    var rows = '<div class="dd-kv-row"><span class="ty ty-ma">200日均线</span>' +
+      '<span class="vl">' + fmtPrice(x.ma200.value) + '</span>' +
+      '<span class="ds">' + maDist(x.ma200.dist) + '</span></div>';
+    x.platforms.forEach(function (p) {
+      var t = DD_TY[p.type] || ["平台", "ty-cur"];
+      rows += '<div class="dd-kv-row"><span class="ty ' + t[1] + '">平台·' + t[0] + '</span>' +
+        '<span class="vl">' + fmtPrice(p.mid) + '</span>' +
+        '<span class="ds">' + tgtDist(p.dist) + '</span>' +
+        '<span class="dt">' + p.days + '天<br>' + p.first + '~' + p.last + '</span></div>';
+    });
+    var kv = '<div class="dd-kv"><h4>关键价位 · 200日均线 + 震荡平台中位数</h4>' + rows + '</div>';
+    var top = '<div class="dd-top">' +
+      '<span class="nm">' + x.name + '</span>' +
+      '<span class="cd">' + x.code + '</span>' +
+      '<span class="px">' + fmtPrice(x.price) + ' ' + x.ccy + '</span>' +
+      '<span class="ddv">距高点 ' + (x.drawdown * 100).toFixed(2) + '%</span>' +
+      '<span class="asof">截至 ' + x.asOf + '</span>' +
+      '<span class="zn ' + ddZoneCls(x.zone) + '">' + x.zone + '</span></div>';
+    return '<div class="dd-card">' + top + '<div class="dd-body">' + ladder + kv + '</div></div>';
+  }
+  var ddFilter = "";
+  function renderDrawdown() {
+    var D = window.DRAWDOWN;
+    var box = document.getElementById("ddBox");
+    if (!D || !D.indices || !D.indices.length) {
+      box.innerHTML = '<div style="font-size:12px;color:var(--sub);padding:8px">回撤数据暂不可用（drawdown.js 未加载或为空）。</div>';
+      return;
+    }
+    var meta = document.getElementById("ddMeta");
+    if (meta) meta.textContent = "生成于 " + D.meta.asOf + " · 每3天刷新 · 来源 Yahoo/腾讯 · ATH为盘中最高";
+    var list = D.indices.filter(function (x) { return !ddFilter || x.market === ddFilter; });
+    box.innerHTML = list.map(ddCard).join("");
+  }
+  document.getElementById("ddTabs").addEventListener("click", function (e) {
+    var t = e.target;
+    while (t && !t.classList.contains("tab")) t = t.parentNode;
+    if (!t || !t.classList.contains("tab")) return;
+    ddFilter = t.getAttribute("data-m") || "";
+    var tabs = this.querySelectorAll(".tab");
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle("on", tabs[i] === t);
+    try { renderDrawdown(); } catch (err) { console.error("dd", err); }
+  });
+  try { renderDrawdown(); } catch (e) { console.error("drawdown", e); }
 
   /* ---- 历史快照对比 ---- */
   function renderHist() {
