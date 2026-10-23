@@ -1,6 +1,8 @@
-# 运行时状态与档位提醒（每次刷新自动生成，不入库）
-scripts/level_state.json
+# 临时档位提醒（每次刷新自动生成，不入库）
 scripts/alerts.json
+
+# 注：scripts/level_state.json 需入库——它记录各标的"最深跌破档位"，
+# 是跨天/跨环境（云端每次全新 clone）档位跨越检测连续的唯一基线
 
 # 券商 / API 凭证（严禁入库，asset-library 为公开仓库）
 .env
