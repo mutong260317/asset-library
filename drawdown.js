@@ -5,7 +5,7 @@
  * ============================================================ */
 window.DRAWDOWN = {
   "meta": {
-    "asOf": "2026-10-23 22:49",
+    "asOf": "2026-10-24 06:39",
     "generatedBy": "scripts/fetch_drawdown.py",
     "refreshCadence": "每天",
     "sources": {
