@@ -314,6 +314,7 @@ def analyze(code, name, market, symbol, ccy):
 
 def main():
     indices = []
+    failures = []
     for code, name, market, symbol, ccy in TARGETS:
         try:
             r = analyze(code, name, market, symbol, ccy)
@@ -322,8 +323,18 @@ def main():
                 print(f"[OK] {name:8s} {code:9s} price={r['price']:>9} "
                       f"dd={r['drawdown']*100:6.2f}% ma200={r['ma200']['value']:>9} "
                       f"plats={len(r['platforms'])} zone={r['zone']} src={r['source']}")
+            else:
+                failures.append((name, "无数据"))
         except Exception as e:
             print(f"[FAIL] {name} {code}: {repr(e)}")
+            failures.append((name, repr(e)[:120]))
+
+    # ===== 完整性闸：9 个标的必须全部成功，否则保留旧数据、明确失败（不覆盖、不更新状态）=====
+    if len(indices) < len(TARGETS):
+        print(f"\n[ABORT] 仅成功 {len(indices)}/{len(TARGETS)}，数据源不完整"
+              f"（电脑刚唤醒/网络未就绪/代理未连？）。保留现有 drawdown.js，本轮不更新，"
+              f"下次定时自动重试。失败明细：{failures}")
+        raise SystemExit(1)
 
     # ===== 档位跨越检测（对比上一次状态）=====
     is_first_run = not os.path.exists(STATE_FILE)  # 首次运行只建基线，不追报历史回撤
