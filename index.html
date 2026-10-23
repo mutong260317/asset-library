@@ -92,6 +92,9 @@
   .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:11px}
   table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:860px}
   thead th{background:#F5F8FC;color:var(--sub);text-align:left;padding:10px 10px;font-size:11px;font-weight:700;letter-spacing:.3px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1;white-space:nowrap;cursor:pointer;user-select:none}
+  thead th.sortable{cursor:pointer}
+  thead th.sortable:hover{color:var(--blue)}
+  thead th .sort-arrow{font-size:9px;margin-left:4px;color:var(--blue)}
   tbody td{padding:9px 10px;border-bottom:1px solid #EEF1F7;vertical-align:middle}
   tbody tr{cursor:pointer;transition:background .12s}
   tbody tr:hover td{background:#F7FAFF}
@@ -565,7 +568,7 @@
     if (!x || !x.aum) return "—";
     var a = x.aum;
     if (a.currency === "CNY") return a.value + "亿";
-    if (a.currency === "USD") return "$" + (a.value >= 100 ? a.value : a.value) + "B";
+    if (a.currency === "USD") return (a.value * 10) + "亿";
     return a.value + (a.unit || "");
   }
   function fmtFee(x) { return x && x.fee ? (x.fee.value + (x.fee.unit || "%")) : "—"; }
@@ -636,6 +639,22 @@
 
   /* ---- 资产总表（分页 + 视图切换 + 草稿） ---- */
   function parseSizeNum(x) { return (x.aum && typeof x.aum.value === "number") ? x.aum.value : -1; }
+  function sortVal(x, key) {
+    switch (key) {
+      case "code": return x.c;
+      case "name": return x.n;
+      case "market": return x.m;
+      case "cat": return x.cat;
+      case "structure": return x.structure || "";
+      case "aum": return (x.aum && typeof x.aum.value === "number") ? (x.m === "US" ? x.aum.value * 10 : x.aum.value) : -1;
+      case "fee": return x.fee ? x.fee.value : -1;
+      case "premium": return (x.signal && x.signal.premium) ? x.signal.premium.value : 0;
+      case "risk": return x.rk || -1;
+      case "weight": return (x.decision && x.decision.w) ? x.decision.w.y : -1;
+      case "action": return (x.decision && x.decision.action) || "";
+      default: return null;
+    }
+  }
   function rkTag(r) { return '<span class="rk rk' + r + '">' + r + '</span>'; }
   function actionTag(x) {
     var d = x.decision || {};
@@ -646,7 +665,7 @@
 
   /* 视图与分页状态 */
   var PAGE_SIZE = 15;
-  var ui = { view: "full", page: 1 };
+  var ui = { view: "full", page: 1, sortKey: "", sortDir: 1 };
 
   /* 草稿（localStorage，不污染权威源） */
   var DRAFT_KEY = "al_drafts_v1";
@@ -663,21 +682,25 @@
   /* 列定义 */
   var COLS = {
     basic: [
-      { k: "code", t: "代码" }, { k: "name", t: "名称" }, { k: "market", t: "市场" },
-      { k: "cat", t: "分类" }, { k: "under", t: "跟踪底层" }, { k: "structure", t: "结构" },
-      { k: "fee", t: "费率" }, { k: "aum", t: "规模" }, { k: "risk", t: "风险" }, { k: "op", t: "" }
+      { k: "code", t: "代码", s: 1 }, { k: "name", t: "名称", s: 1 }, { k: "market", t: "市场", s: 1 },
+      { k: "cat", t: "分类", s: 1 }, { k: "under", t: "跟踪底层" }, { k: "structure", t: "结构", s: 1 },
+      { k: "fee", t: "费率", s: 1 }, { k: "aum", t: "规模", s: 1 }, { k: "risk", t: "风险", s: 1 }, { k: "op", t: "" }
     ],
     full: [
-      { k: "code", t: "代码" }, { k: "name", t: "名称" }, { k: "market", t: "市场" },
-      { k: "cat", t: "分类" }, { k: "aum", t: "规模" }, { k: "fee", t: "费率" },
-      { k: "premium", t: "溢价/折价" }, { k: "risk", t: "风险" }, { k: "overlap", t: "重叠" },
-      { k: "weight", t: "基准权重" }, { k: "action", t: "动作" }, { k: "judge", t: "判断" }, { k: "op", t: "" }
+      { k: "code", t: "代码", s: 1 }, { k: "name", t: "名称", s: 1 }, { k: "market", t: "市场", s: 1 },
+      { k: "cat", t: "分类", s: 1 }, { k: "aum", t: "规模", s: 1 }, { k: "fee", t: "费率", s: 1 },
+      { k: "premium", t: "溢价/折价", s: 1 }, { k: "risk", t: "风险", s: 1 }, { k: "overlap", t: "重叠" },
+      { k: "weight", t: "基准权重", s: 1 }, { k: "action", t: "动作", s: 1 }, { k: "judge", t: "判断" }, { k: "op", t: "" }
     ]
   };
   function renderHead() {
     var cols = COLS[ui.view];
     document.getElementById("tblHead").innerHTML = "<tr>" +
-      cols.map(function (c) { return "<th>" + c.t + "</th>"; }).join("") + "</tr>";
+      cols.map(function (c) {
+        if (!c.s) return "<th>" + c.t + "</th>";
+        var arrow = ui.sortKey === c.k ? '<span class="sort-arrow">' + (ui.sortDir === 1 ? "▲" : "▼") + "</span>" : "";
+        return '<th class="sortable" data-k="' + c.k + '">' + c.t + arrow + "</th>";
+      }).join("") + "</tr>";
   }
 
   function cell(x, k) {
@@ -728,7 +751,18 @@
       return hit && preset && (!fm || x.m === fm) && (!fc || x.cat === fc);
     });
 
-    if (fs === "size") rows.sort(function (a, b) {
+    if (ui.sortKey) {
+      var sk = ui.sortKey, sd = ui.sortDir;
+      rows.sort(function (a, b) {
+        var va = sortVal(a, sk), vb = sortVal(b, sk);
+        if (typeof va === "string" || typeof vb === "string") {
+          va = ("" + va).toLowerCase(); vb = ("" + vb).toLowerCase();
+          return va < vb ? -1 * sd : (va > vb ? 1 * sd : 0);
+        }
+        return (va - vb) * sd;
+      });
+    }
+    else if (fs === "size") rows.sort(function (a, b) {
       if (a.m !== b.m) return a.m === "A" ? -1 : 1;
       return parseSizeNum(b) - parseSizeNum(a);
     });
@@ -794,7 +828,25 @@
 
   document.getElementById("q").addEventListener("input", function () { ui.page = 1; try { renderTbl(); } catch (e) {} });
   ["fPreset", "fMarket", "fCat", "fSort"].forEach(function (id) {
-    document.getElementById(id).addEventListener("change", function () { ui.page = 1; try { renderTbl(); } catch (e) {} });
+    document.getElementById(id).addEventListener("change", function () {
+      ui.page = 1;
+      if (id === "fSort") { ui.sortKey = ""; ui.sortDir = 1; }
+      try { renderTbl(); } catch (e) {}
+    });
+  });
+  /* 表头点击排序：第一次数值列降序/文本列升序，再点切换方向 */
+  document.getElementById("tblHead").addEventListener("click", function (e) {
+    var th = e.target.closest("th.sortable");
+    if (!th) return;
+    var k = th.dataset.k;
+    if (ui.sortKey === k) ui.sortDir = ui.sortDir === 1 ? -1 : 1;
+    else {
+      ui.sortKey = k;
+      var sample = L.length ? sortVal(L[0], k) : null;
+      ui.sortDir = typeof sample === "string" ? 1 : -1;
+    }
+    ui.page = 1;
+    try { renderTbl(); } catch (err) {}
   });
 
   /* 视图切换 */
