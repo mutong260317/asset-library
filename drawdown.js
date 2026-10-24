@@ -5,7 +5,7 @@
  * ============================================================ */
 window.DRAWDOWN = {
   "meta": {
-    "asOf": "2026-10-24 06:39",
+    "asOf": "2026-10-24 22:46",
     "generatedBy": "scripts/fetch_drawdown.py",
     "refreshCadence": "每天",
     "sources": {
@@ -329,7 +329,7 @@ window.DRAWDOWN = {
         },
         {
           "low": 245.35,
-          "high": 251.12,
+          "high": 51.12,
           "mid": 248.1,
           "days": 36,
           "first": "2025-10-24",
@@ -500,68 +500,88 @@ window.DRAWDOWN = {
       "zoneDesc": "回撤30-40%，重点加仓"
     },
     {
-      "code": "SH000922",
+      "code": "SH000510",
       "name": "中证A500",
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
       "asOf": "2026-10-23",
-      "price": 5398.82,
+      "price": 5012.44,
       "ath": {
-        "value": 6209.67,
-        "date": "2024-10-08"
+        "value": 6375.33,
+        "date": "2026-06-22"
       },
-      "drawdown": -0.1306,
+      "drawdown": -0.2138,
       "ma200": {
-        "value": 5595.08,
-        "dist": -0.0351
+        "value": 5807.71,
+        "dist": -0.1369
       },
       "levels": [
         {
           "d": -0.1,
-          "price": 5588.7,
-          "dist": 0.0352,
+          "price": 5737.8,
+          "dist": 0.1447,
           "hit": true
         },
         {
           "d": -0.2,
-          "price": 4967.74,
-          "dist": -0.0798,
-          "hit": false
+          "price": 5100.26,
+          "dist": 0.0175,
+          "hit": true
         },
         {
           "d": -0.3,
-          "price": 4346.77,
-          "dist": -0.1949,
+          "price": 4462.73,
+          "dist": -0.1097,
           "hit": false
         },
         {
           "d": -0.4,
-          "price": 3725.8,
-          "dist": -0.3099,
+          "price": 3825.2,
+          "dist": -0.2369,
           "hit": false
         },
         {
           "d": -0.5,
-          "price": 3104.84,
-          "dist": -0.4249,
+          "price": 3187.66,
+          "dist": -0.364,
           "hit": false
         }
       ],
       "platforms": [
         {
-          "low": 5426.72,
-          "high": 5785.57,
-          "mid": 5609.55,
-          "days": 200,
-          "first": "2025-10-14",
-          "last": "2026-10-21",
+          "low": 5471.19,
+          "high": 5669.91,
+          "mid": 5575.57,
+          "days": 82,
+          "first": "2025-10-15",
+          "last": "2026-09-24",
           "type": "resistance",
-          "dist": 0.039
+          "dist": 0.1124
+        },
+        {
+          "low": 5789.89,
+          "high": 5984.75,
+          "mid": 5887.18,
+          "days": 76,
+          "first": "2026-01-06",
+          "last": "2026-08-18",
+          "type": "resistance",
+          "dist": 0.1745
+        },
+        {
+          "low": 6111.15,
+          "high": 6135.86,
+          "mid": 6119.7,
+          "days": 9,
+          "first": "2026-05-06",
+          "last": "2026-07-09",
+          "type": "resistance",
+          "dist": 0.2209
         }
       ],
-      "zone": "浅回调",
-      "zoneDesc": "关注，等更深回调"
+      "zone": "加仓区",
+      "zoneDesc": "回撤20-30%，分批加仓窗口"
     },
     {
       "code": "SZ399006",
