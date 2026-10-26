@@ -117,6 +117,23 @@ def fetch_a_tencent(symbol):
     return out
 
 
+def fetch_us_tencent_latest(symbol):
+    """
+    腾讯美股 fqkline 仅能取最新一交易日（历史支持有限，且会混入一条异常的2011年数据）。
+    返回 (date, open, close, high, low) 或 None。
+    """
+    tcode = "us" + symbol
+    url = f"http://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={tcode},day,,,3,qfq"
+    j = http_get(url).json()
+    p = j["data"][tcode]
+    rows = p.get("day") or p.get("qfqday") or []
+    recent = [r for r in rows if r[0] >= "2020-01-01"]  # 过滤异常2011年数据
+    if not recent:
+        return None
+    row = recent[-1]
+    return (row[0], float(row[1]), float(row[2]), float(row[3]), float(row[4]))
+
+
 def fetch_us_akshare(symbol):
     """AkShare 新浪美股前复权日K，返回 list[(date, open, close, high, low)]"""
     import akshare as ak
@@ -130,7 +147,7 @@ def fetch_a_akshare(symbol):
 
 
 def fetch_us(symbol):
-    """美股：主 Yahoo，备 AkShare（新浪）；返回 (rows, source)"""
+    """美股：主 Yahoo，备 AkShare（新浪，历史完整但最近交易日有延迟），再用腾讯补最新一天。"""
     try:
         rows = fetch_us_yahoo(symbol)
         if rows and data_fresh(rows[-1][0]):
@@ -139,9 +156,21 @@ def fetch_us(symbol):
     except Exception as e:
         print(f"[WARN] Yahoo {symbol} 失败：{repr(e)[:80]}，切换 AkShare")
     rows = fetch_us_akshare(symbol)
-    if rows and data_fresh(rows[-1][0]):
-        return rows, "AkShare(新浪)"
-    raise RuntimeError(f"美股 {symbol} 所有数据源均失败或数据陈旧")
+    if not rows:
+        raise RuntimeError(f"美股 {symbol} 所有数据源均失败")
+    source = "AkShare(新浪)"
+    # AkShare 新浪源对最近交易日有延迟（如周一收盘后仍停在上周五），用腾讯接口补最新一天
+    try:
+        latest = fetch_us_tencent_latest(symbol)
+        if latest and latest[0] > rows[-1][0]:
+            rows.append(latest)
+            source = "AkShare(新浪)+腾讯补最新"
+            print(f"[INFO] {symbol} 腾讯补最新交易日 {latest[0]} 收盘 {latest[2]}")
+    except Exception as e:
+        print(f"[WARN] {symbol} 腾讯补最新日失败：{repr(e)[:60]}")
+    if data_fresh(rows[-1][0]):
+        return rows, source
+    raise RuntimeError(f"美股 {symbol} 数据陈旧（最后 {rows[-1][0]}）")
 
 
 def fetch_a(symbol):
@@ -384,6 +413,7 @@ def main():
     # 保存状态与提醒
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(new_state, f, ensure_ascii=False, indent=2)
+        f.write("\n")
     with open(ALERT_FILE, "w", encoding="utf-8") as f:
         json.dump({"asOf": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
                    "alerts": alerts}, f, ensure_ascii=False, indent=2)
@@ -398,7 +428,7 @@ def main():
             "generatedBy": "scripts/fetch_drawdown.py",
             "refreshCadence": "每天",
             "sources": {
-                "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily",
+                "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily（历史完整），再用腾讯美股接口补最新交易日",
                 "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily",
             },
             "note": "ATH 统一为最近约8年（2000交易日）且在指数实际发布/可投资起点之后的盘中最高（A股老指数从2018起、新指数从发布起，不回溯到2007/2015等历史泡沫，保证不同数据源口径一致）；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。",
