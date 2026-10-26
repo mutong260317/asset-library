@@ -29,18 +29,25 @@ STATE_FILE = os.path.join(BASE, "scripts", "level_state.json")
 ALERT_FILE = os.path.join(BASE, "scripts", "alerts.json")
 # 回撤档位（正数=回撤深度）
 LEVEL_DS = [0.10, 0.20, 0.30, 0.40, 0.50]
+# ATH 统一窗口：最近 2000 个交易日（约 8 年）。
+# 目的：①让不同数据源（腾讯约8年、AkShare全历史）口径一致；
+# ②避免上证指数把 2007 年 6124 / 2015 年 5178 的极端泡沫当作锚点，
+#   导致指数在这轮高点时仍显示"回撤30%"、择时信号永久失效。
+ATH_WINDOW = 2000
 
-# 标的定义：(展示代码, 名称, 市场, 数据源symbol, 币种)
+# 标的定义：(展示代码, 名称, 市场, 数据源symbol, 币种, ATH起始日期)
+# A股起始日期 = 指数实际发布/可投资起点（新发布指数不回溯到发布前的虚拟历史）；
+# 美股起始日期为 None（滚动窗口，且美股长期创新高、近期高点即历史高点）。
 TARGETS = [
-    ("QQQ", "纳斯达克100", "US", "QQQ", "USD"),
-    ("SPY", "标普500", "US", "SPY", "USD"),
-    ("DIA", "道琼斯工业", "US", "DIA", "USD"),
-    ("IWM", "罗素2000", "US", "IWM", "USD"),
-    ("SH000001", "上证指数", "A", "sh000001", "CNY"),
-    ("SH000300", "沪深300", "A", "sh000300", "CNY"),
-    ("SH000510", "中证A500", "A", "sh000510", "CNY"),
-    ("SZ399006", "创业板指", "A", "sz399006", "CNY"),
-    ("SH000688", "科创50", "A", "sh000688", "CNY"),
+    ("QQQ", "纳斯达克100", "US", "QQQ", "USD", None),
+    ("SPY", "标普500", "US", "SPY", "USD", None),
+    ("DIA", "道琼斯工业", "US", "DIA", "USD", None),
+    ("IWM", "罗素2000", "US", "IWM", "USD", None),
+    ("SH000001", "上证指数", "A", "sh000001", "CNY", "2018-01-01"),
+    ("SH000300", "沪深300", "A", "sh000300", "CNY", "2018-01-01"),
+    ("SH000510", "中证A500", "A", "sh000510", "CNY", "2024-09-23"),
+    ("SZ399006", "创业板指", "A", "sz399006", "CNY", "2018-01-01"),
+    ("SH000688", "科创50", "A", "sh000688", "CNY", "2020-01-01"),
 ]
 
 
@@ -241,8 +248,16 @@ def load_state():
     return {}
 
 
-def analyze(code, name, market, symbol, ccy):
+def analyze(code, name, market, symbol, ccy, ath_start):
     rows, source = fetch_us(symbol) if market == "US" else fetch_a(symbol)
+    if not rows:
+        return None
+    # ATH 口径统一：①A股先剔除指数实际发布/可投资起点之前的回溯数据；
+    # ②再统一截取最近 ATH_WINDOW（约8年）个交易日。
+    # 这样无论数据源返回多长历史，ATH 都对应当前可交易周期的高点，不漂移。
+    if ath_start:
+        rows = [r for r in rows if r[0] >= ath_start]
+    rows = rows[-ATH_WINDOW:]
     if not rows:
         return None
     dates = [r[0] for r in rows]
@@ -315,9 +330,9 @@ def analyze(code, name, market, symbol, ccy):
 def main():
     indices = []
     failures = []
-    for code, name, market, symbol, ccy in TARGETS:
+    for code, name, market, symbol, ccy, ath_start in TARGETS:
         try:
-            r = analyze(code, name, market, symbol, ccy)
+            r = analyze(code, name, market, symbol, ccy, ath_start)
             if r:
                 indices.append(r)
                 print(f"[OK] {name:8s} {code:9s} price={r['price']:>9} "
@@ -386,7 +401,7 @@ def main():
                 "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily",
                 "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily",
             },
-            "note": "ATH为拉取范围内盘中最高；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。",
+            "note": "ATH 统一为最近约8年（2000交易日）且在指数实际发布/可投资起点之后的盘中最高（A股老指数从2018起、新指数从发布起，不回溯到2007/2015等历史泡沫，保证不同数据源口径一致）；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。",
         },
         "indices": indices,
     }
