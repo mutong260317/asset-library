@@ -5,14 +5,14 @@
  * ============================================================ */
 window.DRAWDOWN = {
   "meta": {
-    "asOf": "2026-10-25 06:34",
+    "asOf": "2026-10-26 22:06",
     "generatedBy": "scripts/fetch_drawdown.py",
     "refreshCadence": "每天",
     "sources": {
       "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily",
       "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily"
     },
-    "note": "ATH为拉取范围内盘中最高；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。"
+    "note": "ATH 统一为最近约8年（2000交易日）且在指数实际发布/可投资起点之后的盘中最高（A股老指数从2018起、新指数从发布起，不回溯到2007/2015等历史泡沫，保证不同数据源口径一致）；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。"
   },
   "indices": [
     {
@@ -357,59 +357,59 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-23",
-      "price": 3690.48,
+      "asOf": "2026-10-26",
+      "price": 3697.52,
       "ath": {
         "value": 4258.86,
         "date": "2026-05-14"
       },
-      "drawdown": -0.1335,
+      "drawdown": -0.1318,
       "ma200": {
-        "value": 4000.97,
-        "dist": -0.0776
+        "value": 3999.86,
+        "dist": -0.0756
       },
       "levels": [
         {
           "d": -0.1,
           "price": 3832.97,
-          "dist": 0.0386,
+          "dist": 0.0366,
           "hit": true
         },
         {
           "d": -0.2,
           "price": 3407.09,
-          "dist": -0.0768,
+          "dist": -0.0785,
           "hit": false
         },
         {
           "d": -0.3,
           "price": 2981.2,
-          "dist": -0.1922,
+          "dist": -0.1937,
           "hit": false
         },
         {
           "d": -0.4,
           "price": 2555.32,
-          "dist": -0.3076,
+          "dist": -0.3089,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 2129.43,
-          "dist": -0.423,
+          "dist": -0.4241,
           "hit": false
         }
       ],
       "platforms": [
         {
-          "low": 3858.25,
+          "low": 3870.02,
           "high": 3996.94,
-          "mid": 3926.42,
-          "days": 112,
-          "first": "2025-10-14",
+          "mid": 3931.19,
+          "days": 104,
+          "first": "2025-10-15",
           "last": "2026-09-24",
           "type": "resistance",
-          "dist": 0.0639
+          "dist": 0.0632
         },
         {
           "low": 4079.9,
@@ -419,7 +419,7 @@ window.DRAWDOWN = {
           "first": "2026-01-06",
           "last": "2026-07-01",
           "type": "resistance",
-          "dist": 0.1131
+          "dist": 0.111
         },
         {
           "low": 4023.42,
@@ -429,7 +429,7 @@ window.DRAWDOWN = {
           "first": "2025-11-13",
           "last": "2026-07-02",
           "type": "resistance",
-          "dist": 0.0914
+          "dist": 0.0893
         }
       ],
       "zone": "浅回调",
@@ -441,46 +441,46 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-23",
-      "price": 4105.33,
+      "asOf": "2026-10-26",
+      "price": 4103.54,
       "ath": {
         "value": 5930.91,
         "date": "2021-02-18"
       },
-      "drawdown": -0.3078,
+      "drawdown": -0.3081,
       "ma200": {
-        "value": 4668.32,
-        "dist": -0.1206
+        "value": 4665.73,
+        "dist": -0.1205
       },
       "levels": [
         {
           "d": -0.1,
           "price": 5337.82,
-          "dist": 0.3002,
+          "dist": 0.3008,
           "hit": true
         },
         {
           "d": -0.2,
           "price": 4744.73,
-          "dist": 0.1557,
+          "dist": 0.1563,
           "hit": true
         },
         {
           "d": -0.3,
           "price": 4151.64,
-          "dist": 0.0113,
+          "dist": 0.0117,
           "hit": true
         },
         {
           "d": -0.4,
           "price": 3558.55,
-          "dist": -0.1332,
+          "dist": -0.1328,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 2965.45,
-          "dist": -0.2777,
+          "dist": -0.2773,
           "hit": false
         }
       ],
@@ -488,12 +488,12 @@ window.DRAWDOWN = {
         {
           "low": 4507.39,
           "high": 4792.26,
-          "mid": 4650.9,
-          "days": 174,
-          "first": "2025-10-14",
+          "mid": 4651.54,
+          "days": 173,
+          "first": "2025-10-15",
           "last": "2026-09-23",
           "type": "resistance",
-          "dist": 0.1329
+          "dist": 0.1335
         }
       ],
       "zone": "深度机会",
@@ -505,46 +505,46 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-23",
-      "price": 5012.44,
+      "asOf": "2026-10-26",
+      "price": 4989.34,
       "ath": {
         "value": 6375.33,
         "date": "2026-06-22"
       },
-      "drawdown": -0.2138,
+      "drawdown": -0.2174,
       "ma200": {
-        "value": 5807.71,
-        "dist": -0.1369
+        "value": 5804.69,
+        "dist": -0.1405
       },
       "levels": [
         {
           "d": -0.1,
           "price": 5737.8,
-          "dist": 0.1447,
+          "dist": 0.15,
           "hit": true
         },
         {
           "d": -0.2,
           "price": 5100.26,
-          "dist": 0.0175,
+          "dist": 0.0222,
           "hit": true
         },
         {
           "d": -0.3,
           "price": 4462.73,
-          "dist": -0.1097,
+          "dist": -0.1055,
           "hit": false
         },
         {
           "d": -0.4,
           "price": 3825.2,
-          "dist": -0.2369,
+          "dist": -0.2333,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 3187.66,
-          "dist": -0.364,
+          "dist": -0.3611,
           "hit": false
         }
       ],
@@ -557,7 +557,7 @@ window.DRAWDOWN = {
           "first": "2025-10-15",
           "last": "2026-09-24",
           "type": "resistance",
-          "dist": 0.1123
+          "dist": 0.1175
         },
         {
           "low": 5789.89,
@@ -567,7 +567,7 @@ window.DRAWDOWN = {
           "first": "2026-01-06",
           "last": "2026-08-18",
           "type": "resistance",
-          "dist": 0.1745
+          "dist": 0.18
         },
         {
           "low": 6111.15,
@@ -577,7 +577,7 @@ window.DRAWDOWN = {
           "first": "2026-05-06",
           "last": "2026-07-09",
           "type": "resistance",
-          "dist": 0.2209
+          "dist": 0.2266
         }
       ],
       "zone": "加仓区",
@@ -589,46 +589,46 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-23",
-      "price": 2684.1,
+      "asOf": "2026-10-26",
+      "price": 2638.23,
       "ath": {
         "value": 4380.41,
         "date": "2026-06-25"
       },
-      "drawdown": -0.3872,
+      "drawdown": -0.3977,
       "ma200": {
-        "value": 3502.19,
-        "dist": -0.2336
+        "value": 3499.36,
+        "dist": -0.2461
       },
       "levels": [
         {
           "d": -0.1,
           "price": 3942.37,
-          "dist": 0.4688,
+          "dist": 0.4943,
           "hit": true
         },
         {
           "d": -0.2,
           "price": 3504.33,
-          "dist": 0.3056,
+          "dist": 0.3283,
           "hit": true
         },
         {
           "d": -0.3,
           "price": 3066.29,
-          "dist": 0.1424,
+          "dist": 0.1623,
           "hit": true
         },
         {
           "d": -0.4,
           "price": 2628.25,
-          "dist": -0.0208,
+          "dist": -0.0038,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 2190.2,
-          "dist": -0.184,
+          "dist": -0.1698,
           "hit": false
         }
       ],
@@ -641,7 +641,7 @@ window.DRAWDOWN = {
           "first": "2025-10-21",
           "last": "2026-09-30",
           "type": "resistance",
-          "dist": 0.2119
+          "dist": 0.233
         },
         {
           "low": 4017.27,
@@ -651,7 +651,7 @@ window.DRAWDOWN = {
           "first": "2026-05-13",
           "last": "2026-07-09",
           "type": "resistance",
-          "dist": 0.5017
+          "dist": 0.5278
         },
         {
           "low": 3908.44,
@@ -661,7 +661,7 @@ window.DRAWDOWN = {
           "first": "2026-05-11",
           "last": "2026-07-07",
           "type": "resistance",
-          "dist": 0.4618
+          "dist": 0.4872
         }
       ],
       "zone": "深度机会",
@@ -673,46 +673,46 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-23",
-      "price": 1345.51,
+      "asOf": "2026-10-26",
+      "price": 1315.5,
       "ath": {
         "value": 2255.25,
         "date": "2026-07-01"
       },
-      "drawdown": -0.4034,
+      "drawdown": -0.4167,
       "ma200": {
-        "value": 1589.42,
-        "dist": -0.1535
+        "value": 1589.3,
+        "dist": -0.1723
       },
       "levels": [
         {
           "d": -0.1,
           "price": 2029.73,
-          "dist": 0.5085,
+          "dist": 0.5429,
           "hit": true
         },
         {
           "d": -0.2,
           "price": 1804.2,
-          "dist": 0.3409,
+          "dist": 0.3715,
           "hit": true
         },
         {
           "d": -0.3,
           "price": 1578.67,
-          "dist": 0.1733,
+          "dist": 0.2001,
           "hit": true
         },
         {
           "d": -0.4,
           "price": 1353.15,
-          "dist": 0.0057,
+          "dist": 0.0286,
           "hit": true
         },
         {
           "d": -0.5,
           "price": 1127.62,
-          "dist": -0.1619,
+          "dist": -0.1428,
           "hit": false
         }
       ],
@@ -720,12 +720,12 @@ window.DRAWDOWN = {
         {
           "low": 1296.6,
           "high": 1484.21,
-          "mid": 1387.75,
+          "mid": 1386.94,
           "days": 116,
-          "first": "2025-10-14",
-          "last": "2026-10-23",
+          "first": "2025-10-15",
+          "last": "2026-10-26",
           "type": "current",
-          "dist": 0.0314
+          "dist": 0.0543
         },
         {
           "low": 1656.95,
@@ -735,7 +735,7 @@ window.DRAWDOWN = {
           "first": "2026-05-06",
           "last": "2026-09-23",
           "type": "resistance",
-          "dist": 0.2358
+          "dist": 0.264
         },
         {
           "low": 1602.34,
@@ -745,7 +745,7 @@ window.DRAWDOWN = {
           "first": "2026-08-04",
           "last": "2026-09-17",
           "type": "resistance",
-          "dist": 0.1975
+          "dist": 0.2248
         },
         {
           "low": 1715.4,
@@ -755,7 +755,7 @@ window.DRAWDOWN = {
           "first": "2026-05-11",
           "last": "2026-08-14",
           "type": "resistance",
-          "dist": 0.2784
+          "dist": 0.3076
         }
       ],
       "zone": "极端区",
