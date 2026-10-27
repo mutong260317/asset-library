@@ -42,7 +42,7 @@ TARGETS = [
     ("QQQ", "纳斯达克100", "US", "QQQ", "USD", None),
     ("SPY", "标普500", "US", "SPY", "USD", None),
     ("DIA", "道琼斯工业", "US", "DIA", "USD", None),
-    ("IWM", "罗素2000", "US", "IWM", "USD", None),
+    ("IWM", "罗素200", "US", "IWM", "USD", None),
     ("SH000001", "上证指数", "A", "sh000001", "CNY", "2018-01-01"),
     ("SH000300", "沪深300", "A", "sh000300", "CNY", "2018-01-01"),
     ("SH000510", "中证A500", "A", "sh000510", "CNY", "2024-09-23"),
@@ -146,6 +146,24 @@ def fetch_a_akshare(symbol):
     return _df_to_rows(ak.stock_zh_index_daily(symbol=symbol))
 
 
+def fetch_a_sina_latest(symbol):
+    """
+    新浪实时行情接口（hq.sinajs.cn），补当日收盘。
+    收盘后新浪历史指数接口（stock_zh_index_daily）常延迟到傍晚才更新，
+    而腾讯接口又可能被 WAF 拦截，此时用实时接口拿当日 OHLC。
+    返回 (date, open, close, high, low) 或 None。
+    """
+    headers = {"User-Agent": "Mozilla/5.0", "Referer": "https://finance.sina.com.cn"}
+    r = requests.get(f"https://hq.sinajs.cn/list={symbol}", headers=headers, timeout=15)
+    r.encoding = "gbk"
+    if "=" not in r.text or '"' not in r.text:
+        return None
+    f = r.text.split('"')[1].split(",")
+    if len(f) < 31 or not f[30]:
+        return None
+    return (f[30], float(f[1]), float(f[3]), float(f[4]), float(f[5]))
+
+
 def fetch_us(symbol):
     """美股：主 Yahoo，备 AkShare（新浪，历史完整但最近交易日有延迟），再用腾讯补最新一天。"""
     try:
@@ -174,7 +192,7 @@ def fetch_us(symbol):
 
 
 def fetch_a(symbol):
-    """A股：主 腾讯，备 AkShare（新浪）；返回 (rows, source)"""
+    """A股：主 腾讯，备 AkShare（新浪，历史完整），再用新浪实时接口补当日。"""
     try:
         rows = fetch_a_tencent(symbol)
         if rows and data_fresh(rows[-1][0]):
@@ -183,9 +201,21 @@ def fetch_a(symbol):
     except Exception as e:
         print(f"[WARN] 腾讯 {symbol} 失败：{repr(e)[:80]}，切换 AkShare")
     rows = fetch_a_akshare(symbol)
-    if rows and data_fresh(rows[-1][0]):
-        return rows, "AkShare(新浪)"
-    raise RuntimeError(f"A股 {symbol} 所有数据源均失败或数据陈旧")
+    if not rows:
+        raise RuntimeError(f"A股 {symbol} 历史数据获取失败")
+    source = "AkShare(新浪)"
+    # 收盘后新浪历史指数接口常延迟到傍晚才更新当日，用实时接口补最新一天
+    try:
+        latest = fetch_a_sina_latest(symbol)
+        if latest and latest[0] > rows[-1][0]:
+            rows.append(latest)
+            source = "AkShare(新浪)+新浪实时补当日"
+            print(f"[INFO] {symbol} 新浪实时补当日 {latest[0]} 收盘 {latest[2]}")
+    except Exception as e:
+        print(f"[WARN] {symbol} 新浪实时补当日失败：{repr(e)[:60]}")
+    if data_fresh(rows[-1][0]):
+        return rows, source
+    raise RuntimeError(f"A股 {symbol} 所有数据源均失败或数据陈旧（最后 {rows[-1][0]}）")
 
 
 def find_platforms(dates, closes, highs, lookback=250, bin_pct=0.02):
@@ -429,7 +459,7 @@ def main():
             "refreshCadence": "每天",
             "sources": {
                 "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily（历史完整），再用腾讯美股接口补最新交易日",
-                "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily",
+                "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily（历史完整），再用新浪实时 hq.sinajs.cn 补当日收盘",
             },
             "note": "ATH 统一为最近约8年（2000交易日）且在指数实际发布/可投资起点之后的盘中最高（A股老指数从2018起、新指数从发布起，不回溯到2007/2015等历史泡沫，保证不同数据源口径一致）；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。",
         },
