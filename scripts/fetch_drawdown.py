@@ -32,7 +32,7 @@ LEVEL_DS = [0.10, 0.20, 0.30, 0.40, 0.50]
 # ATH 统一窗口：最近 2000 个交易日（约 8 年）。
 # 目的：①让不同数据源（腾讯约8年、AkShare全历史）口径一致；
 # ②避免上证指数把 2007 年 6124 / 2015 年 5178 的极端泡沫当作锚点，
-#   导致指数在这轮高点时仍显示"回撤30%"、择时信号永久失效。
+#   导致指数在这轮高点时仍显示"回撤30%"、择时信号继续失效。
 ATH_WINDOW = 2000
 
 # 标的定义：(展示代码, 名称, 市场, 数据源symbol, 币种, ATH起始日期)
@@ -42,7 +42,7 @@ TARGETS = [
     ("QQQ", "纳斯达克100", "US", "QQQ", "USD", None),
     ("SPY", "标普500", "US", "SPY", "USD", None),
     ("DIA", "道琼斯工业", "US", "DIA", "USD", None),
-    ("IWM", "罗素200", "US", "IWM", "USD", None),
+    ("IWM", "罗素2000", "US", "IWM", "USD", None),
     ("SH000001", "上证指数", "A", "sh000001", "CNY", "2018-01-01"),
     ("SH000300", "沪深300", "A", "sh000300", "CNY", "2018-01-01"),
     ("SH000510", "中证A500", "A", "sh000510", "CNY", "2024-09-23"),
@@ -57,7 +57,7 @@ def http_get(url, timeout=25):
         try:
             r = requests.get(url, timeout=timeout, headers=UA)
             r.raise_for_status()
-            return r
+            last = r
         except Exception as e:
             last = e
             time.sleep(1.5 * (i + 1))
