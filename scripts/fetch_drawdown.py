@@ -57,7 +57,7 @@ def http_get(url, timeout=25):
         try:
             r = requests.get(url, timeout=timeout, headers=UA)
             r.raise_for_status()
-            last = r
+            return r
         except Exception as e:
             last = e
             time.sleep(1.5 * (i + 1))
