@@ -5,7 +5,7 @@
  * ============================================================ */
 window.DRAWDOWN = {
   "meta": {
-    "asOf": "2026-10-28 06:36",
+    "asOf": "2026-10-28 21:41",
     "generatedBy": "scripts/fetch_drawdown.py",
     "refreshCadence": "每天",
     "sources": {
@@ -20,7 +20,7 @@ window.DRAWDOWN = {
       "name": "纳斯达克100",
       "market": "US",
       "ccy": "USD",
-      "source": "AkShare(新浪)+腾讯补最新",
+      "source": "AkShare(新浪)",
       "asOf": "2026-10-27",
       "price": 721.25,
       "ath": {
@@ -33,15 +33,58 @@ window.DRAWDOWN = {
         "dist": 0.0654
       },
       "levels": [
-        {"d": -0.1, "price": 686.57, "dist": -0.0481, "hit": false},
-        {"d": -0.2, "price": 610.29, "dist": -0.1538, "hit": false},
-        {"d": -0.3, "price": 534.0, "dist": -0.2596, "hit": false},
-        {"d": -0.4, "price": 457.72, "dist": -0.3654, "hit": false},
-        {"d": -0.5, "price": 381.43, "dist": -0.4712, "hit": false}
+        {
+          "d": -0.1,
+          "price": 686.57,
+          "dist": -0.0481,
+          "hit": false
+        },
+        {
+          "d": -0.2,
+          "price": 610.29,
+          "dist": -0.1538,
+          "hit": false
+        },
+        {
+          "d": -0.3,
+          "price": 534.0,
+          "dist": -0.2596,
+          "hit": false
+        },
+        {
+          "d": -0.4,
+          "price": 457.72,
+          "dist": -0.3654,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 381.43,
+          "dist": -0.4712,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 703.5, "high": 742.65, "mid": 719.28, "days": 96, "first": "2026-05-08", "last": "2026-10-27", "type": "current", "dist": -0.0027},
-        {"low": 597.32, "high": 624.87, "mid": 612.15, "days": 86, "first": "2025-10-30", "last": "2026-04-13", "type": "support", "dist": -0.1513}
+        {
+          "low": 703.5,
+          "high": 742.65,
+          "mid": 719.28,
+          "days": 96,
+          "first": "2026-05-08",
+          "last": "2026-10-27",
+          "type": "current",
+          "dist": -0.0027
+        },
+        {
+          "low": 597.32,
+          "high": 624.87,
+          "mid": 612.15,
+          "days": 86,
+          "first": "2025-10-30",
+          "last": "2026-04-13",
+          "type": "support",
+          "dist": -0.1513
+        }
       ],
       "zone": "高位区",
       "zoneDesc": "无回撤，不追高"
@@ -51,7 +94,7 @@ window.DRAWDOWN = {
       "name": "标普500",
       "market": "US",
       "ccy": "USD",
-      "source": "AkShare(新浪)+腾讯补最新",
+      "source": "AkShare(新浪)",
       "asOf": "2026-10-27",
       "price": 769.66,
       "ath": {
@@ -64,16 +107,68 @@ window.DRAWDOWN = {
         "dist": 0.0621
       },
       "levels": [
-        {"d": -0.1, "price": 703.46, "dist": -0.086, "hit": false},
-        {"d": -0.2, "price": 625.3, "dist": -0.1876, "hit": false},
-        {"d": -0.3, "price": 547.13, "dist": -0.2891, "hit": false},
-        {"d": -0.4, "price": 468.97, "dist": -0.3907, "hit": false},
-        {"d": -0.5, "price": 390.81, "dist": -0.4922, "hit": false}
+        {
+          "d": -0.1,
+          "price": 703.46,
+          "dist": -0.086,
+          "hit": false
+        },
+        {
+          "d": -0.2,
+          "price": 625.3,
+          "dist": -0.1876,
+          "hit": false
+        },
+        {
+          "d": -0.3,
+          "price": 547.13,
+          "dist": -0.2891,
+          "hit": false
+        },
+        {
+          "d": -0.4,
+          "price": 468.97,
+          "dist": -0.3907,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 390.81,
+          "dist": -0.4922,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 670.74, "high": 688.48, "mid": 679.43, "days": 75, "first": "2025-10-29", "last": "2026-04-13", "type": "support", "dist": -0.1172},
-        {"low": 761.58, "high": 769.66, "mid": 765.91, "days": 32, "first": "2026-08-04", "last": "2026-10-27", "type": "current", "dist": -0.0049},
-        {"low": 733.83, "high": 745.82, "mid": 739.63, "days": 31, "first": "2026-05-08", "last": "2026-07-31", "type": "support", "dist": -0.039}
+        {
+          "low": 670.74,
+          "high": 688.48,
+          "mid": 679.43,
+          "days": 75,
+          "first": "2025-10-29",
+          "last": "2026-04-13",
+          "type": "support",
+          "dist": -0.1172
+        },
+        {
+          "low": 761.58,
+          "high": 769.66,
+          "mid": 765.91,
+          "days": 32,
+          "first": "2026-08-04",
+          "last": "2026-10-27",
+          "type": "current",
+          "dist": -0.0049
+        },
+        {
+          "low": 733.83,
+          "high": 745.82,
+          "mid": 739.63,
+          "days": 31,
+          "first": "2026-05-08",
+          "last": "2026-07-31",
+          "type": "support",
+          "dist": -0.039
+        }
       ],
       "zone": "高位区",
       "zoneDesc": "无回撤，不追高"
@@ -83,7 +178,7 @@ window.DRAWDOWN = {
       "name": "道琼斯工业",
       "market": "US",
       "ccy": "USD",
-      "source": "AkShare(新浪)+腾讯补最新",
+      "source": "AkShare(新浪)",
       "asOf": "2026-10-27",
       "price": 523.28,
       "ath": {
@@ -96,16 +191,68 @@ window.DRAWDOWN = {
         "dist": 0.041
       },
       "levels": [
-        {"d": -0.1, "price": 490.51, "dist": -0.0626, "hit": false},
-        {"d": -0.2, "price": 436.01, "dist": -0.1668, "hit": false},
-        {"d": -0.3, "price": 381.5, "dist": -0.2709, "hit": false},
-        {"d": -0.4, "price": 327.0, "dist": -0.3751, "hit": false},
-        {"d": -0.5, "price": 272.5, "dist": -0.4792, "hit": false}
+        {
+          "d": -0.1,
+          "price": 490.51,
+          "dist": -0.0626,
+          "hit": false
+        },
+        {
+          "d": -0.2,
+          "price": 436.01,
+          "dist": -0.1668,
+          "hit": false
+        },
+        {
+          "d": -0.3,
+          "price": 381.5,
+          "dist": -0.2709,
+          "hit": false
+        },
+        {
+          "d": -0.4,
+          "price": 327.0,
+          "dist": -0.3751,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 272.5,
+          "dist": -0.4792,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 513.4, "high": 524.06, "mid": 518.53, "days": 52, "first": "2026-06-04", "last": "2026-10-27", "type": "current", "dist": -0.0091},
-        {"low": 483.24, "high": 492.34, "mid": 487.98, "days": 49, "first": "2026-01-05", "last": "2026-05-19", "type": "support", "dist": -0.0675},
-        {"low": 472.22, "high": 479.03, "mid": 475.67, "days": 25, "first": "2025-11-11", "last": "2026-04-13", "type": "support", "dist": -0.091}
+        {
+          "low": 513.4,
+          "high": 524.06,
+          "mid": 518.53,
+          "days": 52,
+          "first": "2026-06-04",
+          "last": "2026-10-27",
+          "type": "current",
+          "dist": -0.0091
+        },
+        {
+          "low": 483.24,
+          "high": 492.34,
+          "mid": 487.98,
+          "days": 49,
+          "first": "2026-01-05",
+          "last": "2026-05-19",
+          "type": "support",
+          "dist": -0.0675
+        },
+        {
+          "low": 472.22,
+          "high": 479.03,
+          "mid": 475.67,
+          "days": 25,
+          "first": "2025-11-11",
+          "last": "2026-04-13",
+          "type": "support",
+          "dist": -0.091
+        }
       ],
       "zone": "高位区",
       "zoneDesc": "无回撤，不追高"
@@ -115,7 +262,7 @@ window.DRAWDOWN = {
       "name": "罗素2000",
       "market": "US",
       "ccy": "USD",
-      "source": "AkShare(新浪)+腾讯补最新",
+      "source": "AkShare(新浪)",
       "asOf": "2026-10-27",
       "price": 280.18,
       "ath": {
@@ -128,17 +275,78 @@ window.DRAWDOWN = {
         "dist": 0.0103
       },
       "levels": [
-        {"d": -0.1, "price": 273.99, "dist": -0.0221, "hit": false},
-        {"d": -0.2, "price": 243.54, "dist": -0.1308, "hit": false},
-        {"d": -0.3, "price": 213.1, "dist": -0.2394, "hit": false},
-        {"d": -0.4, "price": 182.66, "dist": -0.3481, "hit": false},
-        {"d": -0.5, "price": 152.21, "dist": -0.4567, "hit": false}
+        {
+          "d": -0.1,
+          "price": 273.99,
+          "dist": -0.0221,
+          "hit": false
+        },
+        {
+          "d": -0.2,
+          "price": 243.54,
+          "dist": -0.1308,
+          "hit": false
+        },
+        {
+          "d": -0.3,
+          "price": 213.1,
+          "dist": -0.2394,
+          "hit": false
+        },
+        {
+          "d": -0.4,
+          "price": 182.66,
+          "dist": -0.3481,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 152.21,
+          "dist": -0.4567,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 288.92, "high": 299.48, "mid": 294.28, "days": 58, "first": "2026-05-26", "last": "2026-09-09", "type": "resistance", "dist": 0.0503},
-        {"low": 275.03, "high": 283.92, "mid": 279.34, "days": 45, "first": "2026-04-20", "last": "2026-10-27", "type": "current", "dist": -0.003},
-        {"low": 245.35, "high": 251.12, "mid": 248.21, "days": 33, "first": "2025-11-28", "last": "2026-04-06", "type": "support", "dist": -0.1141},
-        {"low": 259.46, "high": 263.62, "mid": 261.56, "days": 27, "first": "2026-01-12", "last": "2026-04-13", "type": "support", "dist": -0.0665}
+        {
+          "low": 288.92,
+          "high": 299.48,
+          "mid": 294.28,
+          "days": 58,
+          "first": "2026-05-26",
+          "last": "2026-09-09",
+          "type": "resistance",
+          "dist": 0.0503
+        },
+        {
+          "low": 275.03,
+          "high": 283.92,
+          "mid": 279.34,
+          "days": 45,
+          "first": "2026-04-20",
+          "last": "2026-10-27",
+          "type": "current",
+          "dist": -0.003
+        },
+        {
+          "low": 245.35,
+          "high": 251.12,
+          "mid": 248.21,
+          "days": 33,
+          "first": "2025-11-28",
+          "last": "2026-04-06",
+          "type": "support",
+          "dist": -0.1141
+        },
+        {
+          "low": 259.46,
+          "high": 263.62,
+          "mid": 261.56,
+          "days": 27,
+          "first": "2026-01-12",
+          "last": "2026-04-13",
+          "type": "support",
+          "dist": -0.0665
+        }
       ],
       "zone": "高位区",
       "zoneDesc": "无回撤，不追高"
@@ -149,27 +357,70 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-27",
-      "price": 3648.3,
+      "asOf": "2026-10-28",
+      "price": 3681.47,
       "ath": {
         "value": 4258.86,
         "date": "2026-05-14"
       },
-      "drawdown": -0.1434,
+      "drawdown": -0.1356,
       "ma200": {
-        "value": 3998.4,
-        "dist": -0.0876
+        "value": 3997.0,
+        "dist": -0.0789
       },
       "levels": [
-        {"d": -0.1, "price": 3832.97, "dist": 0.0506, "hit": true},
-        {"d": -0.2, "price": 3407.09, "dist": -0.0661, "hit": false},
-        {"d": -0.3, "price": 2981.2, "dist": -0.1829, "hit": false},
-        {"d": -0.4, "price": 2555.32, "dist": -0.2996, "hit": false},
-        {"d": -0.5, "price": 2129.43, "dist": -0.4163, "hit": false}
+        {
+          "d": -0.1,
+          "price": 3832.97,
+          "dist": 0.0412,
+          "hit": true
+        },
+        {
+          "d": -0.2,
+          "price": 3407.09,
+          "dist": -0.0745,
+          "hit": false
+        },
+        {
+          "d": -0.3,
+          "price": 2981.2,
+          "dist": -0.1902,
+          "hit": false
+        },
+        {
+          "d": -0.4,
+          "price": 2555.32,
+          "dist": -0.3059,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 2129.43,
+          "dist": -0.4216,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 3863.89, "high": 3990.49, "mid": 3925.16, "days": 105, "first": "2025-10-16", "last": "2026-09-24", "type": "resistance", "dist": 0.0759},
-        {"low": 4077.28, "high": 4135.39, "mid": 4106.3, "days": 55, "first": "2026-01-06", "last": "2026-07-01", "type": "resistance", "dist": 0.1255}
+        {
+          "low": 3863.89,
+          "high": 3990.49,
+          "mid": 3925.24,
+          "days": 104,
+          "first": "2025-10-20",
+          "last": "2026-09-24",
+          "type": "resistance",
+          "dist": 0.0662
+        },
+        {
+          "low": 4077.28,
+          "high": 4135.39,
+          "mid": 4106.3,
+          "days": 55,
+          "first": "2026-01-06",
+          "last": "2026-07-01",
+          "type": "resistance",
+          "dist": 0.1154
+        }
       ],
       "zone": "浅回调",
       "zoneDesc": "关注，等更深回调"
@@ -180,26 +431,60 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-27",
-      "price": 4049.55,
+      "asOf": "2026-10-28",
+      "price": 4083.87,
       "ath": {
         "value": 5930.91,
         "date": "2021-02-18"
       },
-      "drawdown": -0.3172,
+      "drawdown": -0.3114,
       "ma200": {
-        "value": 4662.81,
-        "dist": -0.1315
+        "value": 4660.02,
+        "dist": -0.1236
       },
       "levels": [
-        {"d": -0.1, "price": 5337.82, "dist": 0.3181, "hit": true},
-        {"d": -0.2, "price": 4744.73, "dist": 0.1717, "hit": true},
-        {"d": -0.3, "price": 4151.64, "dist": 0.0252, "hit": true},
-        {"d": -0.4, "price": 3558.55, "dist": -0.1212, "hit": false},
-        {"d": -0.5, "price": 2965.45, "dist": -0.2677, "hit": false}
+        {
+          "d": -0.1,
+          "price": 5337.82,
+          "dist": 0.307,
+          "hit": true
+        },
+        {
+          "d": -0.2,
+          "price": 4744.73,
+          "dist": 0.1618,
+          "hit": true
+        },
+        {
+          "d": -0.3,
+          "price": 4151.64,
+          "dist": 0.0166,
+          "hit": true
+        },
+        {
+          "d": -0.4,
+          "price": 3558.55,
+          "dist": -0.1286,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 2965.45,
+          "dist": -0.2739,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 4507.39, "high": 4792.26, "mid": 4651.81, "days": 172, "first": "2025-10-16", "last": "2026-09-23", "type": "resistance", "dist": 0.1487}
+        {
+          "low": 4507.39,
+          "high": 4792.26,
+          "mid": 4652.0,
+          "days": 171,
+          "first": "2025-10-17",
+          "last": "2026-09-23",
+          "type": "resistance",
+          "dist": 0.1391
+        }
       ],
       "zone": "深度机会",
       "zoneDesc": "回撤30-40%，重点加仓"
@@ -210,28 +495,80 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-27",
-      "price": 4901.61,
+      "asOf": "2026-10-28",
+      "price": 4959.56,
       "ath": {
         "value": 6375.33,
         "date": "2026-06-22"
       },
-      "drawdown": -0.2312,
+      "drawdown": -0.2221,
       "ma200": {
-        "value": 5801.09,
-        "dist": -0.1551
+        "value": 5797.7,
+        "dist": -0.1446
       },
       "levels": [
-        {"d": -0.1, "price": 5737.8, "dist": 0.1706, "hit": true},
-        {"d": -0.2, "price": 5100.26, "dist": 0.0405, "hit": true},
-        {"d": -0.3, "price": 4462.73, "dist": -0.0895, "hit": false},
-        {"d": -0.4, "price": 3825.2, "dist": -0.2196, "hit": false},
-        {"d": -0.5, "price": 3187.66, "dist": -0.3497, "hit": false}
+        {
+          "d": -0.1,
+          "price": 5737.8,
+          "dist": 0.1569,
+          "hit": true
+        },
+        {
+          "d": -0.2,
+          "price": 5100.26,
+          "dist": 0.0284,
+          "hit": true
+        },
+        {
+          "d": -0.3,
+          "price": 4462.73,
+          "dist": -0.1002,
+          "hit": false
+        },
+        {
+          "d": -0.4,
+          "price": 3825.2,
+          "dist": -0.2287,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 3187.66,
+          "dist": -0.3573,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 5461.75, "high": 5659.05, "mid": 5571.03, "days": 81, "first": "2025-10-16", "last": "2026-09-24", "type": "resistance", "dist": 0.1366},
-        {"low": 5789.89, "high": 5984.75, "mid": 5887.29, "days": 76, "first": "2026-01-06", "last": "2026-08-18", "type": "resistance", "dist": 0.2011},
-        {"low": 6111.15, "high": 6135.86, "mid": 6119.7, "days": 9, "first": "2026-05-06", "last": "2026-07-09", "type": "resistance", "dist": 0.2485}
+        {
+          "low": 5461.75,
+          "high": 5659.05,
+          "mid": 5571.52,
+          "days": 80,
+          "first": "2025-10-21",
+          "last": "2026-09-24",
+          "type": "resistance",
+          "dist": 0.1234
+        },
+        {
+          "low": 5789.89,
+          "high": 5984.75,
+          "mid": 5887.29,
+          "days": 76,
+          "first": "2026-01-06",
+          "last": "2026-08-18",
+          "type": "resistance",
+          "dist": 0.1871
+        },
+        {
+          "low": 6111.15,
+          "high": 6135.86,
+          "mid": 6119.7,
+          "days": 9,
+          "first": "2026-05-06",
+          "last": "2026-07-09",
+          "type": "resistance",
+          "dist": 0.2339
+        }
       ],
       "zone": "加仓区",
       "zoneDesc": "回撤20-30%，分批加仓窗口"
@@ -242,30 +579,73 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-27",
-      "price": 2548.15,
+      "asOf": "2026-10-28",
+      "price": 2634.76,
       "ath": {
         "value": 4380.41,
         "date": "2026-06-25"
       },
-      "drawdown": -0.4183,
+      "drawdown": -0.3985,
       "ma200": {
-        "value": 3495.95,
-        "dist": -0.2711
+        "value": 3492.93,
+        "dist": -0.2457
       },
       "levels": [
-        {"d": -0.1, "price": 3942.37, "dist": 0.5471, "hit": true},
-        {"d": -0.2, "price": 3504.33, "dist": 0.3752, "hit": true},
-        {"d": -0.3, "price": 3066.29, "dist": 0.2033, "hit": true},
-        {"d": -0.4, "price": 2628.25, "dist": 0.0314, "hit": true},
-        {"d": -0.5, "price": 2190.2, "dist": -0.1405, "hit": false}
+        {
+          "d": -0.1,
+          "price": 3942.37,
+          "dist": 0.4963,
+          "hit": true
+        },
+        {
+          "d": -0.2,
+          "price": 3504.33,
+          "dist": 0.33,
+          "hit": true
+        },
+        {
+          "d": -0.3,
+          "price": 3066.29,
+          "dist": 0.1638,
+          "hit": true
+        },
+        {
+          "d": -0.4,
+          "price": 2628.25,
+          "dist": -0.0025,
+          "hit": false
+        },
+        {
+          "d": -0.5,
+          "price": 2190.2,
+          "dist": -0.1687,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 3031.3, "high": 3379.61, "mid": 3237.01, "days": 135, "first": "2025-10-16", "last": "2026-10-09", "type": "resistance", "dist": 0.2703},
-        {"low": 4017.27, "high": 4043.07, "mid": 4028.68, "days": 8, "first": "2026-05-13", "last": "2026-07-09", "type": "resistance", "dist": 0.581}
+        {
+          "low": 3059.32,
+          "high": 3379.61,
+          "mid": 3249.38,
+          "days": 127,
+          "first": "2025-10-21",
+          "last": "2026-09-30",
+          "type": "resistance",
+          "dist": 0.2333
+        },
+        {
+          "low": 4017.27,
+          "high": 4043.07,
+          "mid": 4028.68,
+          "days": 8,
+          "first": "2026-05-13",
+          "last": "2026-07-09",
+          "type": "resistance",
+          "dist": 0.5291
+        }
       ],
-      "zone": "极端区",
-      "zoneDesc": "回撤40-50%，熊市机会"
+      "zone": "深度机会",
+      "zoneDesc": "回撤30-40%，重点加仓"
     },
     {
       "code": "SH000688",
@@ -273,29 +653,90 @@ window.DRAWDOWN = {
       "market": "A",
       "ccy": "CNY",
       "source": "腾讯证券",
-      "asOf": "2026-10-27",
-      "price": 1252.28,
+      "asOf": "2026-10-28",
+      "price": 1282.93,
       "ath": {
         "value": 2255.25,
         "date": "2026-07-01"
       },
-      "drawdown": -0.4447,
+      "drawdown": -0.4311,
       "ma200": {
-        "value": 1588.8,
-        "dist": -0.2118
+        "value": 1588.47,
+        "dist": -0.1923
       },
       "levels": [
-        {"d": -0.1, "price": 2029.73, "dist": 0.6208, "hit": true},
-        {"d": -0.2, "price": 1804.2, "dist": 0.4407, "hit": true},
-        {"d": -0.3, "price": 1578.67, "dist": 0.2606, "hit": true},
-        {"d": -0.4, "price": 1353.15, "dist": 0.0805, "hit": true},
-        {"d": -0.5, "price": 1127.62, "dist": -0.0995, "hit": false}
+        {
+          "d": -0.1,
+          "price": 2029.73,
+          "dist": 0.5821,
+          "hit": true
+        },
+        {
+          "d": -0.2,
+          "price": 1804.2,
+          "dist": 0.4063,
+          "hit": true
+        },
+        {
+          "d": -0.3,
+          "price": 1578.67,
+          "dist": 0.2305,
+          "hit": true
+        },
+        {
+          "d": -0.4,
+          "price": 1353.15,
+          "dist": 0.0547,
+          "hit": true
+        },
+        {
+          "d": -0.5,
+          "price": 1127.62,
+          "dist": -0.1211,
+          "hit": false
+        }
       ],
       "platforms": [
-        {"low": 1290.79, "high": 1493.95, "mid": 1390.06, "days": 123, "first": "2025-10-16", "last": "2026-10-26", "type": "resistance", "dist": 0.11},
-        {"low": 1656.95, "high": 1668.33, "mid": 1662.8, "days": 11, "first": "2026-05-06", "last": "2026-09-23", "type": "resistance", "dist": 0.3278},
-        {"low": 1541.64, "high": 1555.98, "mid": 1552.54, "days": 8, "first": "2026-01-22", "last": "2026-09-28", "type": "resistance", "dist": 0.2398},
-        {"low": 1715.4, "high": 1726.18, "mid": 1720.16, "days": 8, "first": "2026-05-11", "last": "2026-08-14", "type": "resistance", "dist": 0.3736}
+        {
+          "low": 1290.79,
+          "high": 1493.95,
+          "mid": 1389.85,
+          "days": 122,
+          "first": "2025-10-17",
+          "last": "2026-10-26",
+          "type": "resistance",
+          "dist": 0.0833
+        },
+        {
+          "low": 1656.95,
+          "high": 1668.33,
+          "mid": 1662.8,
+          "days": 11,
+          "first": "2026-05-06",
+          "last": "2026-09-23",
+          "type": "resistance",
+          "dist": 0.2961
+        },
+        {
+          "low": 1541.64,
+          "high": 1555.98,
+          "mid": 1552.54,
+          "days": 8,
+          "first": "2026-01-22",
+          "last": "2026-09-28",
+          "type": "resistance",
+          "dist": 0.2102
+        },
+        {
+          "low": 1715.4,
+          "high": 1726.18,
+          "mid": 1720.16,
+          "days": 8,
+          "first": "2026-05-11",
+          "last": "2026-08-14",
+          "type": "resistance",
+          "dist": 0.3408
+        }
       ],
       "zone": "极端区",
       "zoneDesc": "回撤40-50%，熊市机会"
