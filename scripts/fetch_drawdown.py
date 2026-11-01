@@ -1,24 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-宽基指数回撤分析 · 数据拉取与计算
-============================================================
-输出：drawdown.js（window.DRAWDOWN）
-数据源：
-  美股（QQQ/SPY/DIA/IWM）：Yahoo Finance chart API，range=5y
-  A股（上证/沪深300/中证A500/创业板指/科创50）：腾讯 fqkline，约8年日线
-计算：
-  - ATH（历史最高，盘中high）与当前回撤
-  - 从ATH回撤档位：-10/-20/-30/-40/-50%，及当前价距各档空间
-  - 200日均线（SMA200）及当前价偏离
-  - 日线震荡平台（近1年价格密集成交区，取中位数），标注当前/支撑/阻力
-  - 加仓区间标签（美股20-30%为加仓区）
-============================================================
-"""
+"""宽基日线：仅接受交易所已收盘数据；有限窗口高点不等于历史最高价。"""
 import os
 import json
 import time
 import datetime as dt
 import requests
+import argparse
+from pathlib import Path
+from market_quality import checked_rows, utc_now
+from refresh_store import refresh_lock, recover, load_baseline, build_pipeline, publish_local, acknowledge, file_versions
+from longbridge_source import fetch_longbridge, configure_snapshot
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 RETRIES = 3
@@ -29,15 +20,10 @@ STATE_FILE = os.path.join(BASE, "scripts", "level_state.json")
 ALERT_FILE = os.path.join(BASE, "scripts", "alerts.json")
 # 回撤档位（正数=回撤深度）
 LEVEL_DS = [0.10, 0.20, 0.30, 0.40, 0.50]
-# ATH 统一窗口：最近 2000 个交易日（约 8 年）。
-# 目的：①让不同数据源（腾讯约8年、AkShare全历史）口径一致；
-# ②避免上证指数把 2007 年 6124 / 2015 年 5178 的极端泡沫当作锚点，
-#   导致指数在这轮高点时仍显示"回撤30%"、择时信号继续失效。
+# 有限窗口盘中高点，不冒充全历史 ATH。
 ATH_WINDOW = 2000
 
-# 标的定义：(展示代码, 名称, 市场, 数据源symbol, 币种, ATH起始日期)
-# A股起始日期 = 指数实际发布/可投资起点（新发布指数不回溯到发布前的虚拟历史）；
-# 美股起始日期为 None（滚动窗口，且美股长期创新高、近期高点即历史高点）。
+# 保留原有分析起点；该起点不代表真实上市/发布日，窗口元数据如实披露。
 TARGETS = [
     ("QQQ", "纳斯达克100", "US", "QQQ", "USD", None),
     ("SPY", "标普500", "US", "SPY", "USD", None),
@@ -64,15 +50,6 @@ def http_get(url, timeout=25):
     raise last
 
 
-def data_fresh(date_str, max_age_days=10):
-    """数据最后日期是否在 max_age_days 内（防止备用源返回陈旧数据）"""
-    try:
-        d = dt.datetime.strptime(date_str, "%Y-%m-%d")
-        return (dt.datetime.now() - d).days <= max_age_days
-    except Exception:
-        return False
-
-
 def _df_to_rows(df):
     """AkShare DataFrame(date,open,high,low,close[,volume]) -> list[(date,open,close,high,low)]"""
     out = []
@@ -89,7 +66,7 @@ def _df_to_rows(df):
 
 def fetch_us_yahoo(symbol):
     """Yahoo chart API，返回 list[(date, open, close, high, low)]"""
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=5y&interval=1d"
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=10y&interval=1d"
     j = http_get(url).json()
     res = j["chart"]["result"][0]
     ts = res["timestamp"]
@@ -99,7 +76,7 @@ def fetch_us_yahoo(symbol):
         o, c, h, l = q["open"][i], q["close"][i], q["high"][i], q["low"][i]
         if c is None or h is None:
             continue
-        d = dt.datetime.fromtimestamp(t, tz=dt.timezone.utc).strftime("%Y-%m-%d")
+        d = dt.datetime.fromtimestamp(t, tz=dt.timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('America/New_York')).strftime("%Y-%m-%d")
         out.append((d, o, c, h, l))
     return out
 
@@ -117,23 +94,6 @@ def fetch_a_tencent(symbol):
     return out
 
 
-def fetch_us_tencent_latest(symbol):
-    """
-    腾讯美股 fqkline 仅能取最新一交易日（历史支持有限，且会混入一条异常的2011年数据）。
-    返回 (date, open, close, high, low) 或 None。
-    """
-    tcode = "us" + symbol
-    url = f"http://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={tcode},day,,,3,qfq"
-    j = http_get(url).json()
-    p = j["data"][tcode]
-    rows = p.get("day") or p.get("qfqday") or []
-    recent = [r for r in rows if r[0] >= "2020-01-01"]  # 过滤异常2011年数据
-    if not recent:
-        return None
-    row = recent[-1]
-    return (row[0], float(row[1]), float(row[2]), float(row[3]), float(row[4]))
-
-
 def fetch_us_akshare(symbol):
     """AkShare 新浪美股前复权日K，返回 list[(date, open, close, high, low)]"""
     import akshare as ak
@@ -146,76 +106,23 @@ def fetch_a_akshare(symbol):
     return _df_to_rows(ak.stock_zh_index_daily(symbol=symbol))
 
 
-def fetch_a_sina_latest(symbol):
-    """
-    新浪实时行情接口（hq.sinajs.cn），补当日收盘。
-    收盘后新浪历史指数接口（stock_zh_index_daily）常延迟到傍晚才更新，
-    而腾讯接口又可能被 WAF 拦截，此时用实时接口拿当日 OHLC。
-    返回 (date, open, close, high, low) 或 None。
-    """
-    headers = {"User-Agent": "Mozilla/5.0", "Referer": "https://finance.sina.com.cn"}
-    r = requests.get(f"https://hq.sinajs.cn/list={symbol}", headers=headers, timeout=15)
-    r.encoding = "gbk"
-    if "=" not in r.text or '"' not in r.text:
-        return None
-    f = r.text.split('"')[1].split(",")
-    if len(f) < 31 or not f[30]:
-        return None
-    return (f[30], float(f[1]), float(f[3]), float(f[4]), float(f[5]))
-
-
-def fetch_us(symbol):
-    """美股：主 Yahoo，备 AkShare（新浪，历史完整但最近交易日有延迟），再用腾讯补最新一天。"""
-    try:
-        rows = fetch_us_yahoo(symbol)
-        if rows and data_fresh(rows[-1][0]):
-            return rows, "Yahoo Finance"
-        raise RuntimeError("Yahoo 数据缺失或陈旧")
-    except Exception as e:
-        print(f"[WARN] Yahoo {symbol} 失败：{repr(e)[:80]}，切换 AkShare")
-    rows = fetch_us_akshare(symbol)
-    if not rows:
-        raise RuntimeError(f"美股 {symbol} 所有数据源均失败")
-    source = "AkShare(新浪)"
-    # AkShare 新浪源对最近交易日有延迟（如周一收盘后仍停在上周五），用腾讯接口补最新一天
-    try:
-        latest = fetch_us_tencent_latest(symbol)
-        if latest and latest[0] > rows[-1][0]:
-            rows.append(latest)
-            source = "AkShare(新浪)+腾讯补最新"
-            print(f"[INFO] {symbol} 腾讯补最新交易日 {latest[0]} 收盘 {latest[2]}")
-    except Exception as e:
-        print(f"[WARN] {symbol} 腾讯补最新日失败：{repr(e)[:60]}")
-    if data_fresh(rows[-1][0]):
-        return rows, source
-    raise RuntimeError(f"美股 {symbol} 数据陈旧（最后 {rows[-1][0]}）")
-
-
-def fetch_a(symbol):
-    """A股：主 腾讯，备 AkShare（新浪，历史完整），再用新浪实时接口补当日。"""
-    try:
-        rows = fetch_a_tencent(symbol)
-        if rows and data_fresh(rows[-1][0]):
-            return rows, "腾讯证券"
-        raise RuntimeError("腾讯 数据缺失或陈旧")
-    except Exception as e:
-        print(f"[WARN] 腾讯 {symbol} 失败：{repr(e)[:80]}，切换 AkShare")
-    rows = fetch_a_akshare(symbol)
-    if not rows:
-        raise RuntimeError(f"A股 {symbol} 历史数据获取失败")
-    source = "AkShare(新浪)"
-    # 收盘后新浪历史指数接口常延迟到傍晚才更新当日，用实时接口补最新一天
-    try:
-        latest = fetch_a_sina_latest(symbol)
-        if latest and latest[0] > rows[-1][0]:
-            rows.append(latest)
-            source = "AkShare(新浪)+新浪实时补当日"
-            print(f"[INFO] {symbol} 新浪实时补当日 {latest[0]} 收盘 {latest[2]}")
-    except Exception as e:
-        print(f"[WARN] {symbol} 新浪实时补当日失败：{repr(e)[:60]}")
-    if data_fresh(rows[-1][0]):
-        return rows, source
-    raise RuntimeError(f"A股 {symbol} 所有数据源均失败或数据陈旧（最后 {rows[-1][0]}）")
+def fetch_daily(symbol, market, now=None, start=None):
+    candidates = ([(fetch_longbridge, "Longbridge", "qfq"),
+                   (fetch_us_yahoo, "Yahoo Finance", "unadjusted"),
+                   (fetch_us_akshare, "AkShare(新浪)", "qfq")] if market == "US" else
+                  [(fetch_longbridge, "Longbridge", "index"),
+                   (fetch_a_tencent, "腾讯证券", "index"),
+                   (fetch_a_akshare, "AkShare(新浪)", "index")])
+    failures = []
+    for fetcher, source, basis in candidates:
+        try:
+            raw = fetcher(symbol, market, now) if source == "Longbridge" else fetcher(symbol)
+            rows, quality = checked_rows(raw, market, now, start)
+            return rows, source, basis, quality
+        except Exception as error:
+            failures.append(f"{source}: {error}")
+            print(f"[WARN] {symbol} {source}: {error}")
+    raise ValueError(f"{symbol} 无合格的已收盘日线: {'; '.join(failures)}")
 
 
 def find_platforms(dates, closes, highs, lookback=250, bin_pct=0.02):
@@ -275,19 +182,12 @@ def find_platforms(dates, closes, highs, lookback=250, bin_pct=0.02):
 
 
 def zone_label(dd_pct):
-    """根据当前回撤深度给出区间标签（dd_pct 为负数，如 -0.12）"""
-    a = abs(dd_pct)
-    if a < 0.10:
-        return "高位区", "无回撤，不追高"
-    if a < 0.20:
-        return "浅回调", "关注，等更深回调"
-    if a < 0.30:
-        return "加仓区", "回撤20-30%，分批加仓窗口"
-    if a < 0.40:
-        return "深度机会", "回撤30-40%，重点加仓"
-    if a < 0.50:
-        return "极端区", "回撤40-50%，熊市机会"
-    return "崩盘区", "回撤>50%，极端左侧"
+    depth = abs(dd_pct)
+    bounds = [(0.10, "回撤不足10%"), (0.20, "回撤10–20%"),
+              (0.30, "回撤20–30%"), (0.40, "回撤30–40%"),
+              (0.50, "回撤40–50%")]
+    label = next((label for bound, label in bounds if depth < bound), "回撤50%以上")
+    return label, "仅描述窗口高点回撤深度，不构成加仓或投资机会判断"
 
 
 def max_hit_depth(levels):
@@ -296,56 +196,45 @@ def max_hit_depth(levels):
     return max(hit) if hit else 0.0
 
 
-def load_state():
-    """读取上一次各标的的最深回撤状态"""
-    if os.path.exists(STATE_FILE):
-        try:
-            with open(STATE_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return {}
-    return {}
-
-
-def analyze(code, name, market, symbol, ccy, ath_start):
-    rows, source = fetch_us(symbol) if market == "US" else fetch_a(symbol)
-    if not rows:
-        return None
-    # ATH 口径统一：①A股先剔除指数实际发布/可投资起点之前的回溯数据；
-    # ②再统一截取最近 ATH_WINDOW（约8年）个交易日。
-    # 这样无论数据源返回多长历史，ATH 都对应当前可交易周期的高点，不漂移。
-    if ath_start:
-        rows = [r for r in rows if r[0] >= ath_start]
-    rows = rows[-ATH_WINDOW:]
-    if not rows:
-        return None
+def analyze(code, name, market, symbol, ccy, ath_start, now=None, previous=None, accept_source_change=False):
+    rows, source, basis, quality = fetch_daily(symbol, market, now, ath_start)
+    if previous:
+        changed = previous["source"] != source or previous.get("priceBasis") not in (None, basis)
+        overlap = next((r for r in rows if r[0] == previous["asOf"]), None)
+        if overlap is None:
+            raise ValueError(f"{code} no overlapping baseline session")
+        revision = abs(overlap[2] / previous["price"] - 1)
+        if changed or revision > .005:
+            if not accept_source_change:
+                raise ValueError(f"{code} source/basis/revision requires review: {revision:.2%}")
+            quality["sourceChangeAccepted"] = True
+            quality["previousSource"] = previous["source"]
+            quality["baselineRevision"] = revision
+        if rows[-1][0] > previous["asOf"] and abs(rows[-1][2] / previous["price"] - 1) > .15:
+            raise ValueError(f"{code} abnormal cross-run price move")
     dates = [r[0] for r in rows]
     opens = [r[1] for r in rows]
     closes = [r[2] for r in rows]
     highs = [r[3] for r in rows]
     lows = [r[4] for r in rows]
 
-    price = closes[-1]
+    price = round(closes[-1], 2)
     as_of = dates[-1]
 
     # ATH（盘中最高）
     ath_idx = max(range(len(highs)), key=lambda i: highs[i])
-    ath = highs[ath_idx]
+    ath = round(highs[ath_idx], 2)
     ath_date = dates[ath_idx]
-    dd = price / ath - 1
+    dd = round(price / ath - 1, 4)
 
     # 200日均线
-    if len(closes) >= 200:
-        ma200 = sum(closes[-200:]) / 200
-        ma200_dist = price / ma200 - 1
-    else:
-        ma200 = sum(closes) / len(closes)
-        ma200_dist = price / ma200 - 1
+    ma200 = round(sum(closes[-200:]) / 200, 2)
+    ma200_dist = price / ma200 - 1
 
     # 回撤档位（从ATH）
     levels = []
     for d in (0.10, 0.20, 0.30, 0.40, 0.50):
-        lvl = ath * (1 - d)
+        lvl = round(ath * (1 - d), 2)
         # distance：当前价到该档还需跌多少（正=还需下跌，负=已跌破）
         dist = lvl / price - 1
         levels.append({
@@ -376,7 +265,13 @@ def analyze(code, name, market, symbol, ccy, ath_start):
         "source": source,
         "asOf": as_of,
         "price": round(price, 2),
-        "ath": {"value": round(ath, 2), "date": ath_date},
+        "peak": {"value": round(ath, 2), "date": ath_date,
+                 "kind": "rolling_2000_sessions", "windowLimit": ATH_WINDOW,
+                 "sampleSessions": len(rows), "windowStart": dates[0],
+                 "windowEnd": dates[-1], "fullWindow": len(rows) == ATH_WINDOW,
+                 "field": "intradayHigh"},
+        "historicalATH": {"value": None, "reason": "未核验上市/发布以来完整同口径日线"},
+        "priceBasis": basis, "quality": quality,
         "drawdown": round(dd, 4),
         "ma200": {"value": round(ma200, 2), "dist": round(ma200_dist, 4)},
         "levels": levels,
@@ -387,97 +282,47 @@ def analyze(code, name, market, symbol, ccy, ath_start):
 
 
 def main():
-    indices = []
-    failures = []
-    for code, name, market, symbol, ccy, ath_start in TARGETS:
-        try:
-            r = analyze(code, name, market, symbol, ccy, ath_start)
-            if r:
-                indices.append(r)
-                print(f"[OK] {name:8s} {code:9s} price={r['price']:>9} "
-                      f"dd={r['drawdown']*100:6.2f}% ma200={r['ma200']['value']:>9} "
-                      f"plats={len(r['platforms'])} zone={r['zone']} src={r['source']}")
-            else:
-                failures.append((name, "无数据"))
-        except Exception as e:
-            print(f"[FAIL] {name} {code}: {repr(e)}")
-            failures.append((name, repr(e)[:120]))
-
-    # ===== 完整性闸：9 个标的必须全部成功，否则保留旧数据、明确失败（不覆盖、不更新状态）=====
-    if len(indices) < len(TARGETS):
-        print(f"\n[ABORT] 仅成功 {len(indices)}/{len(TARGETS)}，数据源不完整"
-              f"（电脑刚唤醒/网络未就绪/代理未连？）。保留现有 drawdown.js，本轮不更新，"
-              f"下次定时自动重试。失败明细：{failures}")
-        raise SystemExit(1)
-
-    # ===== 档位跨越检测（对比上一次状态）=====
-    is_first_run = not os.path.exists(STATE_FILE)  # 首次运行只建基线，不追报历史回撤
-    old_state = load_state()
-    new_state = {}
-    alerts = []
-    for r in indices:
-        code = r["code"]
-        new_depth = max_hit_depth(r["levels"])
-        old_depth = old_state.get(code, {}).get("maxHit", 0.0)
-        new_state[code] = {"maxHit": new_depth, "asOf": r["asOf"]}
-        if (not is_first_run) and new_depth > old_depth + 1e-9:
-            # 新跌破了一个或多个档位
-            for d in LEVEL_DS:
-                if old_depth < d <= new_depth:
-                    lvl_price = next(l["price"] for l in r["levels"]
-                                     if abs(abs(l["d"]) - d) < 1e-9)
-                    alerts.append({
-                        "code": code,
-                        "name": r["name"],
-                        "market": r["market"],
-                        "level": round(-d, 2),
-                        "levelPrice": lvl_price,
-                        "price": r["price"],
-                        "drawdown": r["drawdown"],
-                        "asOf": r["asOf"],
-                        "zone": r["zone"],
-                    })
-                    print(f"[ALERT] {r['name']:8s} 新跌破 -{int(d*100)}% 档 "
-                          f"现价 {r['price']}（{r['zone']}）")
-
-    # 保存状态与提醒
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(new_state, f, ensure_ascii=False, indent=2)
-        f.write("\n")
-    with open(ALERT_FILE, "w", encoding="utf-8") as f:
-        json.dump({"asOf": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
-                   "alerts": alerts}, f, ensure_ascii=False, indent=2)
-    if is_first_run:
-        print(f"\n首次运行：已建立回撤基线（历史回撤不追报，状态存 {os.path.basename(STATE_FILE)}）")
-    else:
-        print(f"\n档位提醒：{len(alerts)} 条（状态已存 {os.path.basename(STATE_FILE)}）")
-
-    payload = {
-        "meta": {
-            "asOf": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
-            "generatedBy": "scripts/fetch_drawdown.py",
-            "refreshCadence": "每天",
-            "sources": {
-                "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily（历史完整），再用腾讯美股接口补最新交易日",
-                "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily（历史完整），再用新浪实时 hq.sinajs.cn 补当日收盘",
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--longbridge-input", help="fresh read-only Longbridge export JSON; no credentials")
+    parser.add_argument("--accept-source-change", action="store_true",
+                        help="review source/basis revisions, reset alert baseline")
+    parser.add_argument("--ack", nargs="+", metavar="EVENT_ID",
+                        help="acknowledge delivered outbox events; never sends messages")
+    args = parser.parse_args()
+    if args.longbridge_input:
+        configure_snapshot(args.longbridge_input)
+    root = Path(BASE)
+    with refresh_lock(root):
+        recover(root)
+        if args.ack:
+            acknowledge(root, args.ack)
+            return
+        previous, old_state = load_baseline(root)
+        versions = file_versions(root)
+        by_code = {r["code"]: r for r in previous["indices"]}
+        now = utc_now()
+        indices = []
+        for target in TARGETS:
+            code = target[0]
+            result = analyze(*target, now=now, previous=by_code[code],
+                             accept_source_change=args.accept_source_change)
+            indices.append(result)
+            print(f"[OK] {code} session={result['asOf']} source={result['source']}")
+        payload = {
+            "meta": {
+                "schemaVersion": 2, "asOf": now.isoformat(),
+                "generatedBy": "scripts/fetch_drawdown.py",
+                "refreshCadence": "按需运行；实际定时任务需独立核验",
+                "sources": {"US": "优先长桥；备用 Yahoo / AkShare 新浪；不补实时价",
+                            "A": "优先长桥；备用腾讯 / AkShare 新浪；不补实时价"},
+                "note": "窗口最多2000交易日；不足时明确标注。历史最高价未核验则为null。仅描述回撤深度，不自动判定投资机会。"
             },
-            "note": "ATH 统一为最近约8年（2000交易日）且在指数实际发布/可投资起点之后的盘中最高（A股老指数从2018起、新指数从发布起，不回溯到2007/2015等历史泡沫，保证不同数据源口径一致）；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。",
-        },
-        "indices": indices,
-    }
-
-    header = (
-        "/* ============================================================\n"
-        " * 宽基指数回撤分析数据（自动生成，请勿手改）\n"
-        " * 生成脚本：scripts/fetch_drawdown.py\n"
-        " * 刷新频率：每天 06:30（美股收盘后）、15:30（A股收盘后）\n"
-        " * ============================================================ */\n"
-    )
-    body = "window.DRAWDOWN = " + json.dumps(payload, ensure_ascii=False, indent=2) + ";\n"
-    out_path = os.path.join(BASE, "drawdown.js")
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(header + body)
-    print(f"WROTE {out_path}  ({len(indices)} indices)")
+            "indices": indices,
+            "pipeline": build_pipeline(indices, previous, old_state),
+        }
+        publish_local(root, payload, now=utc_now(), expected_files=versions)
+        print(f"[COMMITTED LOCALLY] {len(indices)} indices; pending alerts="
+              f"{len(payload['pipeline']['pendingAlerts'])}; no notification sent")
 
 
 if __name__ == "__main__":
