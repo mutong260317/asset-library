@@ -1,0 +1,908 @@
+{
+  "upstream": "685c8a9128b7341e0e85ec34d2a648fef4647d88",
+  "researchAsOf": "2026-10-30",
+  "assets": [
+    {
+      "code": "511520",
+      "decision": {
+        "w": {
+          "c": 16,
+          "y": 12,
+          "a": 8
+        },
+        "action": "持有",
+        "buyZone": "估值分位<30或国开收益率显著上行后加",
+        "trimZone": "收益率跌破前低或久期风险加剧时减",
+        "invalidation": "政策转向宽信用+利率大幅上行",
+        "reason": "防御底仓，债牛走完"
+      },
+      "ret": {
+        "low": 0.03,
+        "high": 0.04
+      },
+      "cyc": 82,
+      "val": 78,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "511090",
+      "decision": {
+        "w": {
+          "c": 6,
+          "y": 4,
+          "a": 1
+        },
+        "action": "持有",
+        "buyZone": "30年收益率>2.4%时可分批左侧",
+        "trimZone": "收益率快速下行至1.8%以下或债市过热时减",
+        "invalidation": "利率上行周期确立（长端持续抬升）",
+        "reason": "久期最长波动最大，激进档降至1%控久期风险"
+      },
+      "ret": {
+        "low": 0.035,
+        "high": 0.05
+      },
+      "cyc": 80,
+      "val": 80,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "511010",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 2,
+          "a": 1
+        },
+        "action": "持有",
+        "buyZone": "收益率上行后加",
+        "trimZone": "收益率创新低时减",
+        "invalidation": "利率快速上行周期",
+        "reason": "中短久期，稳健防御"
+      },
+      "ret": {
+        "low": 0.025,
+        "high": 0.035
+      },
+      "cyc": 75,
+      "val": 70,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "511380",
+      "decision": {
+        "w": {
+          "c": 5,
+          "y": 4,
+          "a": 3
+        },
+        "action": "持有",
+        "buyZone": "百元溢价率回落至<60或正股底部",
+        "trimZone": "溢价率>110且股市过热",
+        "invalidation": "转债信用风险事件扩散",
+        "reason": "股债双性，中性偏贵等回落"
+      },
+      "ret": {
+        "low": 0.04,
+        "high": 0.06
+      },
+      "cyc": 53,
+      "val": 53,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "510300",
+      "decision": {
+        "w": {
+          "c": 13,
+          "y": 13,
+          "a": 16
+        },
+        "action": "分批",
+        "buyZone": "PE<12或分位<20%时加大",
+        "trimZone": "PE>16或分位>80%时减",
+        "invalidation": "盈利增速持续负增长+政策收紧",
+        "reason": "核心底仓，估值修复窗口"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "cyc": 27,
+      "val": 20,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "563360",
+      "decision": {
+        "w": {
+          "c": 7,
+          "y": 8,
+          "a": 10
+        },
+        "action": "分批",
+        "buyZone": "分位<25%继续加",
+        "trimZone": "分位>75%减",
+        "invalidation": "指数样本规则重大变更/盈利下修",
+        "reason": "代表新经济更均衡，长期底仓"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "cyc": 26,
+      "val": 19,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "563300",
+      "decision": {
+        "w": {
+          "c": 4,
+          "y": 4,
+          "a": 4
+        },
+        "action": "持有",
+        "buyZone": "PB分位<30%",
+        "trimZone": "PB分位>80%",
+        "invalidation": "流动性持续收紧+小盘风格逆转",
+        "reason": "小盘弹性大但波动显著，中性仓位"
+      },
+      "ret": {
+        "low": 0.07,
+        "high": 0.11
+      },
+      "cyc": 42,
+      "val": 42,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "588000",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 2,
+          "a": 4
+        },
+        "action": "回避",
+        "buyZone": "PE回落至<50倍且半导体周期见底信号",
+        "trimZone": "PE>100倍继续减",
+        "invalidation": "AI国产替代逻辑证伪",
+        "reason": "高波动成长，PE仍77倍不接飞刀"
+      },
+      "ret": {
+        "low": 0.08,
+        "high": 0.13
+      },
+      "cyc": 55,
+      "val": 62,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "159915",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 5,
+          "a": 6
+        },
+        "action": "分批",
+        "buyZone": "分位<30%分批加",
+        "trimZone": "分位>70%减",
+        "invalidation": "新能源/医药权重盈利持续恶化",
+        "reason": "估值下修+盈利上修，左侧分批"
+      },
+      "ret": {
+        "low": 0.08,
+        "high": 0.12
+      },
+      "cyc": 20,
+      "val": 18,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "513180",
+      "decision": {
+        "w": {
+          "c": 7,
+          "y": 9,
+          "a": 11
+        },
+        "action": "持有",
+        "buyZone": "指数停止创新低+20日趋势企稳后加仓",
+        "trimZone": "反弹至4311前高压力位且盈利未改善",
+        "invalidation": "盈利预期明显下修/政策风险进一步恶化",
+        "reason": "估值历史低位，但政策风险未出清，已布局不加仓"
+      },
+      "ret": {
+        "low": 0.08,
+        "high": 0.14
+      },
+      "cyc": 12,
+      "val": 7,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "513770",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 6,
+          "a": 6
+        },
+        "action": "持有",
+        "buyZone": "与恒生科技同步企稳信号",
+        "trimZone": "互联网板块盈利下修",
+        "invalidation": "平台经济监管再度收紧",
+        "reason": "估值历史低位，已布局不加仓"
+      },
+      "ret": {
+        "low": 0.08,
+        "high": 0.14
+      },
+      "cyc": 12,
+      "val": 7,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "513520",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 6,
+          "a": 6
+        },
+        "action": "分批",
+        "buyZone": "折价>5%或日经回调10%以上",
+        "trimZone": "溢价>3%或日股过热",
+        "invalidation": "日元大幅贬值+日企盈利下修",
+        "reason": "折价安全垫+治理改革，中等配置"
+      },
+      "ret": {
+        "low": 0.05,
+        "high": 0.08
+      },
+      "cyc": 48,
+      "val": 48,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "159920",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 2,
+          "a": 3
+        },
+        "action": "持有",
+        "buyZone": "PE<10",
+        "trimZone": "PE>14",
+        "invalidation": "港股系统性风险",
+        "reason": "高股息+低估，稳健配置"
+      },
+      "ret": {
+        "low": 0.05,
+        "high": 0.08
+      },
+      "cyc": 48,
+      "val": 48,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "513100",
+      "decision": {
+        "w": {
+          "c": 0,
+          "y": 0,
+          "a": 0
+        },
+        "action": "回避",
+        "buyZone": "溢价收敛至<1%且估值分位<60",
+        "trimZone": "—",
+        "invalidation": "QDII额度恢复+溢价长期存在",
+        "reason": "溢价11.3%吞噬收益，IBKR直投替代"
+      },
+      "ret": {
+        "low": 0.08,
+        "high": 0.12
+      },
+      "cyc": 59,
+      "val": 69,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "513500",
+      "decision": {
+        "w": {
+          "c": 0,
+          "y": 0,
+          "a": 0
+        },
+        "action": "回避",
+        "buyZone": "溢价收敛至<1%",
+        "trimZone": "—",
+        "invalidation": "QDII额度恢复",
+        "reason": "溢价11%过高，VOO替代"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "cyc": 60,
+      "val": 70,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "513850",
+      "decision": {
+        "w": {
+          "c": 0,
+          "y": 0,
+          "a": 0
+        },
+        "action": "回避",
+        "buyZone": "溢价收敛",
+        "trimZone": "—",
+        "invalidation": "—",
+        "reason": "溢价5.7%，直投替代"
+      },
+      "ret": {
+        "low": 0.07,
+        "high": 0.11
+      },
+      "cyc": 68,
+      "val": 71,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "513290",
+      "decision": {
+        "w": {
+          "c": 0,
+          "y": 0,
+          "a": 0
+        },
+        "action": "回避",
+        "buyZone": "PB分位回落至<50%",
+        "trimZone": "—",
+        "invalidation": "—",
+        "reason": "PB 100%分位偏贵，XLV替代更稳"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.12
+      },
+      "cyc": 58,
+      "val": 58,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "512480",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 5,
+          "a": 2
+        },
+        "action": "回避",
+        "buyZone": "PE分位回落至<40%且库存见底",
+        "trimZone": "反弹至前高继续减",
+        "invalidation": "AI需求证伪/国产替代停滞",
+        "reason": "周期已过，激进档3→2%（不接飞刀）"
+      },
+      "ret": {
+        "low": 0.05,
+        "high": 0.1
+      },
+      "cyc": 70,
+      "val": 68,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "159995",
+      "decision": {
+        "w": {
+          "c": 0,
+          "y": 2,
+          "a": 0
+        },
+        "action": "回避",
+        "buyZone": "与半导体合并计算，仅保留一只",
+        "trimZone": "—",
+        "invalidation": "—",
+        "reason": "与半导体二选一，基准档3→2%控重叠"
+      },
+      "ret": {
+        "low": 0.05,
+        "high": 0.1
+      },
+      "cyc": 70,
+      "val": 68,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "512400",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 4,
+          "a": 4
+        },
+        "action": "持有",
+        "buyZone": "分位<25%加",
+        "trimZone": "分位>70%减",
+        "invalidation": "新能源需求大幅走弱",
+        "reason": "周期品小仓位，低估但波动大"
+      },
+      "ret": {
+        "low": 0.04,
+        "high": 0.08
+      },
+      "cyc": 38,
+      "val": 38,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "512800",
+      "decision": {
+        "w": {
+          "c": 4,
+          "y": 6,
+          "a": 5
+        },
+        "action": "分批",
+        "buyZone": "PB<0.7继续加",
+        "trimZone": "PB>1.0减",
+        "invalidation": "坏账风险暴露",
+        "reason": "高股息类债防御"
+      },
+      "ret": {
+        "low": 0.04,
+        "high": 0.07
+      },
+      "cyc": 32,
+      "val": 30,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "518880",
+      "decision": {
+        "w": {
+          "c": 12,
+          "y": 3,
+          "a": 6
+        },
+        "action": "持有",
+        "buyZone": "回踩3800-3900企稳后分批接回（保守档12%）",
+        "trimZone": "跌破$3700或实际利率继续走高",
+        "invalidation": "央行购金趋势逆转",
+        "reason": "高位回调加速，保守/基准各减1%（13→12/4→3）"
+      },
+      "ret": {
+        "low": 0.03,
+        "high": 0.07
+      },
+      "cyc": 62,
+      "val": 65,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "159985",
+      "decision": {
+        "w": {
+          "c": 4,
+          "y": 2,
+          "a": 2
+        },
+        "action": "分批",
+        "buyZone": "周期底部区域分批",
+        "trimZone": "反弹30%以上减",
+        "invalidation": "极端天气大幅减产（利多反转）",
+        "reason": "农产品周期底部，低相关配置"
+      },
+      "ret": {
+        "low": 0,
+        "high": 0.05
+      },
+      "cyc": 24,
+      "val": 24,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "162411",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 1,
+          "a": 2
+        },
+        "action": "持有",
+        "buyZone": "油价回调至区间下沿",
+        "trimZone": "油价冲高至前高",
+        "invalidation": "OPEC大幅增产/需求衰退",
+        "reason": "费率1.2%偏高+限购，小仓位战术"
+      },
+      "ret": {
+        "low": 0,
+        "high": 0.06
+      },
+      "cyc": 53,
+      "val": 53,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "SPMO",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 4,
+          "a": 4
+        },
+        "action": "持有",
+        "buyZone": "动量回落+估值分位<50",
+        "trimZone": "动量趋势破位",
+        "invalidation": "动量因子长期失效",
+        "reason": "追强趋势，等回调"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.1
+      },
+      "cyc": 66,
+      "val": 69,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "MTUM",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 3,
+          "a": 3
+        },
+        "action": "持有",
+        "buyZone": "动量回落+估值分位<50",
+        "trimZone": "动量趋势破位",
+        "invalidation": "动量因子长期失效",
+        "reason": "与SPMO二选一亦可，小仓位"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.1
+      },
+      "cyc": 66,
+      "val": 69,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "VOO",
+      "decision": {
+        "w": {
+          "c": 22,
+          "y": 19,
+          "a": 18
+        },
+        "action": "持有",
+        "buyZone": "标普回调10%+或CAPE<30",
+        "trimZone": "CAPE>45或美债10年>5.5%",
+        "invalidation": "美股盈利衰退确认",
+        "reason": "核心底仓；美债飙升压制，cyc70→68，反弹是减仓机会非追高"
+      },
+      "ret": {
+        "low": 0.07,
+        "high": 0.1
+      },
+      "cyc": 60,
+      "val": 70,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "VTI",
+      "decision": {
+        "w": {
+          "c": 17,
+          "y": 17,
+          "a": 16
+        },
+        "action": "持有",
+        "buyZone": "全市场回调10%+",
+        "trimZone": "CAPE极端+利率飙升",
+        "invalidation": "美股衰退",
+        "reason": "全市场分散核心，cyc70→68"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "cyc": 60,
+      "val": 68,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "QQQM",
+      "decision": {
+        "w": {
+          "c": 6,
+          "y": 7,
+          "a": 9
+        },
+        "action": "持有",
+        "buyZone": "纳指回调15%+或PE分位<50",
+        "trimZone": "AI资本开支见顶信号",
+        "invalidation": "AI叙事证伪",
+        "reason": "科技龙头集中，独强难持续不追，cyc70→68"
+      },
+      "ret": {
+        "low": 0.08,
+        "high": 0.13
+      },
+      "cyc": 59,
+      "val": 69,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "SCHD",
+      "decision": {
+        "w": {
+          "c": 16,
+          "y": 10,
+          "a": 8
+        },
+        "action": "分批",
+        "buyZone": "股息率>3.5%加",
+        "trimZone": "股息率<2.8%减",
+        "invalidation": "股息削减潮",
+        "reason": "红利替代债，加息周期防御核心"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "cyc": 55,
+      "val": 55,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "SCHG",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 6,
+          "a": 8
+        },
+        "action": "持有",
+        "buyZone": "成长回调+估值分位<50",
+        "trimZone": "PE>40",
+        "invalidation": "成长风格长期跑输",
+        "reason": "与QQQM重叠，合并计算"
+      },
+      "ret": {
+        "low": 0.08,
+        "high": 0.13
+      },
+      "cyc": 59,
+      "val": 69,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "DIA",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 3,
+          "a": 2
+        },
+        "action": "持有",
+        "buyZone": "道指回调10%+",
+        "trimZone": "PE>25",
+        "invalidation": "蓝筹盈利衰退",
+        "reason": "蓝筹防御，小仓位"
+      },
+      "ret": {
+        "low": 0.05,
+        "high": 0.08
+      },
+      "cyc": 63,
+      "val": 66,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "RSP",
+      "decision": {
+        "w": {
+          "c": 6,
+          "y": 6,
+          "a": 5
+        },
+        "action": "持有",
+        "buyZone": "等权回调+价值跑赢信号",
+        "trimZone": "成长持续跑赢时减",
+        "invalidation": "巨头权重长期主导",
+        "reason": "等权分散价值轮动"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "cyc": 65,
+      "val": 68,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "VTWO",
+      "decision": {
+        "w": {
+          "c": 4,
+          "y": 4,
+          "a": 4
+        },
+        "action": "持有",
+        "buyZone": "利率见顶+小盘周期启动",
+        "trimZone": "高利率持续+小盘盈利下修",
+        "invalidation": "衰退+信用收缩",
+        "reason": "小盘弹性，利率敏感"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.1
+      },
+      "cyc": 60,
+      "val": 62,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "SOXX",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 3,
+          "a": 3
+        },
+        "action": "回避",
+        "buyZone": "PE分位<40%且库存见底",
+        "trimZone": "反弹减仓",
+        "invalidation": "AI资本开支见顶",
+        "reason": "周期高位，等回落"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.12
+      },
+      "cyc": 75,
+      "val": 73,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "SMH",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 3,
+          "a": 3
+        },
+        "action": "回避",
+        "buyZone": "与SOXX合并计算，二选一",
+        "trimZone": "—",
+        "invalidation": "AI资本开支见顶",
+        "reason": "与SOXX二选一"
+      },
+      "ret": {
+        "low": 0.06,
+        "high": 0.12
+      },
+      "cyc": 75,
+      "val": 73,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "XLK",
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 3,
+          "a": 3
+        },
+        "action": "持有",
+        "buyZone": "科技回调15%+",
+        "trimZone": "PE分位>85%减",
+        "invalidation": "AI叙事证伪",
+        "reason": "与VGT合并计算，勿重复加码"
+      },
+      "ret": {
+        "low": 0.07,
+        "high": 0.12
+      },
+      "cyc": 66,
+      "val": 74,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "VGT",
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 4,
+          "a": 5
+        },
+        "action": "持有",
+        "buyZone": "科技回调15%+",
+        "trimZone": "PE分位>85%减",
+        "invalidation": "AI叙事证伪",
+        "reason": "与VGT合并计算，勿重复加码"
+      },
+      "ret": {
+        "low": 0.07,
+        "high": 0.12
+      },
+      "cyc": 66,
+      "val": 74,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "XLV",
+      "decision": {
+        "w": {
+          "c": 7,
+          "y": 5,
+          "a": 5
+        },
+        "action": "分批",
+        "buyZone": "回调+前向PE<18",
+        "trimZone": "前向PE>25",
+        "invalidation": "医改政策冲击",
+        "reason": "防御医药，加息周期增强"
+      },
+      "ret": {
+        "low": 0.05,
+        "high": 0.08
+      },
+      "cyc": 55,
+      "val": 60,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "TQQQ",
+      "decision": {
+        "w": {
+          "c": 1,
+          "y": 2,
+          "a": 2
+        },
+        "action": "回避",
+        "buyZone": "仅牛市右侧趋势确认+严格止损",
+        "trimZone": "趋势破位立即止损",
+        "invalidation": "波动损耗+单边下跌",
+        "reason": "战术仓位，波动损耗巨大"
+      },
+      "ret": {
+        "low": 0,
+        "high": 0.3
+      },
+      "cyc": 66,
+      "val": 74,
+      "signalAsOf": "2026-10-30"
+    },
+    {
+      "code": "SOXL",
+      "decision": {
+        "w": {
+          "c": 1,
+          "y": 1,
+          "a": 2
+        },
+        "action": "回避",
+        "buyZone": "仅周期底部右侧+严格止损",
+        "trimZone": "趋势破位立即止损",
+        "invalidation": "周期高位+波动损耗",
+        "reason": "最极端波动，严格止损"
+      },
+      "ret": {
+        "low": 0,
+        "high": 0.3
+      },
+      "cyc": 75,
+      "val": 73,
+      "signalAsOf": "2026-10-30"
+    }
+  ]
+}

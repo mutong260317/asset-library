@@ -40,6 +40,8 @@
     // 4) 字段与范围校验
     L.forEach(function (x) {
       if (!x.c || !x.n) errors.push("代码/名称缺失");
+      if (x.m === "A" && !/^\d{6}$/.test(x.c)) errors.push(x.c + " A股产品代码必须为6位数字");
+      if (x.m === "US" && !/^[A-Z][A-Z0-9.-]*$/.test(x.c)) errors.push(x.c + " 必须是单一可报价证券代码，不能用组合描述替代");
       if (!x.cat) warnings.push(x.c + " cat 缺失");
       if (!x.u) warnings.push(x.c + " u(跟踪底层) 缺失");
       if (!x.structure) warnings.push(x.c + " structure 缺失");
@@ -51,6 +53,19 @@
       if (!x.signal) { errors.push(x.c + " signal 缺失"); return; }
       var s = x.signal;
       if (!s.asOf) errors.push(x.c + " signal.asOf 缺失（数据必须标注日期）");
+      if (s.priceStatus) {
+        if (s.priceStatus === "checked") {
+          var priceDay = new Date(s.priceAsOf);
+          var priceSymbol = x.c + "." + (x.m === "US" ? "US" : x.c.charAt(0) === "5" ? "SH" : "SZ");
+          if (!isNum(s.price) || s.price <= 0 || !s.priceSource || s.priceSymbol !== priceSymbol ||
+              !/^\d{4}-\d{2}-\d{2}$/.test(s.priceAsOf || "") || isNaN(priceDay.getTime()) ||
+              priceDay.toISOString().slice(0, 10) !== s.priceAsOf || priceDay.getTime() > Date.now() ||
+              s.priceBasis !== "unadjusted") errors.push(x.c + " 产品收盘价/来源/日期/口径非法");
+        } else if (s.priceStatus !== "unavailable" || s.price !== null || s.priceAsOf !== null) {
+          errors.push(x.c + " 未核验价格必须为 null");
+        }
+      }
+      if (s.premium && s.premium.value !== null && (!isNum(s.premium.value) || s.premium.value <= -1)) errors.push(x.c + " 溢价非法");
       if (!isNum(s.cyc) || s.cyc < 0 || s.cyc > 100) errors.push(x.c + " cyc 非法: " + s.cyc);
       if (!isNum(s.val) || s.val < 0 || s.val > 100) errors.push(x.c + " val 非法: " + s.val);
       if (!s.cycleType) warnings.push(x.c + " cycleType 缺失");
@@ -123,3 +138,11 @@
 
   return { validateAssets: validateAssets, assetsReport: assetsReport };
 });
+
+if (typeof require !== "undefined" && require.main === module) {
+  try {
+    var input = require("./data.js");
+    console.log(module.exports.assetsReport(input));
+    process.exitCode = module.exports.validateAssets(input).ok ? 0 : 1;
+  } catch (error) { console.error(error.message); process.exitCode = 1; }
+}

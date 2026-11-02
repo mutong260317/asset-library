@@ -1,0 +1,204 @@
+{
+  "researchAsOf": "2026-10-25",
+  "marketObservedAt": null,
+  "total": 41,
+  "missingPrice": [
+    "511520",
+    "511090",
+    "511010",
+    "511380",
+    "563360",
+    "563300",
+    "513770",
+    "513520",
+    "513100",
+    "513500",
+    "513850",
+    "513290",
+    "512480",
+    "159995",
+    "512400",
+    "512800",
+    "159985",
+    "162411",
+    "SPMO",
+    "MTUM",
+    "VTI",
+    "QQQM",
+    "SCHD",
+    "SCHG",
+    "RSP",
+    "SOXX",
+    "SMH",
+    "XLK",
+    "VGT",
+    "XLV",
+    "TQQQ",
+    "SOXL"
+  ],
+  "priceWithoutProvenance": [
+    {
+      "code": "510300",
+      "value": 4170.61,
+      "underlying": "沪深300，PE约13.6倍"
+    },
+    {
+      "code": "588000",
+      "value": 1358.65,
+      "underlying": "科创板50（半导体权重高）"
+    },
+    {
+      "code": "159915",
+      "value": 2772.38,
+      "underlying": "创业板指，PE约38倍"
+    },
+    {
+      "code": "513180",
+      "value": 4108.24,
+      "underlying": "恒生科技指数"
+    },
+    {
+      "code": "159920",
+      "value": 23972.29,
+      "underlying": "恒生指数"
+    },
+    {
+      "code": "518880",
+      "value": 4165,
+      "underlying": "黄金现货（SGE Au99.99）"
+    },
+    {
+      "code": "VOO",
+      "value": 7722.72,
+      "underlying": "标普500（低费版）"
+    },
+    {
+      "code": "DIA",
+      "value": 51176.96,
+      "underlying": "道琼斯30"
+    },
+    {
+      "code": "VTWO",
+      "value": 2832,
+      "underlying": "Russell 2000（IWM低费版）"
+    }
+  ],
+  "unknownPremium": [],
+  "zeroPremiumWithoutEvidence": [
+    "511520",
+    "511090",
+    "511010",
+    "511380",
+    "510300",
+    "563360",
+    "563300",
+    "588000",
+    "159915",
+    "159920",
+    "512480",
+    "159995",
+    "512400",
+    "512800",
+    "518880",
+    "159985",
+    "162411",
+    "SPMO",
+    "MTUM",
+    "VOO",
+    "VTI",
+    "QQQM",
+    "SCHD",
+    "SCHG",
+    "DIA",
+    "RSP",
+    "VTWO",
+    "SOXX",
+    "SMH",
+    "XLK",
+    "VGT",
+    "XLV",
+    "TQQQ",
+    "SOXL"
+  ],
+  "avoidWithPositiveWeight": [
+    {
+      "code": "588000",
+      "weights": {
+        "c": 2,
+        "y": 2,
+        "a": 4
+      },
+      "action": "回避",
+      "existingReason": "高波动成长，PE仍99.5倍不接飞刀",
+      "resolution": "Unresolved: target allocation and present trading action need author confirmation; do not infer holdings."
+    },
+    {
+      "code": "512480",
+      "weights": {
+        "c": 2,
+        "y": 5,
+        "a": 2
+      },
+      "action": "回避",
+      "existingReason": "周期已过，激进档3→2%（不接飞刀）",
+      "resolution": "Unresolved: target allocation and present trading action need author confirmation; do not infer holdings."
+    },
+    {
+      "code": "159995",
+      "weights": {
+        "c": 0,
+        "y": 2,
+        "a": 0
+      },
+      "action": "回避",
+      "existingReason": "与半导体二选一，基准档3→2%控重叠",
+      "resolution": "Unresolved: target allocation and present trading action need author confirmation; do not infer holdings."
+    },
+    {
+      "code": "SOXX",
+      "weights": {
+        "c": 3,
+        "y": 3,
+        "a": 3
+      },
+      "action": "回避",
+      "existingReason": "周期高位，等回落",
+      "resolution": "Unresolved: target allocation and present trading action need author confirmation; do not infer holdings."
+    },
+    {
+      "code": "SMH",
+      "weights": {
+        "c": 2,
+        "y": 3,
+        "a": 3
+      },
+      "action": "回避",
+      "existingReason": "与SOXX二选一",
+      "resolution": "Unresolved: target allocation and present trading action need author confirmation; do not infer holdings."
+    },
+    {
+      "code": "TQQQ",
+      "weights": {
+        "c": 1,
+        "y": 2,
+        "a": 2
+      },
+      "action": "回避",
+      "existingReason": "战术仓位，波动损耗巨大",
+      "resolution": "Unresolved: target allocation and present trading action need author confirmation; do not infer holdings."
+    },
+    {
+      "code": "SOXL",
+      "weights": {
+        "c": 1,
+        "y": 1,
+        "a": 2
+      },
+      "action": "回避",
+      "existingReason": "最极端波动，严格止损",
+      "resolution": "Unresolved: target allocation and present trading action need author confirmation; do not infer holdings."
+    }
+  ],
+  "methodology": "Cycle/valuation scores are research estimates. Existing per-asset drawdowns lack reproducible raw series. No investment decision or holding was changed.",
+  "sourceBaseline": "3c3dd4ac8f4f2b5787d685cd063a2e3c0e1b300d"
+}

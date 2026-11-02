@@ -1,18 +1,17 @@
-/* ============================================================
- * 宽基指数回撤分析数据（自动生成，请勿手改）
- * 生成脚本：scripts/fetch_drawdown.py
- * 刷新频率：每天 06:30（美股收盘后）、15:30（A股收盘后）
- * ============================================================ */
+/* Generated snapshot; state/outbox are embedded as authority. */
 window.DRAWDOWN = {
   "meta": {
     "asOf": "2026-10-30 22:50",
     "generatedBy": "scripts/fetch_drawdown.py",
-    "refreshCadence": "每天",
+    "refreshCadence": "实际定时任务未核验；不承诺自动刷新",
     "sources": {
-      "US": "主 Yahoo Finance chart API（5y日线），备 AkShare新浪 stock_us_daily（历史完整），再用腾讯美股接口补最新交易日",
-      "A": "主 腾讯证券 fqkline（约8年日线），备 AkShare新浪 stock_zh_index_daily（历史完整），再用新浪实时 hq.sinajs.cn 补当日收盘"
+      "US": "AkShare(新浪)",
+      "A": "腾讯证券"
     },
-    "note": "ATH 统一为最近约8年（2000交易日）且在指数实际发布/可投资起点之后的盘中最高（A股老指数从2018起、新指数从发布起，不回溯到2007/2015等历史泡沫，保证不同数据源口径一致）；回撤档位从ATH起算；平台为近1年日线密集成交区、取中位数；levels/platforms的dist为目标价相对当前价的涨跌幅（负=需下跌到达，正=需上涨到达）；ma200.dist为当前价相对均线的偏离；新跌破-10/-20/-30/-40/-50%档时自动飞书提醒。"
+    "note": "旧快照保留原价格/日期/档位，仅改正窗口高点和历史最高价的区别；尚未完成新日线核验。",
+    "schemaVersion": 2,
+    "migratedAt": "2026-10-30T15:49:18.131974+00:00",
+    "generationId": "439692daf42afad44e597a53"
   },
   "indices": [
     {
@@ -23,10 +22,6 @@ window.DRAWDOWN = {
       "source": "AkShare(新浪)",
       "asOf": "2026-10-29",
       "price": 715.34,
-      "ath": {
-        "value": 762.86,
-        "date": "2026-10-06"
-      },
       "drawdown": -0.0623,
       "ma200": {
         "value": 677.91,
@@ -86,8 +81,28 @@ window.DRAWDOWN = {
           "dist": -0.1444
         }
       ],
-      "zone": "高位区",
-      "zoneDesc": "无回撤，不追高"
+      "zone": "回撤不足10%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 762.86,
+        "date": "2026-10-06",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-29",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "SPY",
@@ -97,10 +112,6 @@ window.DRAWDOWN = {
       "source": "AkShare(新浪)",
       "asOf": "2026-10-29",
       "price": 769.36,
-      "ath": {
-        "value": 781.62,
-        "date": "2026-10-06"
-      },
       "drawdown": -0.0157,
       "ma200": {
         "value": 725.5,
@@ -170,8 +181,28 @@ window.DRAWDOWN = {
           "dist": -0.0386
         }
       ],
-      "zone": "高位区",
-      "zoneDesc": "无回撤，不追高"
+      "zone": "回撤不足10%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 781.62,
+        "date": "2026-10-06",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-29",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "DIA",
@@ -181,10 +212,6 @@ window.DRAWDOWN = {
       "source": "AkShare(新浪)",
       "asOf": "2026-10-29",
       "price": 522.73,
-      "ath": {
-        "value": 545.01,
-        "date": "2026-08-05"
-      },
       "drawdown": -0.0409,
       "ma200": {
         "value": 503.04,
@@ -254,8 +281,28 @@ window.DRAWDOWN = {
           "dist": -0.09
         }
       ],
-      "zone": "高位区",
-      "zoneDesc": "无回撤，不追高"
+      "zone": "回撤不足10%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 545.01,
+        "date": "2026-08-05",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-29",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "IWM",
@@ -265,10 +312,6 @@ window.DRAWDOWN = {
       "source": "AkShare(新浪)",
       "asOf": "2026-10-29",
       "price": 284.01,
-      "ath": {
-        "value": 304.43,
-        "date": "2026-08-14"
-      },
       "drawdown": -0.0671,
       "ma200": {
         "value": 277.56,
@@ -348,8 +391,28 @@ window.DRAWDOWN = {
           "dist": -0.079
         }
       ],
-      "zone": "高位区",
-      "zoneDesc": "无回撤，不追高"
+      "zone": "回撤不足10%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 304.43,
+        "date": "2026-08-14",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-29",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "SH000001",
@@ -359,10 +422,6 @@ window.DRAWDOWN = {
       "source": "腾讯证券",
       "asOf": "2026-10-30",
       "price": 3599.02,
-      "ath": {
-        "value": 4258.86,
-        "date": "2026-05-14"
-      },
       "drawdown": -0.1549,
       "ma200": {
         "value": 3993.61,
@@ -432,8 +491,28 @@ window.DRAWDOWN = {
           "dist": 0.1196
         }
       ],
-      "zone": "浅回调",
-      "zoneDesc": "关注，等更深回调"
+      "zone": "回撤10–20%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 4258.86,
+        "date": "2026-05-14",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-30",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "SH000300",
@@ -443,10 +522,6 @@ window.DRAWDOWN = {
       "source": "腾讯证券",
       "asOf": "2026-10-30",
       "price": 3985.5,
-      "ath": {
-        "value": 5930.91,
-        "date": "2021-02-18"
-      },
       "drawdown": -0.328,
       "ma200": {
         "value": 4653.67,
@@ -496,8 +571,28 @@ window.DRAWDOWN = {
           "dist": 0.1707
         }
       ],
-      "zone": "深度机会",
-      "zoneDesc": "回撤30-40%，重点加仓"
+      "zone": "回撤30–40%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 5930.91,
+        "date": "2021-02-18",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-30",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "SH000510",
@@ -507,10 +602,6 @@ window.DRAWDOWN = {
       "source": "腾讯证券",
       "asOf": "2026-10-30",
       "price": 4793.31,
-      "ath": {
-        "value": 6375.33,
-        "date": "2026-06-22"
-      },
       "drawdown": -0.2481,
       "ma200": {
         "value": 5789.55,
@@ -580,8 +671,28 @@ window.DRAWDOWN = {
           "dist": 0.2743
         }
       ],
-      "zone": "加仓区",
-      "zoneDesc": "回撤20-30%，分批加仓窗口"
+      "zone": "回撤20–30%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 6375.33,
+        "date": "2026-06-22",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-30",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "SZ399006",
@@ -591,10 +702,6 @@ window.DRAWDOWN = {
       "source": "腾讯证券",
       "asOf": "2026-10-30",
       "price": 2413.63,
-      "ath": {
-        "value": 4380.41,
-        "date": "2026-06-25"
-      },
       "drawdown": -0.449,
       "ma200": {
         "value": 3485.25,
@@ -674,8 +781,28 @@ window.DRAWDOWN = {
           "dist": 0.6726
         }
       ],
-      "zone": "极端区",
-      "zoneDesc": "回撤40-50%，熊市机会"
+      "zone": "回撤40–50%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 4380.41,
+        "date": "2026-06-25",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-30",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     },
     {
       "code": "SH000688",
@@ -685,10 +812,6 @@ window.DRAWDOWN = {
       "source": "腾讯证券",
       "asOf": "2026-10-30",
       "price": 1160.84,
-      "ath": {
-        "value": 2255.25,
-        "date": "2026-07-01"
-      },
       "drawdown": -0.4853,
       "ma200": {
         "value": 1586.95,
@@ -768,8 +891,70 @@ window.DRAWDOWN = {
           "dist": 0.3374
         }
       ],
-      "zone": "极端区",
-      "zoneDesc": "回撤40-50%，熊市机会"
+      "zone": "回撤40–50%",
+      "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断",
+      "peak": {
+        "value": 2255.25,
+        "date": "2026-07-01",
+        "kind": "legacy_window_unverified",
+        "windowLimit": 2000,
+        "sampleSessions": null,
+        "windowStart": null,
+        "windowEnd": "2026-10-30",
+        "fullWindow": false,
+        "field": "intradayHigh"
+      },
+      "historicalATH": {
+        "value": null,
+        "reason": "旧快照缺少完整历史序列，无法核验真实ATH"
+      },
+      "priceBasis": null,
+      "quality": {
+        "status": "legacy_unverified",
+        "reason": "本轮仅修正口径标签，未重新拉取合格的完整日线"
+      }
     }
-  ]
+  ],
+  "pipeline": {
+    "state": {
+      "QQQ": {
+        "maxHit": 0.0,
+        "asOf": "2026-10-29"
+      },
+      "SPY": {
+        "maxHit": 0.0,
+        "asOf": "2026-10-29"
+      },
+      "DIA": {
+        "maxHit": 0.0,
+        "asOf": "2026-10-29"
+      },
+      "IWM": {
+        "maxHit": 0.0,
+        "asOf": "2026-10-29"
+      },
+      "SH000001": {
+        "maxHit": 0.1,
+        "asOf": "2026-10-30"
+      },
+      "SH000300": {
+        "maxHit": 0.3,
+        "asOf": "2026-10-30"
+      },
+      "SH000510": {
+        "maxHit": 0.2,
+        "asOf": "2026-10-30"
+      },
+      "SZ399006": {
+        "maxHit": 0.4,
+        "asOf": "2026-10-30"
+      },
+      "SH000688": {
+        "maxHit": 0.4,
+        "asOf": "2026-10-30"
+      }
+    },
+    "pendingAlerts": [],
+    "acknowledgedIds": []
+  }
 };

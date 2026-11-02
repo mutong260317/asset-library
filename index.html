@@ -65,6 +65,12 @@
   .chart-note{font-size:10.5px;color:#93A0B8;margin-top:6px}
   .chart-tip{position:absolute;display:none;background:rgba(22,35,59,.92);color:#fff;font-size:11.5px;padding:5px 10px;border-radius:7px;pointer-events:none;z-index:5;white-space:nowrap}
   .poswrap{position:relative}
+  .chartwrap > .poswrap{flex:1;min-width:0}
+  .chartwrap #chart{display:block;width:100%}
+  #chartMarkets button.tab{border:0;background:transparent;font-family:inherit}
+  #chartMarkets button.tab.on{background:#fff}
+  #chartMarkets button.tab:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  @media(max-width:720px){.chartwrap{flex-direction:column}#chartlist{width:100%;max-height:220px}}
   .sum-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
   .sum-card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--gray-soft)}
   .sum-card .k{font-size:11.5px;font-weight:800;color:var(--blue);margin-bottom:5px;display:flex;align-items:center;gap:6px}
@@ -302,6 +308,7 @@
     <span class="st-meta" id="stMeta"></span>
     <div class="st-err" id="stErr" style="display:none"></div>
   </div>
+  <div id="releaseNotice" role="status" style="padding:10px 14px;margin:0 0 16px;border:1px solid #E8C879;border-radius:10px;background:#FFF8E8;color:#725519;font-size:12px">历史快照模式：研究和产品价格日期见页首。宽基回撤待重新核验，数值分析和提醒暂不可用。</div>
 
   <div class="view active" id="view-overview">
   <div class="stats" id="stats"></div>
@@ -319,6 +326,11 @@
       <h2><span class="ic">◉</span>资产周期温度计</h2>
       <span class="hint">x=周期位置（0底部→100顶部）· y=估值分位 · 点击查看档案</span>
     </div>
+    <div class="tabs" id="chartMarkets" role="group" aria-label="分布图市场筛选" style="margin-bottom:12px">
+      <button type="button" class="tab on" data-m="A" aria-pressed="true">A 股 · 24</button>
+      <button type="button" class="tab" data-m="US" aria-pressed="false">美股 · 17</button>
+    </div>
+    <div class="hint" id="chartMarketNote" aria-live="polite"></div>
     <div class="legend">
       <span class="lg"><span class="sw" style="background:#1E9E62"></span>可布局（底部+低估）</span>
       <span class="lg"><span class="sw" style="background:#5B8DD6"></span>中性</span>
@@ -334,7 +346,7 @@
     <div class="chart-note">点位为 AI 结合宏观+康波推演的估算（每只标注 cycleType/cycleMethod/confidence，点击详情可见"这个分数怎么来的"）。鼠标悬停查看，右侧清单点击看档案。</div>
     <div class="cov">
       <div class="cov-row">
-        <span class="cv-t">估值数据核验</span>
+        <span class="cv-t">研究评分覆盖</span>
         <div class="cov-bar"><i id="covFill" style="width:0%"></i></div>
         <span class="cv-n" id="covNum">0/41</span>
       </div>
@@ -366,7 +378,7 @@
   <div class="sec">
     <div class="sec-h">
       <h2><span class="ic">▼</span>宽基回撤分析 · 高点锚定关键价位</h2>
-      <span class="hint" id="ddMeta">从历史高点起算 · 每天15:40刷新 · 数据来源 Yahoo/腾讯</span>
+      <span class="hint" id="ddMeta">按各标的实际交易日期与来源展示</span>
     </div>
     <div class="dd-tabs" id="ddTabs">
       <span class="tab on" data-m="">全部</span>
@@ -537,14 +549,15 @@
   </div>
 
   <div class="ft">
-    数据源：豆包金融搜索（同花顺）· 中证指数官网 · 理杏仁 · AkShare · FRED ｜ 单一数据源 data.js，经 validate.js 机器自检后发布<br>
-    估值/回撤/预期年化为估算值，随周报核验修正 ｜ 本系统为个人研究参考，不构成投资建议 ｜ 每周日 20:00 自动更新周报并推送飞书
+    研究依据见各资产来源和日期；每日市场数据见各标的实际来源。结构校验通过不代表行情、研究判断已独立核验。<br>
+    估值/回撤/预期年化为估算值，随周报核验修正 ｜ 本系统为个人研究参考，不构成投资建议 ｜ 研究更新与市场更新分别记录；任务是否运行以实际执行记录为准
   </div>
 </div>
 
 <script src="./data.js"></script>
 <script src="./validate.js"></script>
 <script src="./drawdown.js"></script>
+<script src="./release-policy.js"></script>
 <script>
 /* ============ 启动与数据安全层 ============ */
 (function () {
@@ -563,7 +576,7 @@
     var stErr = document.getElementById("stErr");
     if (report.ok) {
       badge.className = "st-ok";
-      badge.innerHTML = "✓ 数据校验通过";
+      badge.innerHTML = "✓ 结构校验通过";
       stErr.style.display = "none";
     } else {
       badge.className = "st-bad";
@@ -609,11 +622,11 @@
     if (!x || !x.signal) return "—";
     var p = x.signal.premium;
     var lim = x.signal.purchaseLimit || "";
-    if (p && typeof p.value === "number" && p.value !== 0) {
+    if (p && typeof p.value === "number" && isFinite(p.value)) {
       return (p.value > 0 ? "+" : "") + (p.value * 100).toFixed(1) + "%" + (lim ? " · " + lim : "");
     }
     if (lim) return lim;
-    return "≈0";
+    return "未知";
   }
   function ddLabel(x) {
     if (!x || !x.signal || !x.signal.drawdown) return null;
@@ -635,7 +648,8 @@
   }
 
   /* ---- 顶部数据状态 ---- */
-  document.getElementById("updBadge").textContent = "更新：" + (A.meta.updated || "?");
+  var marketDates = L.map(function(x){return x.signal && x.signal.priceAsOf;}).filter(Boolean).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
+  document.getElementById("updBadge").textContent = "研究 " + (A.meta.updated || "?") + " · 产品收盘 " + (marketDates.join(" / ") || "未核验");
   document.getElementById("snapD").textContent = (A.snap ? A.snap.d + " · " + A.snap.t : "—");
 
   /* ---- 统计卡 ---- */
@@ -647,10 +661,10 @@
     document.getElementById("stats").innerHTML =
       '<div class="stat"><div class="n">' + L.length + '</div><div class="l">已建档资产</div><div class="s">' + Object.keys(catN).length + ' 个分类</div></div>' +
       '<div class="stat"><div class="n">' + aN + ' <small>/</small> ' + uN + '</div><div class="l">A股 / 美股</div><div class="s">分开各按 100% 配置（机器校验）</div></div>' +
-      '<div class="stat"><div class="n">' + L.length + ' / ' + L.length + '</div><div class="l">周期定位完成</div><div class="s">数据全覆盖</div></div>' +
-      '<div class="stat"><div class="n">' + L.length + ' / ' + L.length + '</div><div class="l">估值数据核验</div><div class="s">全部携带 asOf 数据日期</div></div>' +
+      '<div class="stat"><div class="n">' + L.length + ' / ' + L.length + '</div><div class="l">周期评分已填</div><div class="s">含研究判断，非客观测量</div></div>' +
+      '<div class="stat"><div class="n">' + L.length + ' / ' + L.length + '</div><div class="l">估值评分已填</div><div class="s">填写日期不代表独立核验</div></div>' +
       '<div class="stat"><div class="n">' + rk5 + '</div><div class="l">中高风险资产</div><div class="s">风险≥4/5，注意仓位</div></div>' +
-      '<div class="stat"><div class="n">每周日 20:00</div><div class="l">估值周报推送</div><div class="s">飞书 + GitHub 同步</div></div>';
+      '<div class="stat"><div class="n">研究 / 市场</div><div class="l">更新日期分别记录</div><div class="s">实际任务状态需独立核验</div></div>';
   }
   try { renderStats(); } catch (e) { console.error("stats", e); }
 
@@ -970,11 +984,12 @@
       '<div class="dt-item"><div class="k">跟踪底层</div><div class="v small">' + x.u + '</div></div>' +
       '<div class="dt-item"><div class="k">产品结构</div><div class="v small">' + (x.structure || "—") + '</div></div>' +
       '<div class="dt-item"><div class="k">风险等级</div><div class="v ' + (x.rk >= 4 ? "danger" : (x.rk === 3 ? "warn" : "ok")) + '">' + x.rk + ' / 5</div></div>' +
-      '<div class="dt-item"><div class="k">预期年化（估算）</div><div class="v">' + fmtRet(x) + '</div></div>' +
+      '<div class="dt-item"><div class="k">年化情景假设（未回测）</div><div class="v">' + fmtRet(x) + '</div></div>' +
       '<div class="dt-item"><div class="k">周期位置</div><div class="v ' + vdClass + '">' + cycTxt + '</div></div>' +
       '<div class="dt-item"><div class="k">估值分位</div><div class="v ' + vdClass + '">' + valTxt + '</div></div>' +
       '</div>' +
-      '<div class="dt-sec"><h4>回撤（三类拆分）</h4>' + ddHtml + '</div>' +
+      '<div class="dt-sec"><h4>产品正式收盘价</h4><p>' + (s.priceStatus === "checked" ? Number(s.price).toLocaleString('en-US', {minimumFractionDigits:x.m === 'A' ? 3 : 2, maximumFractionDigits:4}) + ' · ' + s.priceSymbol + ' · ' + s.priceAsOf + ' · ' + s.priceSource + ' · 未复权' : '未知/未核验') + '</p></div>' +
+      '<div class="dt-sec"><h4>研究回撤记录（尚未用原始序列复算）</h4>' + ddHtml + '</div>' +
       (wv ? '<div class="dt-sec"><h4>三档配置权重（' + (x.m === "A" ? "A股" : "美股") + ' 100%）</h4><div class="dt-grid">' +
       '<div class="dt-item"><div class="k">保守</div><div class="v">' + wv.c + '%</div></div>' +
       '<div class="dt-item"><div class="k">基准</div><div class="v">' + wv.y + '%</div></div>' +
@@ -983,6 +998,8 @@
       (dec.buyZone || dec.trimZone || dec.invalidation ? '<div class="dt-sec"><h4>可执行决策</h4><p><b>当前动作：</b>' + (dec.action || "—") + '<br><b>买入/加仓条件：</b>' + (dec.buyZone || "—") + '<br><b>减仓条件：</b>' + (dec.trimZone || "—") + '<br><b>逻辑失效条件：</b>' + (dec.invalidation || "—") + '<br><span class="meta-line">理由：' + (dec.reason || "—") + '</span></p></div>' : "") +
       '<div class="dt-sec"><h4>周期推演（估算，随周报修正）</h4>' + hz + '</div>' +
       (x.vd ? '<div class="dt-sec"><h4>当前判断</h4><p>' + x.vd + '</p></div>' : "") +
+      '<div class="dt-sec"><h4>研究与配置口径</h4><p>周期和估值评分包含研究判断；资产回撤未附原始序列时不能视为已复算。目标权重与当前动作分开记录，不代表实际持仓。</p>' +
+      (x.decision.action === "回避" && Object.keys(x.decision.w).some(function(k){return x.decision.w[k] > 0;}) ? '<p>本项存在“回避”且目标权重为正的冲突，配置意图待确认；暂不据此执行。</p>' : '') + '</div>' +
       (metaLine ? '<div class="dt-sec"><h4>数据来源与口径</h4><p><span class="meta-line">' + metaLine + '</span></p></div>' : "") +
       hist;
     d.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -1037,7 +1054,7 @@
     var pct2 = Math.round(pN / L.length * 100);
     document.getElementById("covFill").style.width = pct2 + "%";
     document.getElementById("covNum").textContent = pN + "/" + L.length;
-    document.getElementById("covSub").textContent = "已核验 " + pN + " 只（100%）· 全部携带 asOf 数据日期 · 每周日周报持续跟踪修正";
+    document.getElementById("covSub").textContent = "已填写评分 " + pN + "/" + L.length + " 只（" + pct2 + "%）· 含 AI 研究判断；不代表价格、估值与来源已逐项核验";
   } catch (e) { console.error("cov", e); }
 
   /* ---- 三档配置 + 组合指标 ---- */
@@ -1138,6 +1155,9 @@
   }
   var DD_TY = { current: ["当前", "ty-cur"], support: ["支撑", "ty-sup"], resistance: ["阻力", "ty-res"] };
   function ddCard(x) {
+    var peak = x.peak || x.ath;
+    var quality = x.quality || {};
+    var anchorLabel = peak.kind === "rolling_2000_sessions" ? (peak.fullWindow ? "滚动2000交易日高点" : "可用" + peak.sampleSessions + "交易日高点（不足2000日）") : "旧快照窗口高点（范围未核验）";
     // 价位条：刻度位置 = 回撤/0.5
     var ticks = x.levels.map(function (l) {
       var pos = Math.abs(l.d) / 0.5 * 100;
@@ -1149,8 +1169,8 @@
     var curPos = Math.min(Math.abs(x.drawdown) / 0.5 * 100, 100);
     var curEdge = curPos < 10 ? " edge-r" : (curPos > 90 ? " edge-l" : "");
     var cur = '<div class="dd-cur' + curEdge + '" style="left:' + curPos + '%"><span class="lb">现价 ' + fmtPrice(x.price) + '</span></div>';
-    var athLine = '<div class="dd-ath"><span class="lb">ATH</span></div>';
-    var ladder = '<div class="dd-ladder"><h4>从高点回撤档位 · ATH ' + fmtPrice(x.ath.value) + '（' + x.ath.date + '）</h4>' +
+    var athLine = '<div class="dd-ath"><span class="lb">窗口高点</span></div>';
+    var ladder = '<div class="dd-ladder"><h4>' + anchorLabel + ' · ' + fmtPrice(peak.value) + '（' + peak.date + '）</h4>' +
       '<div class="dd-track">' + athLine + ticks + cur + '</div></div>';
     // 关键价位表
     var rows = '<div class="dd-kv-row"><span class="ty ty-ma">200日均线</span>' +
@@ -1164,14 +1184,16 @@
         '<span class="dt">' + p.days + '天<br>' + p.first + '~' + p.last + '</span></div>';
     });
     var kv = '<div class="dd-kv"><h4>关键价位 · 200日均线 + 震荡平台中位数</h4>' + rows + '</div>';
+    var depth = Math.abs(x.drawdown);
+    var zoneText = depth < .1 ? "回撤不足10%" : depth < .2 ? "回撤10–20%" : depth < .3 ? "回撤20–30%" : depth < .4 ? "回撤30–40%" : depth < .5 ? "回撤40–50%" : "回撤50%以上";
     var top = '<div class="dd-top">' +
       '<span class="nm">' + x.name + '</span>' +
       '<span class="cd">' + x.code + '</span>' +
       '<span class="px">' + fmtPrice(x.price) + ' ' + x.ccy + '</span>' +
       '<span class="ddv">距高点 ' + (x.drawdown * 100).toFixed(2) + '%</span>' +
       '<span class="asof">截至 ' + x.asOf + '</span>' +
-      '<span class="zn ' + ddZoneCls(x.zone) + '">' + x.zone + '</span></div>';
-    return '<div class="dd-card">' + top + '<div class="dd-body">' + ladder + kv + '</div></div>';
+      '<span class="zn ' + ddZoneCls(zoneText) + '">' + zoneText + '</span></div>';
+    return '<div class="dd-card">' + top + '<div class="hint" style="padding:8px 0">来源：' + x.source + ' · 口径：' + (x.priceBasis || '旧数据未核验') + ' · ' + (quality.status === 'checked' ? '日历/完整性检查通过；历史最高价未核验' : '旧快照未重新核验') + ' · 仅描述回撤，不构成投资机会判断</div><div class="dd-body">' + ladder + kv + '</div></div>';
   }
   var ddFilter = "";
   function renderDrawdown() {
@@ -1182,8 +1204,16 @@
       return;
     }
     var meta = document.getElementById("ddMeta");
-    if (meta) meta.textContent = "生成于 " + D.meta.asOf + " · 每天15:40刷新 · 来源 Yahoo/腾讯 · ATH为盘中最高";
+    if (meta) meta.textContent = "市场数据生成于 " + D.meta.asOf + " · " + (D.meta.refreshCadence || "实际刷新计划未核验") + " · 来源与交易日期见各标的";
     var list = D.indices.filter(function (x) { return !ddFilter || x.market === ddFilter; });
+    var policy = window.RELEASE_POLICY;
+    if (!policy || policy.drawdownAnalysisEnabled !== true) {
+      if (meta) meta.textContent = '宽基长历史正在核验；当前不展示回撤档位或加仓信号，相关提醒已禁用。';
+      box.innerHTML = list.map(function(x) {
+        return '<div class="dd-card dd-quarantined"><b>' + x.name + ' · ' + x.code + '</b><p style="font-size:12px;color:var(--sub)">回撤数据待核验 · 上次记录 ' + x.asOf + '。核验完成后恢复分析。</p></div>';
+      }).join('');
+      return;
+    }
     box.innerHTML = list.map(ddCard).join("");
   }
   document.getElementById("ddTabs").addEventListener("click", function (e) {
@@ -1248,10 +1278,11 @@
       var ctx = cv.getContext("2d");
       var listEl = document.getElementById("chartlist");
       var tipEl = document.getElementById("chartTip");
+      var chartMarket = "A";
       var W = 720, H = 540, pts = [], dpr = Math.min(window.devicePixelRatio || 1, 2);
       function size() {
-        W = Math.max(cv.clientWidth || 720, 560);
-        H = 540;
+        W = Math.max(cv.clientWidth || 720, 240);
+        H = Math.max(cv.clientHeight || 540, 280);
         cv.width = W * dpr; cv.height = H * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
@@ -1259,7 +1290,9 @@
       var padL = 52, padR = 30, padT = 30, padB = 46;
       function px(x) { return padL + (x / 100) * (W - padL - padR); }
       function py(y) { return padT + (100 - y) / 100 * (H - padT - padB); }
-      L.forEach(function (x) {
+      function buildPoints() {
+      pts = [];
+      L.filter(function(x){return x.m === chartMarket;}).forEach(function (x) {
         var s = x.signal;
         if (typeof s.cyc === "number" && typeof s.val === "number") {
           pts.push({ x: s.cyc, y: s.val, name: x.n, cd: x.c, color: zoneColor(zone(x)) });
@@ -1279,6 +1312,7 @@
           });
         });
       })();
+      }
       function placed() { var a = []; pts.forEach(function (p) { if (p.lb) a.push(p.lb); }); return a; }
       function hitLabel(r, others) { for (var i = 0; i < others.length; i++) { var q = others[i]; if (r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y) return true; } return false; }
       function hitPoint(r, skipIdx) { for (var i = 0; i < pts.length; i++) { if (i === skipIdx) continue; var p = pts[i]; if (r.x < p.jx + 7 && r.x + r.w > p.jx - 7 && r.y < p.jy + 7 && r.y + r.h > p.jy - 7) return true; } return false; }
@@ -1303,6 +1337,7 @@
         return null;
       }
       function draw() {
+        buildPoints();
         ctx.fillStyle = "#F7F9FC"; ctx.fillRect(0, 0, W, H);
         ctx.fillStyle = "rgba(30,158,98,.05)"; ctx.fillRect(padL, py(50), px(50) - padL, py(100) - py(50));
         ctx.fillStyle = "rgba(217,87,76,.05)"; ctx.fillRect(px(50), py(50), W - padR - px(50), py(100) - py(50));
@@ -1326,7 +1361,7 @@
         ctx.textAlign = "center"; ctx.fillText("周期位置 % →", padL + (W - padL - padR) / 2, H - padB + 34);
         ctx.fillStyle = "#9AA6BC"; ctx.font = "11px sans-serif";
         ctx.fillText("底部 ← 0", padL, py(105)); ctx.fillText("顶部 → 100", W - padR - 130, py(105));
-        ctx.fillText("低估", padL, py(96)); ctx.fillText("高估", padL, py(7));
+        ctx.fillText("高估", padL, py(96)); ctx.fillText("低估", padL, py(7));
         pts.forEach(function (p) {
           ctx.beginPath(); ctx.arc(p.jx, p.jy, 6, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill();
           ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
@@ -1370,7 +1405,7 @@
             tipEl.style.top = Math.max(0, my - 24) + "px";
           } else { tipEl.style.display = "none"; }
           var lis = listEl.querySelectorAll(".li[data-cd]");
-          for (var j = 0; j < lis.length; j++) { lis[j].classList.toggle("hl", j === i); }
+          for (var j = 0; j < lis.length; j++) { lis[j].classList.toggle("hl", i >= 0 && lis[j].dataset.cd === pts[i].cd); }
         }
       }
       cv.addEventListener("mousemove", function (e) { var r = cv.getBoundingClientRect(); onMove(e.clientX - r.left, e.clientY - r.top); });
@@ -1386,6 +1421,7 @@
           if (d3 < 13) { openDetail(pts[k].cd); return; }
         }
       });
+      function renderChartList() {
       var html3 = '<div class="li" style="cursor:default;background:#F5F8FC;font-weight:700;color:var(--sub)"><span class="dot" style="background:transparent"></span><span class="nm">资产（点击看档案）</span></div>';
       pts.slice().sort(function (a, b) { return b.x - a.x; }).forEach(function (p) {
         html3 += '<div class="li" data-cd="' + p.cd + '"><span class="dot" style="background:' + p.color + '"></span><span class="cd">' + p.cd + '</span><span class="nm">' + p.name + "</span></div>";
@@ -1393,6 +1429,18 @@
       listEl.innerHTML = html3;
       listEl.querySelectorAll(".li[data-cd]").forEach(function (li) {
         li.addEventListener("click", function () { openDetail(li.dataset.cd); });
+      });
+      document.getElementById("chartMarketNote").textContent = (chartMarket === "A" ? "A 股上市资产" : "美股上市资产") + " · " + pts.length + " 只 · 按上市市场分类；A 股含跨境 ETF";
+      cv.setAttribute("aria-label", (chartMarket === "A" ? "A股" : "美股") + "研究评分分布，" + pts.length + "只资产");
+      listEl.dataset.market = chartMarket;
+      }
+      renderChartList();
+      document.getElementById("chartMarkets").addEventListener("click", function(event) {
+        var button = event.target.closest("button[data-m]");
+        if (!button) return;
+        chartMarket = button.dataset.m; hoverI = -1; tipEl.style.display = "none";
+        this.querySelectorAll("button").forEach(function(b) { b.classList.toggle("on", b === button); b.setAttribute("aria-pressed", String(b === button)); });
+        draw(); renderChartList();
       });
       window.addEventListener("resize", function () { size(); draw(); });
     })();

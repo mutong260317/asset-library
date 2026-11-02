@@ -1,0 +1,89 @@
+{
+  "provider": "Longbridge",
+  "observedAt": "2026-10-30T15:41:10Z",
+  "exportSHA256": "9e967b09b4ddc03db8ac4041dbccfb7577eebc5d6550f7bed9d9b4c8d2dd8b6f",
+  "symbols": [
+    {
+      "symbol": "QQQ.US",
+      "receivedBars": 2250,
+      "status": "checked",
+      "quality": {
+        "status": "checked",
+        "expectedSession": "2026-10-29",
+        "calendar": "XNYS",
+        "settlementDelayMinutes": 20,
+        "observedAt": "2026-10-30T15:41:10+00:00",
+        "rows": 2000,
+        "start": "2018-11-13",
+        "end": "2026-10-29"
+      }
+    },
+    {
+      "symbol": "SPY.US",
+      "receivedBars": 2249,
+      "status": "quarantined",
+      "reason": "inconsistent OHLC: 2020-11-18"
+    },
+    {
+      "symbol": "DIA.US",
+      "receivedBars": 2249,
+      "status": "quarantined",
+      "reason": "inconsistent OHLC: 2020-11-18"
+    },
+    {
+      "symbol": "IWM.US",
+      "receivedBars": 2249,
+      "status": "quarantined",
+      "reason": "inconsistent OHLC: 2020-11-18"
+    },
+    {
+      "symbol": "000001.SH",
+      "receivedBars": 2249,
+      "status": "checked",
+      "quality": {
+        "status": "checked",
+        "expectedSession": "2026-10-30",
+        "calendar": "XSHG",
+        "settlementDelayMinutes": 20,
+        "observedAt": "2026-10-30T15:41:10+00:00",
+        "rows": 2000,
+        "start": "2018-07-31",
+        "end": "2026-10-30"
+      }
+    },
+    {
+      "symbol": "000300.SH",
+      "receivedBars": 2249,
+      "status": "checked",
+      "quality": {
+        "status": "checked",
+        "expectedSession": "2026-10-30",
+        "calendar": "XSHG",
+        "settlementDelayMinutes": 20,
+        "observedAt": "2026-10-30T15:41:10+00:00",
+        "rows": 2000,
+        "start": "2018-07-31",
+        "end": "2026-10-30"
+      }
+    },
+    {
+      "symbol": "000510.SH",
+      "receivedBars": 515,
+      "status": "quarantined",
+      "reason": "could not convert string to float: ''"
+    },
+    {
+      "symbol": "399006.SZ",
+      "receivedBars": 2249,
+      "status": "quarantined",
+      "reason": "abnormal daily move at 2024-09-30; review adjustment/source"
+    },
+    {
+      "symbol": "000688.SH",
+      "receivedBars": 1517,
+      "status": "quarantined",
+      "reason": "inconsistent OHLC: 2022-08-05"
+    }
+  ],
+  "note": "Passing these checks is not an independent price audit. Quarantined series must not replace trusted data."
+}

@@ -1,0 +1,418 @@
+{
+  "observedAt": "2026-10-31T09:55:26.858828+00:00",
+  "provider": "Longbridge",
+  "sourceDataSHA256": "c416e6071f756be4f1eb3540b35624c5c55aa14f563087a01d1300ab9f5193f8",
+  "researchAsOf": "2026-10-25",
+  "prices": [
+    {
+      "code": "511520",
+      "symbol": "511520.SH",
+      "value": 119.54,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "511090",
+      "symbol": "511090.SH",
+      "value": 120.268,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "511010",
+      "symbol": "511010.SH",
+      "value": 141.123,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "511380",
+      "symbol": "511380.SH",
+      "value": 12.28,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "510300",
+      "symbol": "510300.SH",
+      "value": 4.065,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "563360",
+      "symbol": "563360.SH",
+      "value": 1.086,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "563300",
+      "symbol": "563300.SH",
+      "value": 1.201,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "588000",
+      "symbol": "588000.SH",
+      "value": 1.228,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159915",
+      "symbol": "159915.SZ",
+      "value": 2.435,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513180",
+      "symbol": "513180.SH",
+      "value": 0.468,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513770",
+      "symbol": "513770.SH",
+      "value": 0.305,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513520",
+      "symbol": "513520.SH",
+      "value": 2.18,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159920",
+      "symbol": "159920.SZ",
+      "value": 1.358,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513100",
+      "symbol": "513100.SH",
+      "value": 2.239,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513500",
+      "symbol": "513500.SH",
+      "value": 2.657,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513850",
+      "symbol": "513850.SH",
+      "value": 1.857,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513290",
+      "symbol": "513290.SH",
+      "value": 1.881,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "512480",
+      "symbol": "512480.SH",
+      "value": 0.72,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159995",
+      "symbol": "159995.SZ",
+      "value": 0.783,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "512400",
+      "symbol": "512400.SH",
+      "value": 1.395,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "512800",
+      "symbol": "512800.SH",
+      "value": 0.893,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "518880",
+      "symbol": "518880.SH",
+      "value": 8.115,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159985",
+      "symbol": "159985.SZ",
+      "value": 2.153,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "162411",
+      "symbol": "162411.SZ",
+      "value": 1.056,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SPMO",
+      "symbol": "SPMO.US",
+      "value": 136.27,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "MTUM",
+      "symbol": "MTUM.US",
+      "value": 284.1,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VOO",
+      "symbol": "VOO.US",
+      "value": 694.81,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VTI",
+      "symbol": "VTI.US",
+      "value": 371.57,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "QQQM",
+      "symbol": "QQQM.US",
+      "value": 284.34,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SCHD",
+      "symbol": "SCHD.US",
+      "value": 35.78,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SCHG",
+      "symbol": "SCHG.US",
+      "value": 34.32,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "DIA",
+      "symbol": "DIA.US",
+      "value": 517.13,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "RSP",
+      "symbol": "RSP.US",
+      "value": 218.31,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VTWO",
+      "symbol": "VTWO.US",
+      "value": 112.85,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SOXX",
+      "symbol": "SOXX.US",
+      "value": 471.51,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SMH",
+      "symbol": "SMH.US",
+      "value": 522.49,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "XLK",
+      "symbol": "XLK.US",
+      "value": 179.51,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VGT",
+      "symbol": "VGT.US",
+      "value": 116.96,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "XLV",
+      "symbol": "XLV.US",
+      "value": 184.87,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "TQQQ",
+      "symbol": "TQQQ.US",
+      "value": 62.01,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.6
+    },
+    {
+      "code": "SOXL",
+      "symbol": "SOXL.US",
+      "value": 77.05,
+      "asOf": "2026-10-30",
+      "source": "Longbridge",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.6
+    }
+  ]
+}
