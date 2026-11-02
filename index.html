@@ -308,6 +308,7 @@
     <span class="st-meta" id="stMeta"></span>
     <div class="st-err" id="stErr" style="display:none"></div>
   </div>
+  <div id="releaseNotice" role="status" style="padding:10px 14px;margin:0 0 16px;border:1px solid #E8C879;border-radius:10px;background:#FFF8E8;color:#725519;font-size:12px">历史快照模式：研究和产品价格日期见页首。宽基回撤待重新核验，数值分析和提醒暂不可用。</div>
 
   <div class="view active" id="view-overview">
   <div class="stats" id="stats"></div>
@@ -556,6 +557,7 @@
 <script src="./data.js"></script>
 <script src="./validate.js"></script>
 <script src="./drawdown.js"></script>
+<script src="./release-policy.js"></script>
 <script>
 /* ============ 启动与数据安全层 ============ */
 (function () {
@@ -1204,6 +1206,14 @@
     var meta = document.getElementById("ddMeta");
     if (meta) meta.textContent = "市场数据生成于 " + D.meta.asOf + " · " + (D.meta.refreshCadence || "实际刷新计划未核验") + " · 来源与交易日期见各标的";
     var list = D.indices.filter(function (x) { return !ddFilter || x.market === ddFilter; });
+    var policy = window.RELEASE_POLICY;
+    if (!policy || policy.drawdownAnalysisEnabled !== true) {
+      if (meta) meta.textContent = '宽基长历史正在核验；当前不展示回撤档位或加仓信号，相关提醒已禁用。';
+      box.innerHTML = list.map(function(x) {
+        return '<div class="dd-card dd-quarantined"><b>' + x.name + ' · ' + x.code + '</b><p style="font-size:12px;color:var(--sub)">回撤数据待核验 · 上次记录 ' + x.asOf + '。核验完成后恢复分析。</p></div>';
+      }).join('');
+      return;
+    }
     box.innerHTML = list.map(ddCard).join("");
   }
   document.getElementById("ddTabs").addEventListener("click", function (e) {

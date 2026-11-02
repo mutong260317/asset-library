@@ -47,3 +47,14 @@ test('publication rejects stale product closes independently of research date',(
   assert.equal(check(A,{A:'2026-10-30',US:'2026-10-30'}).length,0);
   A.assets[0].signal.priceAsOf='2026-10-29';assert.equal(check(A,{A:'2026-10-30',US:'2026-10-30'}).length,1);
 });
+test('snapshot site release requires disabled analysis and alerts',()=>{
+  const check=require('../validate-cli.js').validateSiteRelease;
+  assert.deepEqual(check(root,base),[]);
+  const tmp=fs.mkdtempSync(path.join(root,'.tmp','policy-'));
+  try{
+    fs.copyFileSync(path.join(root,'index.html'),path.join(tmp,'index.html'));
+    const p=loadJS(path.join(root,'release-policy.js'),'RELEASE_POLICY');p.drawdownAlertsEnabled=true;
+    fs.writeFileSync(path.join(tmp,'release-policy.js'),'window.RELEASE_POLICY='+JSON.stringify(p)+';');
+    assert.ok(check(tmp,base).length);
+  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
+});

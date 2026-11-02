@@ -10,6 +10,7 @@ from pathlib import Path
 from market_quality import checked_rows, utc_now
 from refresh_store import refresh_lock, recover, load_baseline, build_pipeline, publish_local, acknowledge, file_versions
 from longbridge_source import fetch_longbridge, configure_snapshot
+from release_policy import alerts_enabled
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 RETRIES = 3
@@ -318,7 +319,7 @@ def main():
                 "note": "窗口最多2000交易日；不足时明确标注。历史最高价未核验则为null。仅描述回撤深度，不自动判定投资机会。"
             },
             "indices": indices,
-            "pipeline": build_pipeline(indices, previous, old_state),
+            "pipeline": build_pipeline(indices, previous, old_state, alerts_enabled=alerts_enabled(root)),
         }
         publish_local(root, payload, now=utc_now(), expected_files=versions)
         print(f"[COMMITTED LOCALLY] {len(indices)} indices; pending alerts="

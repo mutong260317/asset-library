@@ -96,6 +96,10 @@ class AlertChecks(unittest.TestCase):
     def test_date_regression(self):
         p,s=self.baseline()
         with self.assertRaises(ValueError):store.build_pipeline([record('2026-10-27')],p,s)
+    def test_snapshot_policy_suppresses_new_alerts(self):
+        p,s=self.baseline()
+        pipe=store.build_pipeline([record('2026-10-29',75)],p,s,alerts_enabled=False)
+        self.assertEqual(pipe['pendingAlerts'],[])
 
 class TransactionChecks(unittest.TestCase):
     def setUp(self):

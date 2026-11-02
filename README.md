@@ -1,6 +1,6 @@
 # 资产产品分析（Asset Library）
 
-> 本分支为工程修复审查交付，网站尚未更新。其他 AI 接手先读 [HANDOFF.md](HANDOFF.md)、[AGENTS.md](AGENTS.md) 和 [审查报告](reports/audits/REVIEW.md)。9 标的长历史发布闸门仍未通过，禁止直接合并上线。
+> 本版采用历史快照模式：分市场图表和产品价格可用，数据所属日期明确显示；宽基回撤正在核验，数值分析与相关提醒暂不可用。维护者先读 [HANDOFF.md](HANDOFF.md) 与 [AGENTS.md](AGENTS.md)。
 
 个人资产配置研究系统：剖析每只 ETF 的**底层结构 → 康波周期定位 → 估值位置 → 回撤 → 宏观环境**，以「周期为王、不硬配比例」为核心方法论，输出 A股/美股各自按 100% 计的配置方案。
 
@@ -73,7 +73,8 @@ Python 运行环境安装 requirements.txt；浏览器测试使用环境已有�
 ```text
 node validate.js
 node validate-cli.js
-node validate-cli.js --publish
+node validate-cli.js --site-release  # 快照站点：必须隔离未核验回撤
+node validate-cli.js --publish       # 新鲜行情：严格标准保持不变
 python -m unittest discover -s tests -p "test_*.py" -v
 node --test tests/validate.test.js
 python tests/smoke_page.py

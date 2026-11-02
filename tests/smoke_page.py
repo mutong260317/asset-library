@@ -61,6 +61,10 @@ def run():
                 page.screenshot(path=str(OUT/f'overview-{width}.png'),full_page=True)
                 page.locator('#topnav [data-view="drawdown"]').click()
                 assert page.locator('#ddBox .dd-card').count()==9
+                assert page.locator('#ddBox .dd-quarantined').count()==9
+                assert page.locator('#ddBox .dd-ladder').count()==0
+                assert '待重新核验' in page.locator('#releaseNotice').inner_text()
+                assert page.evaluate('window.RELEASE_POLICY.drawdownAlertsEnabled') is False
                 page.locator('#ddTabs [data-m="US"]').click()
                 assert page.locator('#ddBox .dd-card').count()==4
                 page.locator('#ddTabs [data-m="A"]').click()

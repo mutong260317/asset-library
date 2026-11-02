@@ -102,7 +102,7 @@ def load_baseline(root):
     return payload, state
 
 
-def build_pipeline(indices, previous, old_state):
+def build_pipeline(indices, previous, old_state, alerts_enabled=True):
     old_indices = {r["code"]: r for r in previous["indices"]}
     old_pipeline = previous.get("pipeline", {})
     pending = list(old_pipeline.get("pendingAlerts", []))
@@ -128,7 +128,7 @@ def build_pipeline(indices, previous, old_state):
                       old.get("quality", {}).get("status") == "checked" and
                       not r.get("quality", {}).get("sourceChangeAccepted", False))
         state[code] = {"maxHit": depth, "asOf": r["asOf"]}
-        if comparable and r["asOf"] > before["asOf"] and depth > before["maxHit"]:
+        if alerts_enabled and comparable and r["asOf"] > before["asOf"] and depth > before["maxHit"]:
             for level in r["levels"]:
                 if before["maxHit"] < abs(level["d"]) <= depth:
                     event = {"code": code, "name": r["name"], "market": r["market"],
