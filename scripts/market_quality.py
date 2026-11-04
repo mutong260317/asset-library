@@ -51,7 +51,10 @@ def checked_rows(rows, market, now=None, start=None, minimum_rows=200,
     # Dates before the calendar's first session cannot be verified here and cannot
     # enter the final <=2000-session window, so skip them rather than fail.
     calendar_first = cal.first_session.date().isoformat()
-    out, seen = [], set()
+    # Filtering stage: only date/order/calendar/close checks; numeric bar checks
+    # run after the window is truncated so a bad bar outside the <=2000-session
+    # window cannot block an in-window release.
+    collected, seen = [], set()
     previous_date = None
     for row in rows:
         if len(row) != 5:
@@ -71,8 +74,22 @@ def checked_rows(rows, market, now=None, start=None, minimum_rows=200,
         if not cal.is_session(day):
             raise ValueError(f"non-session daily bar: {day}")
         # A valid date alone does not imply its session has closed.
-        if cal.session_close(day).to_pydatetime() + SETTLE_DELAY > now:
+        # Explicit tz_convert("UTC"): pandas 3.1 misreports a zoneinfo UTC
+        # timestamp's offset as the system offset; normalize before comparing.
+        if cal.session_close(day).tz_convert("UTC").to_pydatetime() + SETTLE_DELAY > now:
             continue
+        seen.add(day)
+        collected.append(tuple(row))
+    if not collected or collected[-1][0] != latest:
+        raise ValueError(f"stale data: expected {latest}, got {collected[-1][0] if collected else None}")
+    out = collected[-2000:]
+    if len(out) < minimum_rows:
+        raise ValueError(f"less than {minimum_rows} daily bars; requested metric unavailable")
+    expected_sessions = [d.date().isoformat() for d in cal.sessions_in_range(out[0][0], latest)]
+    if [r[0] for r in out] != expected_sessions:
+        raise ValueError("missing trading sessions in analysis window")
+    for row in out:
+        day = row[0]
         values = row[1:]
         if any(isinstance(v, bool) or not isinstance(v, (int, float)) or
                not math.isfinite(v) or v <= 0 for v in values):
@@ -80,23 +97,13 @@ def checked_rows(rows, market, now=None, start=None, minimum_rows=200,
         o, c, h, low = values
         if not low <= min(o, c) <= max(o, c) <= h:
             raise ValueError(f"inconsistent OHLC: {day}")
-        seen.add(day)
-        out.append(tuple(row))
-    if not out or out[-1][0] != latest:
-        raise ValueError(f"stale data: expected {latest}, got {out[-1][0] if out else None}")
-    out = out[-2000:]
-    if len(out) < minimum_rows:
-        raise ValueError(f"less than {minimum_rows} daily bars; requested metric unavailable")
-    expected = [d.date().isoformat() for d in cal.sessions_in_range(out[0][0], latest)]
-    if [r[0] for r in out] != expected:
-        raise ValueError("missing trading sessions in analysis window")
     approved = approved_moves or {}
     approved_jumps = []
     for prev, cur in zip(out, out[1:]):
         move = cur[2] / prev[2] - 1
         if abs(move) > max_daily_move:
-            expected = approved.get(cur[0])
-            if expected is None or abs(move - expected) > APPROVED_MOVE_TOLERANCE:
+            approved_move = approved.get(cur[0])
+            if approved_move is None or abs(move - approved_move) > APPROVED_MOVE_TOLERANCE:
                 raise ValueError(f"abnormal daily move at {cur[0]}; review adjustment/source")
             approved_jumps.append(cur[0])
     return out, {"status": "checked", "expectedSession": latest,

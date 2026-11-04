@@ -1,9 +1,9 @@
 /* Website release scope; changing to live data still requires --publish. */
 window.RELEASE_POLICY = {
   "schemaVersion": 1,
-  "mode": "snapshot",
-  "releaseId": "site-update-2026-11-02",
-  "drawdownAnalysisEnabled": false,
+  "mode": "live",
+  "releaseId": "site-update-2026-11-04",
+  "drawdownAnalysisEnabled": true,
   "drawdownAlertsEnabled": false,
-  "reason": "宽基长历史待重新核验，先发布可用页面与有明确日期的产品价格快照"
+  "reason": "宽基回撤已通过交易所日历与多源核验，恢复回撤分析；外部提醒发送器未恢复，提醒暂保持禁用"
 };
