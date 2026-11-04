@@ -39,6 +39,7 @@
   .statbar .st-bad{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--red);background:var(--red-soft);padding:4px 10px;border-radius:8px}
   .statbar .st-meta{font-size:11px;color:var(--sub)}
   .statbar .st-err{flex-basis:100%;font-size:11.5px;color:var(--red);margin-top:4px}
+  body:not(.assets-ready) :is(.view,#topnav,#releaseNotice){display:none}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
   .stat{background:var(--card);border-radius:var(--r);padding:13px 14px;box-shadow:var(--shadow);border:1px solid var(--line)}
   .stat .n{font-size:22px;font-weight:800;color:var(--ink)}
@@ -308,7 +309,7 @@
     <span class="st-meta" id="stMeta"></span>
     <div class="st-err" id="stErr" style="display:none"></div>
   </div>
-  <div id="releaseNotice" role="status" style="padding:10px 14px;margin:0 0 16px;border:1px solid #E8C879;border-radius:10px;background:#FFF8E8;color:#725519;font-size:12px">历史快照模式：研究和产品价格日期见页首。宽基回撤待重新核验，数值分析和提醒暂不可用。</div>
+  <div id="releaseNotice" role="status" style="padding:10px 14px;margin:0 0 16px;border:1px solid #E8C879;border-radius:10px;background:#FFF8E8;color:#725519;font-size:12px">历史快照模式：各市场的产品收盘日见总览。宽基回撤待重新核验，数值分析和提醒暂不可用。</div>
 
   <div class="view active" id="view-overview">
   <div class="stats" id="stats"></div>
@@ -561,46 +562,46 @@
 <script>
 /* ============ 启动与数据安全层 ============ */
 (function () {
-  var A = (typeof window !== "undefined") ? window.ASSETS : null;
-  if (!A || !A.assets) {
-    var sb = document.getElementById("statbar");
-    if (sb) {
-      sb.innerHTML = '<span class="st-bad">⚠ 数据加载失败</span><span class="st-meta">未找到 window.ASSETS。请确认 data.js 与 index.html 在同一目录，或重新部署 GitHub Pages。</span>';
-    }
+  var A = window.ASSETS;
+  var badge = document.getElementById("stBadge");
+  var stErr = document.getElementById("stErr");
+  function stop(message, details) {
+    badge.textContent = message;
+    stErr.style.display = "block";
+    stErr.textContent = details;
+    document.getElementById("updBadge").textContent = "数据暂不可用";
+  }
+  if (!A || !Array.isArray(A.assets)) {
+    stop("⚠ 数据加载失败", "请刷新后重试。本地预览时请检查 data.js 是否存在且能正确加载。");
     return;
   }
-  var report = null;
-  if (window.VALIDATE_ASSETS) {
-    report = window.VALIDATE_ASSETS(A);
-    var badge = document.getElementById("stBadge");
-    var stErr = document.getElementById("stErr");
-    if (report.ok) {
-      badge.className = "st-ok";
-      badge.innerHTML = "✓ 结构校验通过";
-      stErr.style.display = "none";
-    } else {
-      badge.className = "st-bad";
-      badge.innerHTML = "⚠ 数据异常：拒绝展示不可信权重";
-      stErr.style.display = "block";
-      stErr.innerHTML = report.errors.slice(0, 8).map(function (e) { return "· " + e; }).join("<br>") +
-        (report.warnings.length ? "<br>警告：" + report.warnings.slice(0, 6).map(function (w) { return "· " + w; }).join("<br>") : "");
-    }
-    var meta = document.getElementById("stMeta");
-    if (meta) {
-      meta.innerHTML = "更新 " + (A.meta.updated || "?") + "（" + (A.meta.week || "?") + "）· 资产 " + A.assets.length + " 只 · A股 保守" +
-        report.counts.wa.c + "%/基准" + report.counts.wa.y + "%/激进" + report.counts.wa.a + "% · 美股 保守" +
-        report.counts.wu.c + "%/基准" + report.counts.wu.y + "%/激进" + report.counts.wu.a + "% · 校验器 v" + (A.meta.validatorVersion || "?");
-    }
+  if (typeof window.VALIDATE_ASSETS !== "function") {
+    stop("⚠ 校验器未加载", "数据视图暂不可用，请刷新后重试。");
+    return;
   }
-  window.__ASSETS_REPORT__ = report;
+  var report;
+  try {
+    report = window.VALIDATE_ASSETS(A);
+  } catch (e) {
+    stop("⚠ 数据校验无法完成", "数据视图暂不可用，请刷新后重试。");
+    return;
+  }
+  if (!report.ok) {
+    stop("⚠ 结构校验失败，数据视图已暂停", report.errors.slice(0, 8).join("；"));
+    return;
+  }
+  badge.className = "st-ok";
+  badge.textContent = "✓ 结构校验通过";
+  document.getElementById("stMeta").textContent = "研究 " + A.meta.updated + "（" + (A.meta.week || "?") + "）· 资产 " + A.assets.length + " 只 · 两个市场各三档目标权重均为 100%";
+  document.body.classList.add("assets-ready");
 })();
 </script>
 
 <script>
 /* ============ 全局工具与渲染入口（模块隔离：单模块失败不影响其他模块） ============ */
 (function () {
-  var A = (typeof window !== "undefined") ? window.ASSETS : null;
-  if (!A || !A.assets) return;
+  if (!document.body.classList.contains("assets-ready")) return;
+  var A = window.ASSETS;
   var L = A.assets;
 
   /* ---- 格式化工具 ---- */
@@ -648,23 +649,27 @@
   }
 
   /* ---- 顶部数据状态 ---- */
-  var marketDates = L.map(function(x){return x.signal && x.signal.priceAsOf;}).filter(Boolean).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
-  document.getElementById("updBadge").textContent = "研究 " + (A.meta.updated || "?") + " · 产品收盘 " + (marketDates.join(" / ") || "未核验");
+  document.getElementById("updBadge").textContent = "研究日期 " + A.meta.updated;
   document.getElementById("snapD").textContent = (A.snap ? A.snap.d + " · " + A.snap.t : "—");
 
   /* ---- 统计卡 ---- */
+  function priceCoverage(market, label) {
+    var assets = L.filter(function (x) { return x.m === market; });
+    var dates = assets.filter(function (x) { return x.signal.priceStatus === "checked"; })
+      .map(function (x) { return x.signal.priceAsOf; }).sort();
+    var first = dates[0], last = dates[dates.length - 1];
+    var datesLabel = !first ? "无已核验价格" : first === last ? "收盘日 " + first : "收盘日 " + first + " 至 " + last;
+    return '<div class="stat" data-price-market="' + market + '"><div class="n">' + dates.length + ' <small>/ ' + assets.length + '</small></div>' +
+      '<div class="l">' + label + ' · 收盘快照覆盖</div><div class="s">' + datesLabel + '</div></div>';
+  }
   function renderStats() {
-    var aN = 0, uN = 0, rk5 = 0;
-    L.forEach(function (x) { if (x.m === "A") aN++; else uN++; if (x.rk >= 4) rk5++; });
+    var rk5 = L.filter(function (x) { return x.rk >= 4; }).length;
     var catN = {};
     L.forEach(function (x) { catN[x.cat] = (catN[x.cat] || 0) + 1; });
     document.getElementById("stats").innerHTML =
       '<div class="stat"><div class="n">' + L.length + '</div><div class="l">已建档资产</div><div class="s">' + Object.keys(catN).length + ' 个分类</div></div>' +
-      '<div class="stat"><div class="n">' + aN + ' <small>/</small> ' + uN + '</div><div class="l">A股 / 美股</div><div class="s">分开各按 100% 配置（机器校验）</div></div>' +
-      '<div class="stat"><div class="n">' + L.length + ' / ' + L.length + '</div><div class="l">周期评分已填</div><div class="s">含研究判断，非客观测量</div></div>' +
-      '<div class="stat"><div class="n">' + L.length + ' / ' + L.length + '</div><div class="l">估值评分已填</div><div class="s">填写日期不代表独立核验</div></div>' +
-      '<div class="stat"><div class="n">' + rk5 + '</div><div class="l">中高风险资产</div><div class="s">风险≥4/5，注意仓位</div></div>' +
-      '<div class="stat"><div class="n">研究 / 市场</div><div class="l">更新日期分别记录</div><div class="s">实际任务状态需独立核验</div></div>';
+      priceCoverage("A", "A 股") + priceCoverage("US", "美股") +
+      '<div class="stat"><div class="n">' + rk5 + '</div><div class="l">中高风险资产</div><div class="s">研究风险评级 ≥4/5</div></div>';
   }
   try { renderStats(); } catch (e) { console.error("stats", e); }
 
@@ -1450,6 +1455,7 @@
 <script>
 /* ============ 顶部 Tab 导航（视图切换 + hash 路由） ============ */
 (function () {
+  if (!document.body.classList.contains("assets-ready")) return;
   var nav = document.getElementById("topnav");
   if (!nav) return;
   var items = nav.querySelectorAll(".nav-item");

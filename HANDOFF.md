@@ -2,9 +2,18 @@
 
 > 2026-11-02 用户明确要求先更新网站。本轮发布范围改为“历史快照站点”：A 股/美股图表、产品价格与维护功能上线；宽基回撤不显示数值档位，回撤提醒生成禁用。
 > --site-release 是网站范围检查；--publish 仍严格检查新鲜行情，当前未通过，不能冒称已通过。
-> 最新交接以 main 及 PR #1 为入口：https://github.com/mutong260317/asset-library/pull/1
+> 已发布版本以 main 为准。快照站点见 PR #1，宽基取数修复见 PR #2。
 
-## 2026-11-04 豆包接手（本地分支，未推送）
+## 2026-11-04 Codex 页面审查（本地待交付）
+- 基于已核对的远程 `a2ae34be`（PR #2），本地分支 `codex/data-visibility-20261104`。PR #2 已合并；线上发布策略仍是历史快照。
+- 修复结构校验失败后配置照常展示的问题。数据缺失、校验器缺失或校验失败均暂停数据视图，直接打开配置或资产页链接也不能绕过。
+- 总览分别显示 A 股、美股的已核验产品收盘覆盖和实际日期。日期混合时显示范围，没有核验价格时显示无数据；页首单独显示研究日期。
+- 2026-11-04 21:04（北京时间）只读取数复核：9/9 宽基通过 `fetch_daily`。A 股 5 条来自腾讯，末根 11-04；美股 4 条来自 Yahoo，末根 11-03。9 条序列与各自旧快照同日收盘价均在两位小数对齐。本机长桥 CLI 返回缺 `timestamp` 的数据，触发备用源。
+- 4 只美股宽基由新浪改为 Yahoo 未复权，仍需完成价格口径复核并重建提醒基线。41 只产品价格仍是 10-30，严格 `--publish` 失败。取数与重叠收盘价比对未写行情或提醒，明细在本机忽略目录 `test-results/drawdown-overlap-2026-11-04.json`。
+- 测试：Python 28、Node 23、`--site-release` 及 Edge 1440px / 390px 烟雾测试通过，另覆盖结构失败、校验器缺失、缺价和混合日期。
+- 页面修改与浏览器回归测试仅在本地。未改研究结论、目标权重、行情文件、发布策略或提醒状态。
+
+## 2026-11-04 豆包接手（PR #2 已合并）
 - 基线：远程 main HEAD `ccbfc17`，本地已 reset --hard 对齐；工作分支 `doubao/drawdown-jump-review-20261104`。
 - 本地环境修复（均为 gitignore 忽略文件，无仓库改动）：删除旧格式 `scripts/alerts.json`（离线/--site-release 恢复 exit 0）；创建 `.venv` 装齐 requirements.txt（exchange-calendars 4.13.2 等），日历步骤正常。
 - 只读探测（`.tmp/probe1-7`，不入库）实测 9 标的：长桥报告的 OHLC 硬伤在新浪/腾讯/Yahoo 均不成立，属长桥数据/复权问题；7 标的可直接通过，仅创业板/科创50 因 2024 九二四真实暴涨需留痕复核。完整证据见 `reports/2026-11-04-drawdown-feasibility.md`。
@@ -14,7 +23,7 @@
 - 端到端：真实 fetch_daily 9/9 通过（美股走 Yahoo、A股走腾讯，创业板/科创50 带 approved 放行）。
 - 检查结果：Python 28 测试、Node 23 测试全通过；validate.js、validate-cli、--site-release 均 exit 0；--publish 仍 exit 1（59 errors，旧快照非最近收盘日，正确 fail-closed）。
 - 本机 PATH 存在 Trae 自带 `longbridge.EXE`（d:\ai\trae\...），调用返回无效 candle（缺 timestamp），非可用登录态，真实 CLI 链路仍需单独打通。
-- 状态：改动仅在本地分支，未提交推送；合并/部署需用户授权。
+- 状态：上述代码已通过 PR #2 合入 `a2ae34be`。本次合并没有提交新的价格或回撤快照。
 
 ## 版本与交付状态
 - 首次远程基线：3c3dd4ac8f4f2b5787d685cd063a2e3c0e1b300d。结束前发现远程更新到 c6fac5040f9498bcaabdfcf21de756057a8bcee4，已读取并合入其 data.js 和 reports/2026-W44.md；完整保留新的 W44 研究、权重与判断。

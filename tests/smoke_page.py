@@ -29,6 +29,11 @@ def run():
                 page.goto(url,wait_until='networkidle')
                 assert page.evaluate('document.documentElement.scrollWidth') <= width+2
                 assert page.locator('#stBadge').inner_text()=='✓ 结构校验通过'
+                assert '研究日期' in page.locator('#updBadge').inner_text()
+                for market in ('A', 'US'):
+                    coverage = page.locator(f'[data-price-market="{market}"]')
+                    assert coverage.is_visible()
+                    assert '收盘快照覆盖' in coverage.locator('.l').inner_text()
                 assert page.locator('#chartlist .li[data-cd]').count()==24
                 assert page.locator('#chartlist').get_attribute('data-market')=='A'
                 page.locator('#chartMarkets button[data-m="US"]').click()
@@ -83,6 +88,53 @@ def run():
             page.goto(url,wait_until='networkidle')
             assert '数据加载失败' in page.locator('#statbar').inner_text()
             results.append({'missingAssets':'visible error'})
+            page.close()
+
+            page = browser.new_page()
+            page.route('**/data.js', lambda route: route.fulfill(
+                content_type='application/javascript',
+                body=(ROOT / 'data.js').read_text(encoding='utf-8') +
+                     '\nwindow.ASSETS.assets[0].decision.w.y += 1;'))
+            page.goto(url + '#allocation', wait_until='networkidle')
+            assert '结构校验失败' in page.locator('#stBadge').inner_text()
+            assert '101' in page.locator('#stErr').inner_text()
+            assert page.locator('#cfgGrid .cfg-card').count() == 0
+            assert not page.locator('#topnav').is_visible()
+            results.append({'invalidWeights': 'views blocked including direct allocation link'})
+            page.close()
+
+            page = browser.new_page()
+            page.route('**/validate.js', lambda route: route.fulfill(
+                content_type='application/javascript', body='/* unavailable */'))
+            page.goto(url + '#assets', wait_until='networkidle')
+            assert '校验器未加载' in page.locator('#stBadge').inner_text()
+            assert not page.locator('#view-assets').is_visible()
+            assert page.locator('#tbody tr').count() == 0
+            results.append({'missingValidator': 'views blocked'})
+            page.close()
+
+            page = browser.new_page()
+            page.route('**/data.js', lambda route: route.fulfill(
+                content_type='application/javascript',
+                body=(ROOT / 'data.js').read_text(encoding='utf-8') + '''
+                const assets = window.ASSETS.assets;
+                const a = assets.filter(x => x.m === 'A');
+                a.forEach(x => Object.assign(x.signal,
+                    {priceStatus: 'checked', priceAsOf: '2026-10-30', price: 1,
+                     priceSource: 'Smoke fixture', priceBasis: 'unadjusted',
+                     priceSymbol: x.c + (x.c.startsWith('5') ? '.SH' : '.SZ')}));
+                Object.assign(a[0].signal, {priceStatus: 'unavailable', price: null, priceAsOf: null});
+                a[1].signal.priceAsOf = '2026-10-29';
+                assets.filter(x => x.m === 'US').forEach(x => Object.assign(x.signal,
+                    {priceStatus: 'unavailable', price: null, priceAsOf: null}));'''))
+            page.goto(url, wait_until='networkidle')
+            a_coverage = page.locator('[data-price-market="A"]')
+            us_coverage = page.locator('[data-price-market="US"]')
+            assert a_coverage.locator('.n').inner_text() == '23 / 24'
+            assert a_coverage.locator('.s').inner_text() == '收盘日 2026-10-29 至 2026-10-30'
+            assert us_coverage.locator('.n').inner_text() == '0 / 17'
+            assert us_coverage.locator('.s').inner_text() == '无已核验价格'
+            results.append({'mixedDatesAndMissingPrices': 'coverage and date range verified'})
             browser.close()
             (OUT/'smoke.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
             print(json.dumps(results,ensure_ascii=False))
