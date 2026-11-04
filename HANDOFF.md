@@ -4,8 +4,8 @@
 > --site-release 是网站范围检查；--publish 仍严格检查新鲜行情，当前未通过，不能冒称已通过。
 > 最新交接以 main 及 PR #1 为入口：https://github.com/mutong260317/asset-library/pull/1
 
-## 2026-11-04 豆包接手（本地分支，未推送）
-- 基线：远程 main HEAD `ccbfc17`，本地已 reset --hard 对齐；工作分支 `doubao/drawdown-jump-review-20261104`。
+## 2026-11-04 豆包接手（已合并 PR #2，远程 main=a2ae34b，网站已更新）
+- 基线：远程 main HEAD `ccbfc17`，本地已 reset --hard 对齐；工作分支 `doubao/drawdown-jump-review-20261104`（commit f4b6f1f，已推送）。
 - 本地环境修复（均为 gitignore 忽略文件，无仓库改动）：删除旧格式 `scripts/alerts.json`（离线/--site-release 恢复 exit 0）；创建 `.venv` 装齐 requirements.txt（exchange-calendars 4.13.2 等），日历步骤正常。
 - 只读探测（`.tmp/probe1-7`，不入库）实测 9 标的：长桥报告的 OHLC 硬伤在新浪/腾讯/Yahoo 均不成立，属长桥数据/复权问题；7 标的可直接通过，仅创业板/科创50 因 2024 九二四真实暴涨需留痕复核。完整证据见 `reports/2026-11-04-drawdown-feasibility.md`。
 - 修复 A（日历边界，market_quality.py）：早于日历 `first_session` 的早期数据安全跳过（与 A股 start 过滤一致），不改变窗口内任何校验；窗口内非交易日仍报错。
@@ -14,7 +14,8 @@
 - 端到端：真实 fetch_daily 9/9 通过（美股走 Yahoo、A股走腾讯，创业板/科创50 带 approved 放行）。
 - 检查结果：Python 28 测试、Node 23 测试全通过；validate.js、validate-cli、--site-release 均 exit 0；--publish 仍 exit 1（59 errors，旧快照非最近收盘日，正确 fail-closed）。
 - 本机 PATH 存在 Trae 自带 `longbridge.EXE`（d:\ai\trae\...），调用返回无效 candle（缺 timestamp），非可用登录态，真实 CLI 链路仍需单独打通。
-- 状态：改动仅在本地分支，未提交推送；合并/部署需用户授权。
+- 交付：用户授权后已推送分支、创建并 squash 合并 PR #2（https://github.com/mutong260317/asset-library/pull/2）；远程 main 新 HEAD `a2ae34b`，GitHub Pages 已自动重建并回读确认（HTTP 200，data.js/drawdown.js 正常）。本地 main 已同步。
+- 重启登录入口与网址已固化到 `LOCAL-ACCESS.md`，重启后按该文件确认，无需再问 AI。
 
 ## 版本与交付状态
 - 首次远程基线：3c3dd4ac8f4f2b5787d685cd063a2e3c0e1b300d。结束前发现远程更新到 c6fac5040f9498bcaabdfcf21de756057a8bcee4，已读取并合入其 data.js 和 reports/2026-W44.md；完整保留新的 W44 研究、权重与判断。

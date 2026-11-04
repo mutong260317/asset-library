@@ -1,7 +1,7 @@
 # AGENTS.md — 跨 AI 维护规则
 
 ## 接手与交付
-1. 先读 README.md、AGENTS.md、HANDOFF.md，再核对 GitHub 实际 HEAD、工作区改动和相关源码；不能把旧交接里的 SHA 当作最新版本。
+1. 先读 README.md、AGENTS.md、HANDOFF.md（本机登录状态与常用网址见 LOCAL-ACCESS.md），再核对 GitHub 实际 HEAD、工作区改动和相关源码；不能把旧交接里的 SHA 当作最新版本。
 2. 一个功能同一时间只由一个执行者修改。先在本地独立分支完成、测试、更新交接；不覆盖未合并或用户未提交的工作。
 3. 建议须独立判断。优先修根因，保持 HTML + JS + Python；不新增服务器、数据库、收费服务或自动交易。
 4. 推送、合并、部署、修改定时任务和发送外部提醒均按用户明确授权执行。本地审查提交不等于发布许可。
@@ -49,6 +49,7 @@ Windows 本地虚拟环境用 .venv\Scripts\python；发布闸门可用 ASSET_PY
 
 ## 通用 GitHub 流程
 使用当前环境可用的 GitHub 连接器、CLI 或 API 读取固定提交内容并核验 SHA。获授权写回后，基于已确认的远程基线创建审查分支；检测远程漂移，完整写入相关文件，保证数据/状态同一提交，再回读完整内容与提交号。不要硬编码某平台工具名称；无凭证时不能假定 Git push 可用。不得把本地未推送文件说成 GitHub 已交付文件。
+- 本机 git 凭证由 GitHub CLI 提供（`credential.helper=!gh auth git-credential`，账号 mutong260317，token 存系统凭据存储、重启后保留）；用 `gh auth status` 检查、`gh auth login` 重新登录，步骤与网址见 LOCAL-ACCESS.md。
 
 ## 归档与交接
 - 周报研究更新后，用 scripts/archive_weekly.js 保存完整 41 只资产，包含未调整资产；既有快照不静默覆盖。不能把本轮保存的旧研究内容说成过去真实采集的历史。
