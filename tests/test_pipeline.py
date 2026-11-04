@@ -74,6 +74,36 @@ class CalendarChecks(unittest.TestCase):
         r=bars()[-3:];r[-1]=(r[-1][0],78,77,84,70)
         self.assertTrue(q.checked_rows(r,'US',NOW,minimum_rows=1,max_daily_move=.6)[0])
         with self.assertRaises(ValueError):q.checked_rows(r,'US',NOW,minimum_rows=1)
+    def test_pre_calendar_rows_skipped(self):
+        # 早于日历首交易日（2014-01-02）的早期数据应被跳过，而非触发 is_session 报错。
+        old=[('2010-01-04',10,10,11,9)]+bars()
+        clean,quality=q.checked_rows(old,'US',NOW)
+        self.assertEqual(quality['rows'],220)
+        self.assertGreaterEqual(clean[0][0],'2014-01-02')
+    def test_non_session_inside_calendar_still_rejected(self):
+        # 日历范围内的非交易日（2026-10-25 周日）仍须报错，不能被边界跳过掩盖。
+        rows=[('2026-10-25',100,100,105,95),
+              ('2026-10-28',100,100,105,95),
+              ('2026-10-29',100,100,105,95)]
+        with self.assertRaisesRegex(ValueError,'non-session'):q.checked_rows(rows,'US',NOW,minimum_rows=1)
+    def _jump_rows(self):
+        # 两个连续交易日，最后一天相对前一天 +16%，OHLC 自洽。
+        return [('2026-10-28',100,100,101,99),
+                ('2026-10-29',116,116,118,115)]
+    def test_approved_jump_accepted(self):
+        clean,quality=q.checked_rows(self._jump_rows(),'US',NOW,minimum_rows=1,
+                                     approved_moves={'2026-10-29':0.16})
+        self.assertEqual(quality['approvedJumps'],['2026-10-29'])
+    def test_unapproved_or_mismatched_jump_rejected(self):
+        rows=self._jump_rows()
+        for approved in (None,{'2026-10-28':0.16},{'2026-10-29':0.10},{'2026-10-29':-0.16}):
+            with self.subTest(approved=approved),self.assertRaises(ValueError):
+                q.checked_rows(rows,'US',NOW,minimum_rows=1,approved_moves=approved)
+    def test_load_reviewed_jumps(self):
+        self.assertEqual(fetch.load_reviewed_jumps('nonexistent-xyz.json'),{})
+        loaded=fetch.load_reviewed_jumps()
+        self.assertEqual(loaded['SZ399006']['2024-09-30'],0.1536)
+        self.assertEqual(len(loaded['SH000688']),2)
 
 class AlertChecks(unittest.TestCase):
     def baseline(self):
