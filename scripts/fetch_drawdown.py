@@ -19,6 +19,7 @@ RETRIES = 3
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE_FILE = os.path.join(BASE, "scripts", "level_state.json")
 ALERT_FILE = os.path.join(BASE, "scripts", "alerts.json")
+REVIEWED_JUMPS_FILE = os.path.join(BASE, "scripts", "reviewed_jumps.json")
 # 回撤档位（正数=回撤深度）
 LEVEL_DS = [0.10, 0.20, 0.30, 0.40, 0.50]
 # 有限窗口盘中高点，不冒充全历史 ATH。
@@ -107,7 +108,19 @@ def fetch_a_akshare(symbol):
     return _df_to_rows(ak.stock_zh_index_daily(symbol=symbol))
 
 
-def fetch_daily(symbol, market, now=None, start=None):
+def load_reviewed_jumps(path=REVIEWED_JUMPS_FILE):
+    """加载复核例外清单 -> {code: {date: move}}；文件缺失时返回空映射。"""
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    by_code = {}
+    for entry in data.get("entries", []):
+        by_code.setdefault(entry["code"], {})[entry["date"]] = entry["move"]
+    return by_code
+
+
+def fetch_daily(symbol, market, now=None, start=None, approved_moves=None):
     candidates = ([(fetch_longbridge, "Longbridge", "qfq"),
                    (fetch_us_yahoo, "Yahoo Finance", "unadjusted"),
                    (fetch_us_akshare, "AkShare(新浪)", "qfq")] if market == "US" else
@@ -118,7 +131,8 @@ def fetch_daily(symbol, market, now=None, start=None):
     for fetcher, source, basis in candidates:
         try:
             raw = fetcher(symbol, market, now) if source == "Longbridge" else fetcher(symbol)
-            rows, quality = checked_rows(raw, market, now, start)
+            rows, quality = checked_rows(raw, market, now, start,
+                                         approved_moves=approved_moves)
             return rows, source, basis, quality
         except Exception as error:
             failures.append(f"{source}: {error}")
@@ -198,7 +212,9 @@ def max_hit_depth(levels):
 
 
 def analyze(code, name, market, symbol, ccy, ath_start, now=None, previous=None, accept_source_change=False):
-    rows, source, basis, quality = fetch_daily(symbol, market, now, ath_start)
+    approved_moves = load_reviewed_jumps().get(code)
+    rows, source, basis, quality = fetch_daily(symbol, market, now, ath_start,
+                                               approved_moves=approved_moves)
     if previous:
         changed = previous["source"] != source or previous.get("priceBasis") not in (None, basis)
         overlap = next((r for r in rows if r[0] == previous["asOf"]), None)

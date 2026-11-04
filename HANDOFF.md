@@ -4,6 +4,18 @@
 > --site-release 是网站范围检查；--publish 仍严格检查新鲜行情，当前未通过，不能冒称已通过。
 > 最新交接以 main 及 PR #1 为入口：https://github.com/mutong260317/asset-library/pull/1
 
+## 2026-11-04 豆包接手（本地分支，未推送）
+- 基线：远程 main HEAD `ccbfc17`，本地已 reset --hard 对齐；工作分支 `doubao/drawdown-jump-review-20261104`。
+- 本地环境修复（均为 gitignore 忽略文件，无仓库改动）：删除旧格式 `scripts/alerts.json`（离线/--site-release 恢复 exit 0）；创建 `.venv` 装齐 requirements.txt（exchange-calendars 4.13.2 等），日历步骤正常。
+- 只读探测（`.tmp/probe1-7`，不入库）实测 9 标的：长桥报告的 OHLC 硬伤在新浪/腾讯/Yahoo 均不成立，属长桥数据/复权问题；7 标的可直接通过，仅创业板/科创50 因 2024 九二四真实暴涨需留痕复核。完整证据见 `reports/2026-11-04-drawdown-feasibility.md`。
+- 修复 A（日历边界，market_quality.py）：早于日历 `first_session` 的早期数据安全跳过（与 A股 start 过滤一致），不改变窗口内任何校验；窗口内非交易日仍报错。
+- 修复 B（复核例外）：新增 `scripts/reviewed_jumps.json`（入库留痕，4 条真实交易日）；`checked_rows` 新增纯函数参数 `approved_moves`，仅当幅度/符号吻合（容差 0.002）才放行，`quality.approvedJumps` 记录；`fetch_drawdown` 加载并按 code 透传。清单外新跳变仍隔离，不放宽全局阈值、不篡改数据。
+- 数据源顺序：维持长桥→Yahoo→AkShare 不变（修正评估报告初稿“美股优先 Yahoo”的提法）；本机长桥不可用时 fallback 自动选 Yahoo（4 美股全 PASS），保持长桥优先符合 AGENTS。
+- 端到端：真实 fetch_daily 9/9 通过（美股走 Yahoo、A股走腾讯，创业板/科创50 带 approved 放行）。
+- 检查结果：Python 28 测试、Node 23 测试全通过；validate.js、validate-cli、--site-release 均 exit 0；--publish 仍 exit 1（59 errors，旧快照非最近收盘日，正确 fail-closed）。
+- 本机 PATH 存在 Trae 自带 `longbridge.EXE`（d:\ai\trae\...），调用返回无效 candle（缺 timestamp），非可用登录态，真实 CLI 链路仍需单独打通。
+- 状态：改动仅在本地分支，未提交推送；合并/部署需用户授权。
+
 ## 版本与交付状态
 - 首次远程基线：3c3dd4ac8f4f2b5787d685cd063a2e3c0e1b300d。结束前发现远程更新到 c6fac5040f9498bcaabdfcf21de756057a8bcee4，已读取并合入其 data.js 和 reports/2026-W44.md；完整保留新的 W44 研究、权重与判断。
 - 固定审查基线：685c8a9128b7341e0e85ec34d2a648fef4647d88。后续 W41 比较/日志、措辞修正已合入；其组合代码 XLK/VGT 规范化为可报价 XLK，原字符串保留为 aliases，VGT 单独资产与权重不变。
