@@ -4,7 +4,9 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),{spa
 const {loadJS,validateDrawdown}=require('../validate-cli.js');
 const root=path.resolve(__dirname,'..');
 const base=loadJS(path.join(root,'drawdown.js'),'DRAWDOWN');
-const now=new Date('2026-10-31T00:00:00Z');
+// 锚点晚于基线最晚日期，避免写死时间随数据更新而漂移
+const _lastStamp=Math.max(Date.parse(base.meta.asOf),...base.indices.map(i=>Date.parse(i.asOf)));
+const now=new Date(_lastStamp+86400000);
 const check=d=>validateDrawdown(d,{now});
 test('baseline formulas are internally consistent',()=>assert.deepEqual(check(base).errors,[]));
 const mutations={
@@ -44,17 +46,25 @@ test('composite security code cannot pass asset validation',()=>{
 test('publication rejects stale product closes independently of research date',()=>{
   const A=structuredClone(loadJS(path.join(root,'data.js'),'ASSETS'));
   const check=require('../validate-cli.js').validateProductPrices;
-  assert.equal(check(A,{A:'2026-10-30',US:'2026-10-30'}).length,0);
-  A.assets[0].signal.priceAsOf='2026-10-29';assert.equal(check(A,{A:'2026-10-30',US:'2026-10-30'}).length,1);
+  // 从真实产品数据派生各市场最近收盘交易日，避免写死日期
+  const latest=c=>A.assets.filter(x=>x.m===c).map(x=>x.signal.priceAsOf).sort().pop();
+  const expected={A:latest('A'),US:latest('US')};
+  assert.equal(check(A,expected).length,0);
+  A.assets[0].signal.priceAsOf='2026-10-29';assert.equal(check(A,expected).length,1);
 });
 test('snapshot site release requires disabled analysis and alerts',()=>{
   const check=require('../validate-cli.js').validateSiteRelease;
-  assert.deepEqual(check(root,base),[]);
   const tmp=fs.mkdtempSync(path.join(root,'.tmp','policy-'));
   try{
+    // 真实 index.html 仍保留 releaseNotice / dd-quarantined 标记，复制到临时目录
     fs.copyFileSync(path.join(root,'index.html'),path.join(tmp,'index.html'));
-    const p=loadJS(path.join(root,'release-policy.js'),'RELEASE_POLICY');p.drawdownAlertsEnabled=true;
-    fs.writeFileSync(path.join(tmp,'release-policy.js'),'window.RELEASE_POLICY='+JSON.stringify(p)+';');
+    const snap={schemaVersion:1,mode:'snapshot',releaseId:'test-snapshot',
+      drawdownAnalysisEnabled:false,drawdownAlertsEnabled:false,reason:'test'};
+    fs.writeFileSync(path.join(tmp,'release-policy.js'),'window.RELEASE_POLICY='+JSON.stringify(snap)+';');
+    assert.deepEqual(check(tmp,base),[]);
+    // snapshot 模式开启 alerts 必须被拒绝
+    snap.drawdownAlertsEnabled=true;
+    fs.writeFileSync(path.join(tmp,'release-policy.js'),'window.RELEASE_POLICY='+JSON.stringify(snap)+';');
     assert.ok(check(tmp,base).length);
   }finally{fs.rmSync(tmp,{recursive:true,force:true});}
 });

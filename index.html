@@ -652,6 +652,14 @@
   document.getElementById("updBadge").textContent = "研究 " + (A.meta.updated || "?") + " · 产品收盘 " + (marketDates.join(" / ") || "未核验");
   document.getElementById("snapD").textContent = (A.snap ? A.snap.d + " · " + A.snap.t : "—");
 
+  /* ---- 发布模式提示：live 模式隐藏快照黄框，snapshot 模式保留兜底 ---- */
+  (function () {
+    var notice = document.getElementById("releaseNotice");
+    if (!notice) return;
+    var policy = window.RELEASE_POLICY;
+    notice.style.display = (policy && policy.mode === "live") ? "none" : "block";
+  })();
+
   /* ---- 统计卡 ---- */
   function renderStats() {
     var aN = 0, uN = 0, rk5 = 0;

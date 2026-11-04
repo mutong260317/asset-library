@@ -19,12 +19,45 @@ def asset_data(root):
     code="const {loadJS}=require('./validate-cli.js');console.log(JSON.stringify(loadJS(process.argv[1],'ASSETS')))"
     return json.loads(subprocess.check_output(['node','-e',code,str(root/'data.js')],cwd=root,encoding='utf-8'))
 
-def refresh(root=ROOT, input_file=None):
+def _product_df_to_rows(df):
+    """产品 DataFrame(date,open,high,low,close) -> (date,open,close,high,low)。"""
+    out=[]
+    for _,r in df.iterrows():
+        d=r["date"]
+        d=d.strftime("%Y-%m-%d") if hasattr(d,"strftime") else str(d)[:10]
+        try:
+            out.append((d,float(r["open"]),float(r["close"]),float(r["high"]),float(r["low"])))
+        except Exception:
+            continue
+    return out
+
+
+def fetch_price_rows(code,market,symbol,now,limit,provider):
+    """Return checked close rows for the selected provider."""
+    if provider=="akshare":
+        import akshare as ak
+        if market=="US":
+            df=ak.stock_us_daily(symbol=code,adjust="")
+        else:
+            sina_symbol=("sh" if code.startswith("5") else "sz")+code
+            df=ak.fund_etf_hist_sina(symbol=sina_symbol)
+        all_rows=_product_df_to_rows(df)
+        # Match the Longbridge recent window (last ~10 calendar days) so historical
+        # splits, source gaps and old OHLC quirks cannot quarantine a current close.
+        cutoff=(now.date()-dt.timedelta(days=10)).isoformat()
+        raw=[r for r in all_rows if r[0]>=cutoff]
+    else:
+        raw=fetch_longbridge(symbol,market,now,recent=True)
+    return checked_rows(raw,market,now,minimum_rows=1,max_daily_move=limit)
+
+
+def refresh(root=ROOT, input_file=None, provider="longbridge"):
     if input_file:configure_snapshot(input_file)
     with refresh_lock(root):
         if (root/'scripts/.refresh-transaction.json').exists():
             raise ValueError('Recover pending drawdown transaction before price refresh')
         A=asset_data(root);now=utc_now();prices=[];original=(root/'data.js').read_text(encoding='utf-8')
+        source_name='Longbridge' if provider=='longbridge' else 'AkShare(新浪)'
         for asset in A['assets']:
             code=asset['c'];market=asset['m']
             symbol=code if market=='US' else ('sh' if code.startswith('5') else 'sz')+code
@@ -34,8 +67,8 @@ def refresh(root=ROOT, input_file=None):
                 # Leveraged ETF day moves require a different quarantine policy;
                 # this is an engineering guard, not an investment risk limit.
                 limit=.60 if asset['cat']=='杠杆' else .15
-                rows,_=checked_rows(fetch_longbridge(symbol,market,now,recent=True),market,now,minimum_rows=1,max_daily_move=limit)
-                item.update(value=rows[-1][2],asOf=rows[-1][0],source='Longbridge',status='checked')
+                rows,_=fetch_price_rows(code,market,symbol,now,limit,provider)
+                item.update(value=rows[-1][2],asOf=rows[-1][0],source=source_name,status='checked')
                 item['dailyMoveReviewLimit']=limit
             except Exception as error:item['reason']=str(error)
             prices.append(item)
@@ -79,7 +112,7 @@ def refresh(root=ROOT, input_file=None):
                 if bs!=ns:raise ValueError('Non-price research signal changed')
             if A['meta']['updated']!=new['meta']['updated']:raise ValueError('Research date changed')
         if (root/'data.js').read_text(encoding='utf-8')!=original:raise ValueError('Concurrent data.js edit; abort')
-        archive={'observedAt':now.isoformat(),'provider':'Longbridge','sourceDataSHA256':source_digest,
+        archive={'observedAt':now.isoformat(),'provider':source_name,'sourceDataSHA256':source_digest,
                  'researchAsOf':A['meta']['updated'],'prices':prices}
         (root/'snapshots/prices').mkdir(parents=True,exist_ok=True)
         target=root/rel
@@ -89,5 +122,8 @@ def refresh(root=ROOT, input_file=None):
         print(json.dumps({'checked':sum(p['status']=='checked' for p in prices),'total':len(prices),'snapshot':rel,'researchUnchanged':True},ensure_ascii=False))
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--longbridge-input');args=parser.parse_args()
-    refresh(input_file=args.longbridge_input)
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--longbridge-input')
+    parser.add_argument('--provider',choices=['longbridge','akshare'],default='longbridge')
+    args=parser.parse_args()
+    refresh(input_file=args.longbridge_input,provider=args.provider)

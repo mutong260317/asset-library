@@ -1,0 +1,418 @@
+{
+  "observedAt": "2026-11-04T14:56:45.790024+00:00",
+  "provider": "AkShare(新浪)",
+  "sourceDataSHA256": "87dca1706c53fa564ed19ef28d002f239e49ef947c5cae340328a2e73674d144",
+  "researchAsOf": "2026-10-30",
+  "prices": [
+    {
+      "code": "511520",
+      "symbol": "511520.SH",
+      "value": 120.031,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "511090",
+      "symbol": "511090.SH",
+      "value": 121.288,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "511010",
+      "symbol": "511010.SH",
+      "value": 141.352,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "511380",
+      "symbol": "511380.SH",
+      "value": 12.539,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "510300",
+      "symbol": "510300.SH",
+      "value": 4.175,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "563360",
+      "symbol": "563360.SH",
+      "value": 1.125,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "563300",
+      "symbol": "563300.SH",
+      "value": 1.247,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "588000",
+      "symbol": "588000.SH",
+      "value": 1.34,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159915",
+      "symbol": "159915.SZ",
+      "value": 2.561,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513180",
+      "symbol": "513180.SH",
+      "value": 0.491,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513770",
+      "symbol": "513770.SH",
+      "value": 0.318,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513520",
+      "symbol": "513520.SH",
+      "value": 2.157,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159920",
+      "symbol": "159920.SZ",
+      "value": 1.398,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513100",
+      "symbol": "513100.SH",
+      "value": 2.242,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513500",
+      "symbol": "513500.SH",
+      "value": 2.614,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513850",
+      "symbol": "513850.SH",
+      "value": 1.851,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "513290",
+      "symbol": "513290.SH",
+      "value": 1.852,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "512480",
+      "symbol": "512480.SH",
+      "value": 0.772,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159995",
+      "symbol": "159995.SZ",
+      "value": 0.836,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "512400",
+      "symbol": "512400.SH",
+      "value": 1.469,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "512800",
+      "symbol": "512800.SH",
+      "value": 0.874,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "518880",
+      "symbol": "518880.SH",
+      "value": 8.229,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "159985",
+      "symbol": "159985.SZ",
+      "value": 2.117,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "162411",
+      "symbol": "162411.SZ",
+      "value": 0.979,
+      "asOf": "2026-11-04",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SPMO",
+      "symbol": "SPMO.US",
+      "value": 133.16,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "MTUM",
+      "symbol": "MTUM.US",
+      "value": 278.33,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VOO",
+      "symbol": "VOO.US",
+      "value": 693.54,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VTI",
+      "symbol": "VTI.US",
+      "value": 371.21,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "QQQM",
+      "symbol": "QQQM.US",
+      "value": 282.23,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SCHD",
+      "symbol": "SCHD.US",
+      "value": 35.55,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SCHG",
+      "symbol": "SCHG.US",
+      "value": 34.29,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "DIA",
+      "symbol": "DIA.US",
+      "value": 517.06,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "RSP",
+      "symbol": "RSP.US",
+      "value": 219.26,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VTWO",
+      "symbol": "VTWO.US",
+      "value": 113.0,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SOXX",
+      "symbol": "SOXX.US",
+      "value": 465.0,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "SMH",
+      "symbol": "SMH.US",
+      "value": 518.52,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "XLK",
+      "symbol": "XLK.US",
+      "value": 176.51,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "VGT",
+      "symbol": "VGT.US",
+      "value": 115.28,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "XLV",
+      "symbol": "XLV.US",
+      "value": 184.02,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.15
+    },
+    {
+      "code": "TQQQ",
+      "symbol": "TQQQ.US",
+      "value": 60.55,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.6
+    },
+    {
+      "code": "SOXL",
+      "symbol": "SOXL.US",
+      "value": 73.12,
+      "asOf": "2026-11-03",
+      "source": "AkShare(新浪)",
+      "basis": "unadjusted",
+      "status": "checked",
+      "dailyMoveReviewLimit": 0.6
+    }
+  ]
+}

@@ -97,9 +97,12 @@ def fetch_a_tencent(symbol):
 
 
 def fetch_us_akshare(symbol):
-    """AkShare 新浪美股前复权日K，返回 list[(date, open, close, high, low)]"""
+    """AkShare 新浪美股未复权日K，返回 list[(date, open, close, high, low)]
+
+    前复权因子会在除权日跳变，可能夸大正常单日跌幅并误报，故用未复权。
+    """
     import akshare as ak
-    return _df_to_rows(ak.stock_us_daily(symbol=symbol, adjust="qfq"))
+    return _df_to_rows(ak.stock_us_daily(symbol=symbol, adjust=""))
 
 
 def fetch_a_akshare(symbol):
@@ -123,7 +126,7 @@ def load_reviewed_jumps(path=REVIEWED_JUMPS_FILE):
 def fetch_daily(symbol, market, now=None, start=None, approved_moves=None):
     candidates = ([(fetch_longbridge, "Longbridge", "qfq"),
                    (fetch_us_yahoo, "Yahoo Finance", "unadjusted"),
-                   (fetch_us_akshare, "AkShare(新浪)", "qfq")] if market == "US" else
+                   (fetch_us_akshare, "AkShare(新浪)", "unadjusted")] if market == "US" else
                   [(fetch_longbridge, "Longbridge", "index"),
                    (fetch_a_tencent, "腾讯证券", "index"),
                    (fetch_a_akshare, "AkShare(新浪)", "index")])
