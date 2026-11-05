@@ -9,7 +9,8 @@ import re
 import subprocess
 import tempfile
 from zoneinfo import ZoneInfo
-from longbridge_source import configure_snapshot,fetch_longbridge,canonical_symbol
+from longbridge_source import (configure_snapshot, fetch_longbridge, fetch_product_candles,
+                               product_symbol, rows_from_candles)
 from market_quality import checked_rows,utc_now,last_closed_session
 from refresh_store import atomic_text,refresh_lock
 
@@ -19,22 +20,25 @@ def asset_data(root):
     code="const {loadJS}=require('./validate-cli.js');console.log(JSON.stringify(loadJS(process.argv[1],'ASSETS')))"
     return json.loads(subprocess.check_output(['node','-e',code,str(root/'data.js')],cwd=root,encoding='utf-8'))
 
-def refresh(root=ROOT, input_file=None):
+def refresh(root=ROOT, input_file=None, require_complete=False):
     if input_file:configure_snapshot(input_file)
     with refresh_lock(root):
         if (root/'scripts/.refresh-transaction.json').exists():
             raise ValueError('Recover pending drawdown transaction before price refresh')
         A=asset_data(root);now=utc_now();prices=[];original=(root/'data.js').read_text(encoding='utf-8')
-        for asset in A['assets']:
+        candles = fetch_product_candles(A['assets'], now) if not input_file else [None] * len(A['assets'])
+        for asset, bars in zip(A['assets'], candles):
             code=asset['c'];market=asset['m']
             symbol=code if market=='US' else ('sh' if code.startswith('5') else 'sz')+code
-            item={'code':code,'symbol':canonical_symbol(symbol,market),'value':None,'asOf':None,
+            item={'code':code,'symbol':product_symbol(code,market),'value':None,'asOf':None,
                   'source':None,'basis':'unadjusted','status':'unavailable'}
             try:
                 # Leveraged ETF day moves require a different quarantine policy;
                 # this is an engineering guard, not an investment risk limit.
                 limit=.60 if asset['cat']=='杠杆' else .15
-                rows,_=checked_rows(fetch_longbridge(symbol,market,now,recent=True),market,now,minimum_rows=1,max_daily_move=limit)
+                source_rows = (fetch_longbridge(symbol,market,now,recent=True) if input_file
+                               else rows_from_candles(bars, market))
+                rows,_=checked_rows(source_rows,market,now,minimum_rows=1,max_daily_move=limit)
                 item.update(value=rows[-1][2],asOf=rows[-1][0],source='Longbridge',status='checked')
                 item['dailyMoveReviewLimit']=limit
             except Exception as error:item['reason']=str(error)
@@ -44,6 +48,9 @@ def refresh(root=ROOT, input_file=None):
             if item['status']=='checked' and item['asOf']!=last_closed_session(asset['m'],final_now):
                 item.update(value=None,asOf=None,source=None,status='unavailable',reason='session changed while fetching; retry')
         if not any(p['status']=='checked' for p in prices):raise ValueError('No verified product close prices; preserve data.js')
+        if require_complete and any(p['status']!='checked' for p in prices):
+            details = '; '.join(f"{p['code']}: {p['reason']}" for p in prices if p['status']!='checked')
+            raise ValueError('Incomplete product closes; preserve data.js: ' + details)
         text=original
         for item in prices:
             code=item['code'];asset=next(x for x in A['assets'] if x['c']==code)
@@ -89,5 +96,7 @@ def refresh(root=ROOT, input_file=None):
         print(json.dumps({'checked':sum(p['status']=='checked' for p in prices),'total':len(prices),'snapshot':rel,'researchUnchanged':True},ensure_ascii=False))
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--longbridge-input');args=parser.parse_args()
-    refresh(input_file=args.longbridge_input)
+    parser=argparse.ArgumentParser();parser.add_argument('--longbridge-input')
+    parser.add_argument('--require-complete', action='store_true')
+    args=parser.parse_args()
+    refresh(input_file=args.longbridge_input, require_complete=args.require_complete)

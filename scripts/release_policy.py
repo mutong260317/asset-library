@@ -8,8 +8,10 @@ def alerts_enabled(root):
     match=re.search(r'window\.RELEASE_POLICY\s*=\s*(\{.*\})\s*;',text,re.S)
     if not match:raise ValueError('Missing release policy')
     policy=json.loads(match[1])
-    if policy.get('schemaVersion')!=1 or type(policy.get('drawdownAlertsEnabled')) is not bool:
+    if (policy.get('schemaVersion')!=1 or type(policy.get('drawdownAlertsEnabled')) is not bool or
+            policy.get('mode') not in ('snapshot', 'verified-close')):
         raise ValueError('Invalid release policy')
-    if policy.get('mode')=='snapshot' and policy['drawdownAlertsEnabled']:
-        raise ValueError('Snapshot releases cannot enable drawdown alerts')
+    if policy['drawdownAlertsEnabled'] and (policy['mode']!='verified-close' or
+                                           policy.get('drawdownAnalysisEnabled') is not True):
+        raise ValueError('Drawdown alerts require verified-close mode with analysis enabled')
     return policy['drawdownAlertsEnabled']

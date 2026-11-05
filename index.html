@@ -15,7 +15,7 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1120px;margin:0 auto;padding:16px 14px 48px}
+  .wrap{max-width:1360px;margin:0 auto;padding:20px clamp(14px,2.4vw,32px) 48px}
   .hd{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:6px 2px 14px}
   .logo{display:flex;align-items:center;gap:10px}
   .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2E6BE6,#7B5CD6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 4px 12px rgba(46,107,230,.35)}
@@ -27,7 +27,7 @@
   .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(30,158,98,.18)}
   .topnav{display:flex;gap:4px;overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:5px;margin-bottom:14px;box-shadow:var(--shadow);position:sticky;top:0;z-index:30;scrollbar-width:none}
   .topnav::-webkit-scrollbar{display:none}
-  .nav-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;padding:8px 14px;font-size:13px;font-weight:600;color:var(--sub);border-radius:9px;cursor:pointer;transition:all .15s;user-select:none}
+  .nav-item{display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;padding:8px 14px;min-height:42px;font-size:13px;font-weight:600;color:var(--sub);border-radius:9px;cursor:pointer;text-decoration:none;transition:all .15s;user-select:none}
   .nav-item:hover{background:var(--gray-soft);color:var(--ink)}
   .nav-item.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(46,107,230,.3)}
   .nav-item .ni{font-size:11px}
@@ -45,7 +45,7 @@
   .stat .n{font-size:22px;font-weight:800;color:var(--ink)}
   .stat .n small{font-size:12px;font-weight:600;color:var(--sub)}
   .stat .l{font-size:11px;color:var(--sub);margin-top:2px}
-  .stat .s{font-size:10.5px;color:#93A0B8;margin-top:3px}
+  .stat .s{font-size:11.5px;color:var(--sub);margin-top:3px}
   .sec{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
   .sec-h{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}
   .sec-h h2{font-size:15px;display:flex;align-items:center;gap:8px}
@@ -79,6 +79,34 @@
   .sum-card .v{font-size:12px;color:#3C4A63;line-height:1.65}
   .tabs{display:inline-flex;background:var(--gray-soft);border-radius:10px;padding:3px;border:1px solid var(--line);margin-bottom:12px}
   .tab{padding:6px 16px;font-size:12.5px;border-radius:8px;cursor:pointer;color:var(--sub);transition:.15s;user-select:none}
+  button.tab{border:0;background:transparent;font-family:inherit}
+  :focus-visible{outline:2px solid #2459b3;outline-offset:2px}
+  :where(.view,.detail){scroll-margin-top:112px}
+  .market-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:12px 0}
+  .market-tools .tabs{margin:0}
+  #marketSearch{padding:8px 12px;min-height:40px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:13px}
+  #marketStatus{color:var(--sub);font-size:13px}
+  .market-table{width:100%;min-width:650px;font-variant-numeric:tabular-nums}
+  .market-table th{cursor:default}
+  .market-name{font-weight:700}
+  .market-note{color:var(--sub);font-size:12px;margin-top:10px}
+  @media(max-width:560px){
+    .wrap{padding-top:12px}
+    .hd-right{margin-left:0}
+    .topnav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+    .nav-item{padding:6px 4px;font-size:12px}
+    .sec{padding:12px}
+    .market-table{min-width:0}
+    .market-table thead{display:none}
+    .market-table,.market-table tbody,.market-table tr{display:block;width:100%}
+    .market-table tr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);padding:7px 0}
+    .market-table td{display:block;border:0;padding:4px 8px;white-space:normal}
+    .market-table td:first-child,.market-table td:nth-child(4),.market-table td:nth-child(5){grid-column:1/-1}
+    .market-table td:nth-child(2)::before{content:'最新报价 ';color:var(--sub)}
+    .market-table td:nth-child(3)::before{content:'涨跌幅 ';color:var(--sub)}
+    .market-table td:nth-child(5)::before{content:'正式收盘 ';color:var(--sub)}
+  }
+  @media(prefers-reduced-motion:reduce){.view.active{animation:none}*,*::before,*::after{scroll-behavior:auto!important}}
   .tab.on{background:#fff;color:var(--blue);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08)}
   .cfg-wrap{display:flex;gap:14px;flex-wrap:wrap}
   .cfg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;flex:1;min-width:300px}
@@ -296,12 +324,13 @@
     </div>
   </div>
 
-  <nav class="topnav" id="topnav">
-    <span class="nav-item active" data-view="overview"><span class="ni">★</span>总览</span>
-    <span class="nav-item" data-view="drawdown"><span class="ni">▼</span>回撤分析</span>
-    <span class="nav-item" data-view="allocation"><span class="ni">≡</span>配置组合</span>
-    <span class="nav-item" data-view="assets"><span class="ni">▤</span>资产总表</span>
-    <span class="nav-item" data-view="archive"><span class="ni">▦</span>历史档案</span>
+  <nav class="topnav" id="topnav" aria-label="主要页面">
+    <a class="nav-item active" href="#overview" data-view="overview" aria-current="page"><span class="ni" aria-hidden="true">★</span>总览</a>
+    <a class="nav-item" href="#market" data-view="market"><span class="ni" aria-hidden="true">↗</span>行情</a>
+    <a class="nav-item" href="#drawdown" data-view="drawdown"><span class="ni" aria-hidden="true">▼</span>回撤分析</a>
+    <a class="nav-item" href="#allocation" data-view="allocation"><span class="ni" aria-hidden="true">≡</span>配置组合</a>
+    <a class="nav-item" href="#assets" data-view="assets"><span class="ni" aria-hidden="true">▤</span>资产总表</a>
+    <a class="nav-item" href="#archive" data-view="archive"><span class="ni" aria-hidden="true">▦</span>历史档案</a>
   </nav>
 
   <div class="statbar" id="statbar">
@@ -375,6 +404,26 @@
   </div>
   </div>
 
+  <div class="view" id="view-market">
+    <div class="sec">
+      <div class="sec-h"><h2><span class="ic" aria-hidden="true">↗</span>产品行情与收盘快照</h2></div>
+      <p id="marketStatus">准备读取行情状态…</p>
+      <div class="market-tools">
+        <div class="tabs" id="marketTabs" role="group" aria-label="选择市场">
+          <button class="tab on" type="button" data-m="A" aria-pressed="true">A 股 · CNY</button>
+          <button class="tab" type="button" data-m="US" aria-pressed="false">美股 · USD</button>
+        </div>
+        <input id="marketSearch" type="search" aria-label="搜索行情标的" placeholder="搜索名称或代码">
+        <button id="marketRefresh" type="button" class="cancel-btn" hidden>读取报价</button>
+      </div>
+      <div class="tblwrap"><table class="market-table">
+        <thead><tr><th scope="col">标的</th><th scope="col">最新报价</th><th scope="col">相对该时段参考价</th><th scope="col">报价时段与时间（北京时间）</th><th scope="col">正式收盘快照</th></tr></thead>
+        <tbody id="marketRows"></tbody>
+      </table></div>
+      <p class="market-note">报价和正式收盘各自记录。宽基回撤和飞书档位提醒使用经校验的收盘日线。</p>
+    </div>
+  </div>
+
   <div class="view" id="view-drawdown">
   <div class="sec">
     <div class="sec-h">
@@ -382,9 +431,9 @@
       <span class="hint" id="ddMeta">按各标的实际交易日期与来源展示</span>
     </div>
     <div class="dd-tabs" id="ddTabs">
-      <span class="tab on" data-m="">全部</span>
-      <span class="tab" data-m="US">美股</span>
-      <span class="tab" data-m="A">A股</span>
+      <button type="button" class="tab on" data-m="" aria-pressed="true">全部</button>
+      <button type="button" class="tab" data-m="US" aria-pressed="false">美股</button>
+      <button type="button" class="tab" data-m="A" aria-pressed="false">A 股</button>
     </div>
     <div id="ddBox"></div>
   </div>
@@ -397,8 +446,8 @@
       <span class="hint">A股、美股各按 100% 计，避免稀释 · 权重经机器校验强制=100</span>
     </div>
     <div class="tabs" id="cfgTabs">
-      <span class="tab on" data-m="A">A股组合</span>
-      <span class="tab" data-m="US">美股组合</span>
+      <button type="button" class="tab on" data-m="A" aria-pressed="true">A 股组合</button>
+      <button type="button" class="tab" data-m="US" aria-pressed="false">美股组合</button>
     </div>
     <div class="cfg-wrap">
       <div class="cfg-grid" id="cfgGrid"></div>
@@ -651,6 +700,11 @@
   /* ---- 顶部数据状态 ---- */
   document.getElementById("updBadge").textContent = "研究日期 " + A.meta.updated;
   document.getElementById("snapD").textContent = (A.snap ? A.snap.d + " · " + A.snap.t : "—");
+  var release = window.RELEASE_POLICY;
+  if (release && release.mode === "verified-close" && release.drawdownAnalysisEnabled === true) {
+    document.getElementById("releaseNotice").textContent = "已核验收盘快照 · 各市场收盘日期见总览，盘中报价见行情页。" +
+      (release.drawdownAlertsEnabled === true ? "档位提醒按收盘数据生成，实际送达以飞书回执为准。" : "回撤提醒未启用。");
+  }
 
   /* ---- 统计卡 ---- */
   function priceCoverage(market, label) {
@@ -1115,8 +1169,11 @@
   try {
     document.getElementById("cfgTabs").addEventListener("click", function (e) {
       var t = e.target.closest(".tab"); if (!t) return;
-      document.querySelectorAll("#cfgTabs .tab").forEach(function (x) { x.classList.remove("on"); });
-      t.classList.add("on"); renderCfg(t.dataset.m);
+      document.querySelectorAll("#cfgTabs .tab").forEach(function (x) {
+        x.classList.toggle("on", x === t);
+        x.setAttribute("aria-pressed", String(x === t));
+      });
+      renderCfg(t.dataset.m);
     });
     renderCfg("A");
   } catch (e) { console.error("cfg", e); }
@@ -1142,12 +1199,11 @@
     if (v == null || isNaN(v)) return "—";
     return Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
-  function ddZoneCls(z) {
-    if (z === "高位区") return "zn-orange";
-    if (z === "浅回调") return "zn-blue";
-    if (z === "加仓区" || z === "深度机会") return "zn-green";
-    if (z === "极端区") return "zn-purple";
-    return "zn-red";
+  function ddZoneCls(depth) {
+    if (depth < .1) return "zn-blue";
+    if (depth < .3) return "zn-orange";
+    if (depth < .5) return "zn-red";
+    return "zn-purple";
   }
   function tgtDist(d) {
     if (Math.abs(d) < 0.005) return "当前价附近";
@@ -1173,7 +1229,7 @@
     }).join("");
     var curPos = Math.min(Math.abs(x.drawdown) / 0.5 * 100, 100);
     var curEdge = curPos < 10 ? " edge-r" : (curPos > 90 ? " edge-l" : "");
-    var cur = '<div class="dd-cur' + curEdge + '" style="left:' + curPos + '%"><span class="lb">现价 ' + fmtPrice(x.price) + '</span></div>';
+    var cur = '<div class="dd-cur' + curEdge + '" style="left:' + curPos + '%"><span class="lb">收盘 ' + fmtPrice(x.price) + '</span></div>';
     var athLine = '<div class="dd-ath"><span class="lb">窗口高点</span></div>';
     var ladder = '<div class="dd-ladder"><h4>' + anchorLabel + ' · ' + fmtPrice(peak.value) + '（' + peak.date + '）</h4>' +
       '<div class="dd-track">' + athLine + ticks + cur + '</div></div>';
@@ -1197,8 +1253,10 @@
       '<span class="px">' + fmtPrice(x.price) + ' ' + x.ccy + '</span>' +
       '<span class="ddv">距高点 ' + (x.drawdown * 100).toFixed(2) + '%</span>' +
       '<span class="asof">截至 ' + x.asOf + '</span>' +
-      '<span class="zn ' + ddZoneCls(zoneText) + '">' + zoneText + '</span></div>';
-    return '<div class="dd-card">' + top + '<div class="hint" style="padding:8px 0">来源：' + x.source + ' · 口径：' + (x.priceBasis || '旧数据未核验') + ' · ' + (quality.status === 'checked' ? '日历/完整性检查通过；历史最高价未核验' : '旧快照未重新核验') + ' · 仅描述回撤，不构成投资机会判断</div><div class="dd-body">' + ladder + kv + '</div></div>';
+      '<span class="zn ' + ddZoneCls(depth) + '">' + zoneText + '</span></div>';
+    var basis = {qfq: "前复权", unadjusted: "未复权", index: "指数点位"}[x.priceBasis];
+    return '<div class="dd-card">' + top + '<div class="hint" style="padding:8px 0">' + x.source + ' · ' + basis + ' · ' +
+      quality.start + ' 至 ' + quality.end + ' · 全历史最高价待核验</div><div class="dd-body">' + ladder + kv + '</div></div>';
   }
   var ddFilter = "";
   function renderDrawdown() {
@@ -1212,14 +1270,12 @@
     if (meta) meta.textContent = "市场数据生成于 " + D.meta.asOf + " · " + (D.meta.refreshCadence || "实际刷新计划未核验") + " · 来源与交易日期见各标的";
     var list = D.indices.filter(function (x) { return !ddFilter || x.market === ddFilter; });
     var policy = window.RELEASE_POLICY;
-    if (!policy || policy.drawdownAnalysisEnabled !== true) {
-      if (meta) meta.textContent = '宽基长历史正在核验；当前不展示回撤档位或加仓信号，相关提醒已禁用。';
-      box.innerHTML = list.map(function(x) {
-        return '<div class="dd-card dd-quarantined"><b>' + x.name + ' · ' + x.code + '</b><p style="font-size:12px;color:var(--sub)">回撤数据待核验 · 上次记录 ' + x.asOf + '。核验完成后恢复分析。</p></div>';
-      }).join('');
-      return;
-    }
-    box.innerHTML = list.map(ddCard).join("");
+    var enabled = policy && policy.mode === "verified-close" && policy.drawdownAnalysisEnabled === true;
+    if (!enabled && meta) meta.textContent = '宽基长历史正在核验；当前不展示回撤档位，相关提醒已禁用。';
+    box.innerHTML = list.map(function(x) {
+      if (enabled && x.quality && x.quality.status === "checked") return ddCard(x);
+      return '<div class="dd-card dd-quarantined"><b>' + x.name + ' · ' + x.code + '</b><p style="font-size:12px;color:var(--sub)">回撤数据待核验 · 上次记录 ' + x.asOf + '。核验完成后恢复分析。</p></div>';
+    }).join('');
   }
   document.getElementById("ddTabs").addEventListener("click", function (e) {
     var t = e.target;
@@ -1227,7 +1283,10 @@
     if (!t || !t.classList.contains("tab")) return;
     ddFilter = t.getAttribute("data-m") || "";
     var tabs = this.querySelectorAll(".tab");
-    for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle("on", tabs[i] === t);
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].classList.toggle("on", tabs[i] === t);
+      tabs[i].setAttribute("aria-pressed", String(tabs[i] === t));
+    }
     try { renderDrawdown(); } catch (err) { console.error("dd", err); }
   });
   try { renderDrawdown(); } catch (e) { console.error("drawdown", e); }
@@ -1459,29 +1518,32 @@
   var nav = document.getElementById("topnav");
   if (!nav) return;
   var items = nav.querySelectorAll(".nav-item");
-  var VIEWS = ["overview", "drawdown", "allocation", "assets", "archive"];
+  var VIEWS = ["overview", "market", "drawdown", "allocation", "assets", "archive"];
   function show(name) {
     if (VIEWS.indexOf(name) < 0) name = "overview";
-    items.forEach(function (it) { it.classList.toggle("active", it.dataset.view === name); });
+    items.forEach(function (it) {
+      it.classList.toggle("active", it.dataset.view === name);
+      if (it.dataset.view === name) it.setAttribute("aria-current", "page");
+      else it.removeAttribute("aria-current");
+    });
     VIEWS.forEach(function (v) {
       var el = document.getElementById("view-" + v);
       if (el) el.classList.toggle("active", v === name);
     });
+    window.dispatchEvent(new Event("asset-view"));
     // 切回总览时，隐藏期间 canvas 尺寸为 0，触发 resize 让温度计重算
     if (name === "overview") {
       setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 70);
     }
   }
-  items.forEach(function (it) {
-    it.addEventListener("click", function () {
-      show(it.dataset.view);
-      if (history.replaceState) history.replaceState(null, "", "#" + it.dataset.view);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+  window.addEventListener("hashchange", function () {
+    show(location.hash.slice(1));
+    window.scrollTo(0, 0);
   });
   var initial = (location.hash || "").replace("#", "");
   show(initial);
 })();
 </script>
+<script src="./market-board.js"></script>
 </body>
 </html>

@@ -26,6 +26,10 @@ def run():
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 page.on('console',lambda m:errors.append(m.text) if m.type=='error' else None)
                 page.route('**/*',lambda route:route.continue_() if route.request.url.startswith(url.rsplit('/',1)[0]) or route.request.url.startswith('data:') else route.abort())
+                page.route('**/api/quotes', lambda route: route.fulfill(json={
+                    'observedAt':'2026-11-04T13:10:05Z', 'pollSeconds':15,
+                    'quotes':[{'code':'SOXX', 'price':500.4, 'status':'recent', 'change':0.0123,
+                               'session':'pre_market', 'timestamp':'2026-11-04T13:10:00Z'}]}))
                 page.goto(url,wait_until='networkidle')
                 assert page.evaluate('document.documentElement.scrollWidth') <= width+2
                 assert page.locator('#stBadge').inner_text()=='✓ 结构校验通过'
@@ -64,6 +68,20 @@ def run():
                 assert f'{price:.3f}' in page.locator('#detail').inner_text()
                 page.locator('#chartMarkets').locator('xpath=..').screenshot(path=str(OUT/f'chart-{width}.png'))
                 page.screenshot(path=str(OUT/f'overview-{width}.png'),full_page=True)
+                page.locator('#topnav [data-view="market"]').focus()
+                page.keyboard.press('Enter')
+                page.locator('#marketStatus').filter(has_text='有报价').wait_for()
+                assert page.locator('#marketRows tr').count() == 24
+                page.locator('#marketTabs button[data-m="US"]').click()
+                assert page.locator('#marketRows tr').count() == 17
+                page.locator('#marketSearch').fill('SOXX')
+                quote_row = page.locator('#marketRows tr')
+                assert quote_row.count() == 1
+                assert '500.40' in quote_row.inner_text()
+                assert '盘前' in quote_row.inner_text()
+                assert page.evaluate('document.documentElement.scrollWidth') <= width+2
+                assert page.locator('#topnav [data-view="market"]').get_attribute('aria-current') == 'page'
+                page.screenshot(path=str(OUT/f'market-{width}.png'),full_page=True)
                 page.locator('#topnav [data-view="drawdown"]').click()
                 assert page.locator('#ddBox .dd-card').count()==9
                 assert page.locator('#ddBox .dd-quarantined').count()==9
@@ -80,6 +98,8 @@ def run():
                 page.locator('#q').fill('SOXX')
                 page.wait_for_timeout(250)
                 assert page.locator('tbody tr[data-c="SOXX"]').count()==1
+                page.go_back()
+                page.locator('#view-drawdown').wait_for()
                 assert not errors,errors
                 results.append({'width':width,'errors':errors,'A':24,'US':17,'drawdown':9})
                 page.close()

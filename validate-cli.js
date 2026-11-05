@@ -9,13 +9,22 @@ const date=v=>typeof v==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!isNaN(Date.pa
 const near=(a,b,t=.0002)=>num(a)&&num(b)&&Math.abs(a-b)<=t;
 function depthLabel(d){return ["回撤不足10%","回撤10–20%","回撤20–30%","回撤30–40%","回撤40–50%","回撤50%以上"][DEPTHS.filter(x=>Math.abs(d)>=Math.abs(x)).length];}
 function loadJS(file,name){const c={window:{},console};vm.runInNewContext(fs.readFileSync(file,"utf8"),c,{filename:file,timeout:3000});if(!c.window[name])throw Error(name+" missing: "+file);return c.window[name];}
-function validateProductPrices(A,expected){return A.assets.filter(x=>x.signal.priceStatus==='checked'&&x.signal.priceAsOf!==expected[x.m]).map(x=>x.c+': 产品收盘价非最近已完成交易日，预期 '+expected[x.m]);}
-function validateSiteRelease(root,D){
-  const p=loadJS(path.join(root,'release-policy.js'),'RELEASE_POLICY'),html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+function validateProductPrices(A,expected){
+  return A.assets.flatMap(x=>{
+    if(x.signal?.priceStatus!=='checked')return [x.c+': 缺少已核验产品收盘价'];
+    if(x.signal.priceAsOf!==expected[x.m])return [x.c+': 产品收盘价非最近已完成交易日，预期 '+expected[x.m]];
+    return [];
+  });
+}
+function sitePolicy(root){return loadJS(path.join(root,'release-policy.js'),'RELEASE_POLICY');}
+function validateSiteRelease(root,D,p=sitePolicy(root)){
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
   const errors=[];
-  if(p.schemaVersion!==1||p.mode!=='snapshot'||p.drawdownAnalysisEnabled!==false||p.drawdownAlertsEnabled!==false||!p.releaseId||!p.reason)errors.push('快照网站发布必须隔离回撤分析并禁用回撤提醒');
+  if(p.schemaVersion!==1||!p.releaseId||!p.reason||!['snapshot','verified-close'].includes(p.mode))errors.push('网站发布策略无效');
+  if(p.mode==='snapshot'&&(p.drawdownAnalysisEnabled!==false||p.drawdownAlertsEnabled!==false))errors.push('快照网站发布必须隔离回撤分析并禁用回撤提醒');
+  if(p.mode==='verified-close'&&(p.drawdownAnalysisEnabled!==true||typeof p.drawdownAlertsEnabled!=='boolean'))errors.push('核验收盘模式发布策略无效');
   if(!html.includes('src="./release-policy.js"')||!html.includes('id="releaseNotice"')||!html.includes('dd-quarantined'))errors.push('网站缺少快照提示或隔离视图');
-  if(!D.pipeline||D.pipeline.pendingAlerts.length)errors.push('需先处理已有提醒队列，禁止携待发送提醒发布快照网站');
+  if(p.drawdownAlertsEnabled===false&&(!D.pipeline||D.pipeline.pendingAlerts.length))errors.push('关闭提醒的发布版本不得携带待发送提醒');
   return errors;
 }
 function validateDrawdown(D,{now=new Date(),publish=false,expected=null}={}){
@@ -62,18 +71,20 @@ function validateDrawdown(D,{now=new Date(),publish=false,expected=null}={}){
 }
 function main(argv=process.argv.slice(2)){
   const opt=k=>{const i=argv.indexOf(k);return i<0?undefined:argv[i+1];};
-  const root=path.resolve(opt("--root")||__dirname),publish=argv.includes("--publish"),now=new Date(opt("--now")||Date.now());
+  const root=path.resolve(opt("--root")||__dirname),siteRelease=argv.includes("--site-release"),now=new Date(opt("--now")||Date.now());
   try{
     if(isNaN(now))throw Error("invalid --now");
     if(fs.existsSync(path.join(root,"scripts/.refresh-transaction.json")))throw Error("未完成事务；先恢复再校验/发布");
+    const policy=siteRelease?sitePolicy(root):null;
+    const publish=argv.includes("--publish")||policy?.mode==='verified-close';
     const A=loadJS(path.join(root,"data.js"),"ASSETS"),D=loadJS(path.join(root,"drawdown.js"),"DRAWDOWN"),assets=av.validateAssets(A);console.log(av.assetsReport(A));
     let expected=null;
     if(publish){const exe=process.env.ASSET_PYTHON||(process.platform==="win32"?path.join(__dirname,".venv/Scripts/python.exe"):"python3");const r=spawnSync(exe,[path.join(__dirname,"scripts/calendar_status.py"),now.toISOString()],{encoding:"utf8"});if(r.status!==0)throw Error("交易日历不可用；拒绝发布: "+(r.stderr||r.error||""));expected=JSON.parse(r.stdout);}
     const r=validateDrawdown(D,{now,publish,expected});
-    if(argv.includes('--site-release'))r.errors.push(...validateSiteRelease(root,D));
+    if(siteRelease)r.errors.push(...validateSiteRelease(root,D,policy));
     if(publish&&expected)r.errors.push(...validateProductPrices(A,expected));
     if(D.pipeline){const mirror=JSON.parse(fs.readFileSync(path.join(root,"scripts/level_state.json"),"utf8"));if(!D.meta.generationId||mirror.generationId!==D.meta.generationId||JSON.stringify(mirror.indices)!==JSON.stringify(D.pipeline.state))r.errors.push("状态镜像/代号不一致");const file=path.join(root,"scripts/alerts.json");if(fs.existsSync(file)){const a=JSON.parse(fs.readFileSync(file,"utf8"));if(a.generationId!==D.meta.generationId||JSON.stringify(a.alerts)!==JSON.stringify(D.pipeline.pendingAlerts))r.errors.push("提醒镜像不一致");}}
-    r.errors.forEach(e=>console.error("[DD-ERROR] "+e));r.warnings.forEach(e=>console.log("[DD-WARN] "+e));console.log("drawdown: "+r.errors.length+" errors, "+r.warnings.length+" warnings"+(argv.includes("--site-release")?" [snapshot site release]":publish?" [publish gate]":" [offline structure only]"));return assets.ok&&!r.errors.length?0:1;
+    r.errors.forEach(e=>console.error("[DD-ERROR] "+e));r.warnings.forEach(e=>console.log("[DD-WARN] "+e));console.log("drawdown: "+r.errors.length+" errors, "+r.warnings.length+" warnings"+(publish?" [publish gate]":siteRelease?" [snapshot site release]":" [offline structure only]"));return assets.ok&&!r.errors.length?0:1;
   }catch(e){console.error("[ERROR] "+e.message);return 1;}
 }
 module.exports={validateDrawdown,validateProductPrices,validateSiteRelease,loadJS,depthLabel,main};
