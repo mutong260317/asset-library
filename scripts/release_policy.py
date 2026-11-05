@@ -9,9 +9,9 @@ def alerts_enabled(root):
     if not match:raise ValueError('Missing release policy')
     policy=json.loads(match[1])
     if (policy.get('schemaVersion')!=1 or type(policy.get('drawdownAlertsEnabled')) is not bool or
-            policy.get('mode') not in ('snapshot', 'verified-close')):
+            policy.get('mode') not in ('snapshot', 'live')):
         raise ValueError('Invalid release policy')
-    if policy['drawdownAlertsEnabled'] and (policy['mode']!='verified-close' or
+    if policy['drawdownAlertsEnabled'] and (policy['mode']!='live' or
                                            policy.get('drawdownAnalysisEnabled') is not True):
-        raise ValueError('Drawdown alerts require verified-close mode with analysis enabled')
+        raise ValueError('Drawdown alerts require live mode with analysis enabled')
     return policy['drawdownAlertsEnabled']

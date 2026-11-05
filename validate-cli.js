@@ -20,9 +20,9 @@ function sitePolicy(root){return loadJS(path.join(root,'release-policy.js'),'REL
 function validateSiteRelease(root,D,p=sitePolicy(root)){
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
   const errors=[];
-  if(p.schemaVersion!==1||!p.releaseId||!p.reason||!['snapshot','verified-close'].includes(p.mode))errors.push('网站发布策略无效');
+  if(p.schemaVersion!==1||!p.releaseId||!p.reason||!['snapshot','live'].includes(p.mode))errors.push('网站发布策略无效');
   if(p.mode==='snapshot'&&(p.drawdownAnalysisEnabled!==false||p.drawdownAlertsEnabled!==false))errors.push('快照网站发布必须隔离回撤分析并禁用回撤提醒');
-  if(p.mode==='verified-close'&&(p.drawdownAnalysisEnabled!==true||typeof p.drawdownAlertsEnabled!=='boolean'))errors.push('核验收盘模式发布策略无效');
+  if(p.mode==='live'&&(p.drawdownAnalysisEnabled!==true||typeof p.drawdownAlertsEnabled!=='boolean'))errors.push('核验收盘模式发布策略无效');
   if(!html.includes('src="./release-policy.js"')||!html.includes('id="releaseNotice"')||!html.includes('dd-quarantined'))errors.push('网站缺少快照提示或隔离视图');
   if(p.drawdownAlertsEnabled===false&&(!D.pipeline||D.pipeline.pendingAlerts.length))errors.push('关闭提醒的发布版本不得携带待发送提醒');
   return errors;
@@ -76,7 +76,7 @@ function main(argv=process.argv.slice(2)){
     if(isNaN(now))throw Error("invalid --now");
     if(fs.existsSync(path.join(root,"scripts/.refresh-transaction.json")))throw Error("未完成事务；先恢复再校验/发布");
     const policy=siteRelease?sitePolicy(root):null;
-    const publish=argv.includes("--publish")||policy?.mode==='verified-close';
+    const publish=argv.includes("--publish")||policy?.mode==='live';
     const A=loadJS(path.join(root,"data.js"),"ASSETS"),D=loadJS(path.join(root,"drawdown.js"),"DRAWDOWN"),assets=av.validateAssets(A);console.log(av.assetsReport(A));
     let expected=null;
     if(publish){const exe=process.env.ASSET_PYTHON||(process.platform==="win32"?path.join(__dirname,".venv/Scripts/python.exe"):"python3");const r=spawnSync(exe,[path.join(__dirname,"scripts/calendar_status.py"),now.toISOString()],{encoding:"utf8"});if(r.status!==0)throw Error("交易日历不可用；拒绝发布: "+(r.stderr||r.error||""));expected=JSON.parse(r.stdout);}

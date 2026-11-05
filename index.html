@@ -701,10 +701,18 @@
   document.getElementById("updBadge").textContent = "研究日期 " + A.meta.updated;
   document.getElementById("snapD").textContent = (A.snap ? A.snap.d + " · " + A.snap.t : "—");
   var release = window.RELEASE_POLICY;
-  if (release && release.mode === "verified-close" && release.drawdownAnalysisEnabled === true) {
+  if (release && release.mode === "live" && release.drawdownAnalysisEnabled === true) {
     document.getElementById("releaseNotice").textContent = "已核验收盘快照 · 各市场收盘日期见总览，盘中报价见行情页。" +
       (release.drawdownAlertsEnabled === true ? "档位提醒按收盘数据生成，实际送达以飞书回执为准。" : "回撤提醒未启用。");
   }
+
+  /* ---- 发布模式提示：live 模式隐藏快照黄框，snapshot 模式保留兜底 ---- */
+  (function () {
+    var notice = document.getElementById("releaseNotice");
+    if (!notice) return;
+    var policy = window.RELEASE_POLICY;
+    notice.style.display = (policy && policy.mode === "live") ? "none" : "block";
+  })();
 
   /* ---- 统计卡 ---- */
   function priceCoverage(market, label) {
@@ -1270,7 +1278,7 @@
     if (meta) meta.textContent = "市场数据生成于 " + D.meta.asOf + " · " + (D.meta.refreshCadence || "实际刷新计划未核验") + " · 来源与交易日期见各标的";
     var list = D.indices.filter(function (x) { return !ddFilter || x.market === ddFilter; });
     var policy = window.RELEASE_POLICY;
-    var enabled = policy && policy.mode === "verified-close" && policy.drawdownAnalysisEnabled === true;
+    var enabled = policy && policy.mode === "live" && policy.drawdownAnalysisEnabled === true;
     if (!enabled && meta) meta.textContent = '宽基长历史正在核验；当前不展示回撤档位，相关提醒已禁用。';
     box.innerHTML = list.map(function(x) {
       if (enabled && x.quality && x.quality.status === "checked") return ddCard(x);
