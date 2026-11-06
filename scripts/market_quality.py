@@ -42,7 +42,7 @@ def last_closed_session(market, now=None):
 
 
 def checked_rows(rows, market, now=None, start=None, minimum_rows=200,
-                 max_daily_move=MAX_DAILY_MOVE, approved_moves=None):
+                 max_daily_move=MAX_DAILY_MOVE, approved_moves=None, split_ratios=None):
     """Only completed sessions, exactly latest closed session, no holes/NaNs/jumps."""
     cal, now = schedule(market, now)
     if not 1 <= minimum_rows <= 2000 or not 0 < max_daily_move < 1:
@@ -100,7 +100,10 @@ def checked_rows(rows, market, now=None, start=None, minimum_rows=200,
     approved = approved_moves or {}
     approved_jumps = []
     for prev, cur in zip(out, out[1:]):
-        move = cur[2] / prev[2] - 1
+        ratio = (split_ratios or {}).get(cur[0], 1)
+        if isinstance(ratio, bool) or not isinstance(ratio, (int,float)) or not math.isfinite(ratio) or ratio <= 0:
+            raise ValueError('invalid reviewed split ratio')
+        move = cur[2] * ratio / prev[2] - 1
         if abs(move) > max_daily_move:
             approved_move = approved.get(cur[0])
             if approved_move is None or abs(move - approved_move) > APPROVED_MOVE_TOLERANCE:
@@ -110,4 +113,5 @@ def checked_rows(rows, market, now=None, start=None, minimum_rows=200,
                  "calendar": cal.name, "settlementDelayMinutes": 20,
                  "observedAt": now.isoformat(), "rows": len(out),
                  "start": out[0][0], "end": out[-1][0],
-                 "approvedJumps": approved_jumps}
+                 "approvedJumps": approved_jumps,
+                 "reviewedSplits": [r[0] for r in out[1:] if r[0] in (split_ratios or {})]}

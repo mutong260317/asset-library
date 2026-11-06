@@ -69,7 +69,7 @@ def recover(root):
     if not journal.exists():
         return
     txn = json.loads(journal.read_text(encoding="utf-8"))
-    if set(txn) != set(FILES):
+    if set(txn) not in (set(FILES), set(FILES) | {'data.js'}):
         raise ValueError("invalid transaction file set")
     # Check all files before changing any of them.
     for rel, item in txn.items():
@@ -142,7 +142,7 @@ def build_pipeline(indices, previous, old_state, alerts_enabled=True):
     return {"state": state, "pendingAlerts": pending, "acknowledgedIds": acknowledged}
 
 
-def publish_local(root, payload, now=None, require_fresh=True, expected_files=None):
+def publish_local(root, payload, now=None, require_fresh=True, expected_files=None, asset_text=None):
     """Validate staged bytes before touching outputs. No Git/remote writes."""
     root = Path(root)
     expected_files = expected_files or file_versions(root)
@@ -154,12 +154,15 @@ def publish_local(root, payload, now=None, require_fresh=True, expected_files=No
         "scripts/level_state.json": encoded({"generationId": generation, "indices": payload["pipeline"]["state"]}),
         "scripts/alerts.json": encoded({"generationId": generation, "alerts": payload["pipeline"]["pendingAlerts"]}),
     }
+    if asset_text is not None:
+        values['data.js'] = asset_text
     tmp = root / ".tmp"
     tmp.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(dir=tmp) as stage:
         stage = Path(stage)
         (stage / "scripts").mkdir()
-        shutil.copyfile(root / "data.js", stage / "data.js")
+        if asset_text is None:
+            shutil.copyfile(root / "data.js", stage / "data.js")
         for rel, content in values.items():
             (stage / rel).write_text(content, encoding="utf-8")
         command = ["node", str(root / "validate-cli.js"), "--root", str(stage)]

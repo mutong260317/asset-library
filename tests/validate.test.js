@@ -68,3 +68,14 @@ test('snapshot site release requires disabled analysis and alerts',()=>{
     assert.ok(check(tmp,base).length);
   }finally{fs.rmSync(tmp,{recursive:true,force:true});}
 });
+test('publication refuses unavailable product prices',()=>{
+  const A=structuredClone(loadJS(path.join(root,'data.js'),'ASSETS'));
+  const missing=A.assets[0];
+  missing.signal.priceStatus='unavailable';missing.signal.price=null;missing.signal.priceAsOf=null;
+  const expected=Object.fromEntries(['A','US'].map(m=>[m,A.assets.find(x=>x.m===m&&x.signal.priceAsOf).signal.priceAsOf]));
+  assert.ok(require('../validate-cli.js').validateProductPrices(A,expected).some(e=>e.includes(missing.c)));
+});
+test('report catalog points to every existing weekly report',()=>{
+  const actual=fs.readdirSync(path.join(root,'reports')).filter(f=>/^\d{4}-W\d{2}\.md$/.test(f)).sort().reverse();
+  assert.deepEqual(Array.from(loadJS(path.join(root,'reports/catalog.js'),'RESEARCH_REPORTS')),actual);
+});

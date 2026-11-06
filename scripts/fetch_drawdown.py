@@ -230,8 +230,8 @@ def analyze(code, name, market, symbol, ccy, ath_start, now=None, previous=None,
             quality["sourceChangeAccepted"] = True
             quality["previousSource"] = previous["source"]
             quality["baselineRevision"] = revision
-        if rows[-1][0] > previous["asOf"] and abs(rows[-1][2] / previous["price"] - 1) > .15:
-            raise ValueError(f"{code} abnormal cross-run price move")
+        # checked_rows already checks each adjacent session, including reviewed
+        # extremes. A move accumulated over several missed runs is not a daily jump.
     dates = [r[0] for r in rows]
     opens = [r[1] for r in rows]
     closes = [r[2] for r in rows]

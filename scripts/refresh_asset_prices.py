@@ -9,7 +9,8 @@ import re
 import subprocess
 import tempfile
 from zoneinfo import ZoneInfo
-from longbridge_source import configure_snapshot,fetch_longbridge,canonical_symbol
+from longbridge_source import (configure_snapshot, fetch_longbridge, fetch_product_candles,
+                               product_symbol, rows_from_candles)
 from market_quality import checked_rows,utc_now,last_closed_session
 from refresh_store import atomic_text,refresh_lock
 
@@ -32,7 +33,7 @@ def _product_df_to_rows(df):
     return out
 
 
-def fetch_price_rows(code,market,symbol,now,limit,provider):
+def fetch_price_rows(code,market,symbol,now,limit,provider,split_ratios=None):
     """Return checked close rows for the selected provider."""
     if provider=="akshare":
         import akshare as ak
@@ -48,28 +49,39 @@ def fetch_price_rows(code,market,symbol,now,limit,provider):
         raw=[r for r in all_rows if r[0]>=cutoff]
     else:
         raw=fetch_longbridge(symbol,market,now,recent=True)
-    return checked_rows(raw,market,now,minimum_rows=1,max_daily_move=limit)
+    return checked_rows(raw,market,now,minimum_rows=1,max_daily_move=limit,split_ratios=split_ratios)
 
 
-def refresh(root=ROOT, input_file=None, provider="longbridge"):
+def refresh(root=ROOT, input_file=None, provider="longbridge", require_complete=False):
+    if input_file and provider != "longbridge":
+        raise ValueError('A Longbridge export cannot be used with a different provider')
     if input_file:configure_snapshot(input_file)
     with refresh_lock(root):
         if (root/'scripts/.refresh-transaction.json').exists():
             raise ValueError('Recover pending drawdown transaction before price refresh')
         A=asset_data(root);now=utc_now();prices=[];original=(root/'data.js').read_text(encoding='utf-8')
         source_name='Longbridge' if provider=='longbridge' else 'AkShare(新浪)'
-        for asset in A['assets']:
+        actions=json.loads((root/'scripts/reviewed_splits.json').read_text(encoding='utf-8'))
+        splits={}
+        for action in actions['entries']:
+            splits.setdefault(action['code'],{})[action['date']]=action['newSharesPerOldShare']
+        candles = fetch_product_candles(A['assets'], now) if provider == 'longbridge' and not input_file else [None] * len(A['assets'])
+        for asset, bars in zip(A['assets'], candles):
             code=asset['c'];market=asset['m']
             symbol=code if market=='US' else ('sh' if code.startswith('5') else 'sz')+code
-            item={'code':code,'symbol':canonical_symbol(symbol,market),'value':None,'asOf':None,
+            item={'code':code,'symbol':product_symbol(code,market),'value':None,'asOf':None,
                   'source':None,'basis':'unadjusted','status':'unavailable'}
             try:
                 # Leveraged ETF day moves require a different quarantine policy;
                 # this is an engineering guard, not an investment risk limit.
                 limit=.60 if asset['cat']=='杠杆' else .15
-                rows,_=fetch_price_rows(code,market,symbol,now,limit,provider)
+                if provider == 'longbridge' and not input_file:
+                    rows,quality=checked_rows(rows_from_candles(bars, market), market, now, minimum_rows=1, max_daily_move=limit,split_ratios=splits.get(code))
+                else:
+                    rows,quality=fetch_price_rows(code,market,symbol,now,limit,provider,split_ratios=splits.get(code))
                 item.update(value=rows[-1][2],asOf=rows[-1][0],source=source_name,status='checked')
                 item['dailyMoveReviewLimit']=limit
+                if quality.get('reviewedSplits'):item['reviewedSplits']=quality['reviewedSplits']
             except Exception as error:item['reason']=str(error)
             prices.append(item)
         final_now=utc_now()
@@ -77,6 +89,9 @@ def refresh(root=ROOT, input_file=None, provider="longbridge"):
             if item['status']=='checked' and item['asOf']!=last_closed_session(asset['m'],final_now):
                 item.update(value=None,asOf=None,source=None,status='unavailable',reason='session changed while fetching; retry')
         if not any(p['status']=='checked' for p in prices):raise ValueError('No verified product close prices; preserve data.js')
+        if require_complete and any(p['status']!='checked' for p in prices):
+            details = '; '.join(f"{p['code']}: {p['reason']}" for p in prices if p['status']!='checked')
+            raise ValueError('Incomplete product closes; preserve data.js: ' + details)
         text=original
         for item in prices:
             code=item['code'];asset=next(x for x in A['assets'] if x['c']==code)
@@ -125,5 +140,6 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--longbridge-input')
     parser.add_argument('--provider',choices=['longbridge','akshare'],default='longbridge')
+    parser.add_argument('--require-complete', action='store_true')
     args=parser.parse_args()
-    refresh(input_file=args.longbridge_input,provider=args.provider)
+    refresh(input_file=args.longbridge_input,provider=args.provider,require_complete=args.require_complete)

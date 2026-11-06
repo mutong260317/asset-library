@@ -185,5 +185,19 @@ class TransactionChecks(unittest.TestCase):
         baseline,_=store.load_baseline(self.root)
         self.assertEqual(baseline['pipeline']['pendingAlerts'],[])
         self.assertEqual(baseline['pipeline']['acknowledgedIds'],['a'*24])
+    def test_asset_and_drawdown_bundle_recovers_together(self):
+        shutil.copyfile(ROOT/'data.js', self.root/'data.js')
+        payload=copy.deepcopy(store.load_payload(ROOT))
+        updated=(ROOT/'data.js').read_text(encoding='utf-8')+'\n/* staged products */\n'
+        store.publish_local(self.root, payload, require_fresh=False, asset_text=updated)
+        self.assertEqual((self.root/'data.js').read_text(encoding='utf-8'), updated)
+        store.load_baseline(self.root)
+        original=updated
+        txn={rel:dict(beforeHash=store.digest((self.root/rel).read_text(encoding='utf-8')),
+                      after=(self.root/rel).read_text(encoding='utf-8')) for rel in store.FILES}
+        txn['data.js']={'beforeHash':store.digest(original), 'after':original+'/* recovered */\n'}
+        (self.root/'scripts/.refresh-transaction.json').write_text(json.dumps(txn), encoding='utf-8')
+        store.recover(self.root)
+        self.assertTrue((self.root/'data.js').read_text(encoding='utf-8').endswith('/* recovered */\n'))
 
 if __name__=='__main__':unittest.main()

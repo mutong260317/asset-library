@@ -3,6 +3,12 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const {loadJS}=require('../validate-cli.js');
 const {validateAssets}=require('../validate.js');
+function indexReports(root=path.resolve(__dirname,'..')){
+  const dir=path.join(root,'reports');
+  const reports=fs.readdirSync(dir).filter(file=>/^\d{4}-W\d{2}\.md$/.test(file)).sort().reverse();
+  fs.writeFileSync(path.join(dir,'catalog.js'),'/* Generated from the actual weekly report files. */\nwindow.RESEARCH_REPORTS = '+JSON.stringify(reports,null,2)+';\n');
+  return reports;
+}
 function archive(root=path.resolve(__dirname,'..'),revision=''){
   if(revision&&!/^r[1-9]\d*$/.test(revision))throw Error('Invalid explicit revision label');
   const A=loadJS(path.join(root,'data.js'),'ASSETS'),r=validateAssets(A);
@@ -23,5 +29,5 @@ function archive(root=path.resolve(__dirname,'..'),revision=''){
   }
   fs.writeFileSync(file,text,{flag:'wx'});return {file,hash,assets:A.assets.length,unchanged:false};
 }
-module.exports={archive};
-if(require.main===module){try{const i=process.argv.indexOf('--revision');console.log(JSON.stringify(archive(undefined,i<0?'':process.argv[i+1])));}catch(e){console.error(e.message);process.exitCode=1;}}
+module.exports={archive,indexReports};
+if(require.main===module){try{const i=process.argv.indexOf('--revision');const snapshot=archive(undefined,i<0?'':process.argv[i+1]);indexReports();console.log(JSON.stringify(snapshot));}catch(e){console.error(e.message);process.exitCode=1;}}

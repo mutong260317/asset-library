@@ -2,8 +2,8 @@
 window.RELEASE_POLICY = {
   "schemaVersion": 1,
   "mode": "live",
-  "releaseId": "site-update-2026-11-04",
+  "releaseId": "site-update-2026-11-06",
   "drawdownAnalysisEnabled": true,
   "drawdownAlertsEnabled": false,
-  "reason": "宽基回撤已通过交易所日历与多源核验，恢复回撤分析；外部提醒发送器未恢复，提醒暂保持禁用"
+  "reason": "产品与宽基使用已核验的正式收盘快照；盘中报价由本机入口提供，外部自动提醒暂保持禁用"
 };

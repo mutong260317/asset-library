@@ -1,6 +1,6 @@
 # 资产产品分析（Asset Library）
 
-> 本版采用历史快照模式：分市场图表和产品价格可用，数据所属日期明确显示；宽基回撤正在核验，数值分析与相关提醒暂不可用。维护者先读 [HANDOFF.md](HANDOFF.md) 与 [AGENTS.md](AGENTS.md)。
+> 公开网站展示有日期和来源的研究及正式收盘快照。本机版额外提供长桥盘中报价。飞书支持发送预览、显式发送和回执留存。实际验收结果见 [产品审查记录](reports/audits/PRODUCT-REVIEW.md)，维护者先读 HANDOFF.md 与 AGENTS.md。
 
 个人资产配置研究系统：剖析每只 ETF 的**底层结构 → 康波周期定位 → 估值位置 → 回撤 → 宏观环境**，以「周期为王、不硬配比例」为核心方法论，输出 A股/美股各自按 100% 计的配置方案。
 
@@ -24,7 +24,7 @@
 2. **发布前必须自检**：`node validate.js` 和 `node validate-cli.js --publish`。普通离线校验仅检查结构，不能替代交易日新鲜度和完整性闸门。权重非 100% 禁止发布。
 3. 更新研究日期后运行 `node scripts/archive_weekly.js`，完整保存 41 只资产（含未调整项）；`history` 继续用于页面变化对比，不能代替全量快照。日常价格更新不修改研究日期。
 4. 生成本周周报 `reports/2026-Wxx.md`，同步关键结论到飞书文档
-5. 在本地/独立分支检查、测试并提交。远程写回、合并和 GitHub Pages 部署另按用户授权执行，数据与状态必须同一提交。
+5. 在本地/独立分支检查、测试并提交。用户已授权常规更新通过测试后推送、合并和部署，数据与状态必须同一提交，上线后核对实际版本与页面。
 
 > ⚠️ **严禁**在 index.html 内嵌资产数据副本；data.js 是唯一规范源。
 
@@ -60,7 +60,7 @@ Portfolio Decision（决策）：w{c,y,a} 三档权重 / action / buyZone / trim
 ## 数据源与可复算边界
 
 - **产品收盘价**：优先长桥只读日线，按相同基金/ETF代码、未复权价格保存。priceAsOf 是收盘所属交易日；meta.marketUpdated 是观测时间。不能用底层指数点位替代基金价。
-- **宽基回撤**：优先长桥，备用链路保留 Yahoo / 腾讯 / AkShare。所有提供商必须经过同一交易日历、OHLC、完整性、异常和来源切换闸门；不拼入实时行情。本轮旧回撤尚未通过新闸门，保留为未重新核验快照。
+- **宽基回撤**：优先长桥，备用链路保留 Yahoo / 腾讯 / AkShare。所有提供商必须经过同一交易日历、OHLC、完整性、异常和来源切换闸门；逐标的显示收盘日与高点窗口。是否可发布以本次严格校验为准。
 - **研究估值/周期**：旧研究曾引用豆包金融搜索、中证、理杏仁、发行商和宏观资料；来源文字不等于已连接相应 API，也不代表所有分位已独立复算。研究评分含主观推演，不能当成实时行情。
 - **高点口径**：peak 为最多 2000 交易日可用窗口的盘中高点；实际覆盖范围必须展示。historicalATH 未核验则为 null。回撤标签仅描述深度，不直接定义投资机会。
 - **溢价与组合指标**：未知溢价为 null；旧非零溢价仍需对 NAV/市价同一时点核验。目标年化、目标回撤没有模型验证时只是情景假设。
@@ -73,7 +73,7 @@ Python 运行环境安装 requirements.txt；浏览器测试使用环境已有�
 ```text
 node validate.js
 node validate-cli.js
-node validate-cli.js --site-release  # 快照站点：必须隔离未核验回撤
+node validate-cli.js --site-release  # snapshot 检查隔离；live 自动执行严格行情校验
 node validate-cli.js --publish       # 新鲜行情：严格标准保持不变
 python -m unittest discover -s tests -p "test_*.py" -v
 node --test tests/validate.test.js
@@ -95,10 +95,30 @@ node scripts/archive_weekly.js --revision r2          # 同周研究确有修订
 或同字段对象数组，传 `--longbridge-input <本地JSON>`。导出不含凭证，六小时有效；跨过新的收盘时点必须重取，不能把旧盘中缓存改称收盘。
 
 数据先在临时目录完整校验，之后用可恢复日志写入 drawdown.js、level_state 镜像和临时 alerts。
-权威状态与未发送队列嵌入 drawdown.js；仓库不包含飞书发送器。外部发送器获授权且发送成功后，按事件 ID 显式 `--ack`，并在接收端按 ID 幂等。
+权威状态与未发送队列嵌入 drawdown.js。scripts/send_feishu.py 在收到 message_id 后确认事件，发送意图、固定 UUID 和回执持久化在本机 .local/ 中。
 定时任务是否已启用、是否有额度、是否能联网均需独立验收，本轮没有修改它们。
 
 工程审查记录在本地交付分支的 `reports/audits/REVIEW.md`。新增文件在获得远程写入授权前不应被描述为 GitHub 已发布成果。
+
+## 本机行情与飞书
+
+```text
+python scripts/live_market.py --port 8765
+python scripts/refresh_market.py                          # 仅生成完整候选包
+python scripts/refresh_market.py --apply                  # 通过严格校验后同批更新本地数据/状态
+python scripts/refresh_market.py --provider akshare --apply
+python scripts/send_feishu.py weekly                     # 周报摘要预览
+python scripts/send_feishu.py weekly --send               # 显式发送
+python scripts/send_feishu.py drawdown                    # 当前收盘档位提醒预览
+```
+
+Windows 可将 python 换为 `.venv\Scripts\python.exe`。本机行情地址为 http://127.0.0.1:8765/#market 。页面可见时约每 15 秒读取一次，标明时段、成交时间、抓取时间、缺失和过期状态。该入口仅绑定本机回环地址，公开 GitHub Pages 展示收盘快照。
+
+来源/复权变化需要先复核候选包，再显式使用 `--accept-source-change` 建立新基线。不要把此参数无条件加入定时任务。整批更新失败保留原数据，候选证据保存在 `.local/candidates/`。
+
+飞书默认从 `ASSET_FEISHU_APP_ID`、`ASSET_FEISHU_APP_SECRET`、`ASSET_FEISHU_RECEIVE_ID` 读取配置。也可在不入库的 `.local/feishu-config.json` 中设置 `envPrefix` 和 `receiveId`，复用已有机器人环境变量。`--send` 才实际发送。网络结果不明时，45 分钟内沿用已保存的正文和 UUID 重试，超过窗口停止并要求核查群消息。请保留 `.local/feishu-delivery.json`，防止跨次重复发送。研究周报按研究年/周去重，回撤提醒按事件 ID 去重。
+
+回撤提醒须先通过行情发布校验并开启发布策略中的提醒开关。当前外部定时任务未改动，实际运行频率以任务配置和回执为准。
 
 ## 免责
 

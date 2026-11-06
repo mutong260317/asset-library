@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-06",
+  "note": "Only normalize the adjacent-session QC return. Preserve raw unadjusted OHLC and product close prices.",
+  "entries": [
+    {"code": "MTUM", "date": "2026-11-05", "newSharesPerOldShare": 4, "source": "https://www.sec.gov/Archives/edgar/data/1100663/000119312526414100/R2.htm"},
+    {"code": "SOXX", "date": "2026-11-05", "newSharesPerOldShare": 3, "source": "https://www.sec.gov/Archives/edgar/data/1100663/000119312526430480/d156277d497.htm"}
+  ]
+}
