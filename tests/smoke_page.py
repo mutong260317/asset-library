@@ -143,6 +143,7 @@ def run():
                 page.locator('.wrp details').first.locator('summary').click()
                 assert page.locator('.wrp details').first.get_attribute('open') == ''
                 page.screenshot(path=str(OUT/f'archive-{width}.png'), full_page=True)
+                assert page.evaluate('document.documentElement.scrollWidth') <= width+2
                 assert not errors,errors
                 results.append({'width':width,'errors':errors,'A':24,'US':17,'drawdown':9})
                 page.close()
