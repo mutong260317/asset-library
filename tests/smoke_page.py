@@ -4,6 +4,7 @@ import http.server
 import json
 from pathlib import Path
 import threading
+from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -18,10 +19,12 @@ def run():
     try:
         with sync_playwright() as p:
             browser=p.chromium.launch(channel='msedge',headless=True,args=['--disable-gpu'])
+            context=browser.new_context()
             url=f'http://127.0.0.1:{server.server_port}/index.html'
             results=[]
-            for width in (1440,390):
-                page=browser.new_page(viewport={'width':width,'height':1000})
+            for width in (1440,768,390):
+                page=context.new_page()
+                page.set_viewport_size({'width':width,'height':1000})
                 errors=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 page.on('console',lambda m:errors.append(m.text) if m.type=='error' else None)
@@ -45,7 +48,9 @@ def run():
                 assert page.locator('#chartlist').get_attribute('data-market')=='US'
                 page.locator('#chartlist [data-cd="SOXX"]').click()
                 assert 'SOXX.US' in page.locator('#detail').inner_text()
+                assert page.locator('#detail').is_visible()
                 assert '目标权重与当前动作分开记录' in page.locator('#detail').inner_text()
+                page.keyboard.press('Escape')
                 assert page.locator('#chartMarkets button[data-m="US"]').get_attribute('aria-pressed')=='true'
                 page.locator('#chart').scroll_into_view_if_needed()
                 point=page.evaluate('''() => {
@@ -60,13 +65,17 @@ def run():
                 assert point['name'] in page.locator('#chartTip').inner_text()
                 page.mouse.click(box['x']+point['x'],box['y']+point['y'])
                 assert point['code'] in page.locator('#detail').inner_text()
+                assert page.locator('#detailDialog').is_visible()
+                page.locator('#detailClose').click()
                 assert 'A 股含跨境 ETF' in page.locator('#chartMarketNote').inner_text()
                 page.locator('#chartMarkets button[data-m="A"]').click()
                 assert page.locator('#chartlist .li[data-cd]').count()==24
                 page.locator('#chartlist [data-cd="159995"]').click()
                 price=page.evaluate("window.ASSETS.assets.find(x=>x.c==='159995').signal.price")
                 assert f'{price:.3f}' in page.locator('#detail').inner_text()
+                page.locator('#detailClose').click()
                 page.locator('#chartMarkets').locator('xpath=..').screenshot(path=str(OUT/f'chart-{width}.png'))
+                page.evaluate('window.scrollTo(0,0)')
                 page.screenshot(path=str(OUT/f'overview-{width}.png'),full_page=True)
                 page.locator('#topnav [data-view="market"]').focus()
                 page.keyboard.press('Enter')
@@ -79,6 +88,9 @@ def run():
                 assert quote_row.count() == 1
                 assert '500.40' in quote_row.inner_text()
                 assert '盘前' in quote_row.inner_text()
+                quote_row.locator('button').click()
+                assert page.locator('#detailDialog').is_visible()
+                page.keyboard.press('Escape')
                 assert page.evaluate('document.documentElement.scrollWidth') <= width+2
                 assert page.locator('#topnav [data-view="market"]').get_attribute('aria-current') == 'page'
                 page.screenshot(path=str(OUT/f'market-{width}.png'),full_page=True)
@@ -99,19 +111,71 @@ def run():
                 page.locator('#q').fill('SOXX')
                 page.wait_for_timeout(250)
                 assert page.locator('tbody tr[data-c="SOXX"]').count()==1
+                page.locator('#q').fill('')
+                page.locator('#fMarket').select_option('US')
+                assert '17' in page.locator('#rowCount').inner_text()
+                page.locator('#viewToggle [data-v="basic"]').click()
+                page.locator('#tblHead [data-k="fee"]').focus()
+                page.keyboard.press('Enter')
+                assert page.locator('#tblHead [data-k="fee"]').get_attribute('aria-sort') == 'descending'
+                page.locator('#fSort').select_option('fee')
+                assert page.locator('#pager [data-p="next"]').is_enabled()
+                page.locator('#pager [data-p="next"]').click()
+                assert page.locator('#tbody tr').count() == 2
+                page.locator('#q').fill('NO_SUCH_PRODUCT_123')
+                assert '无匹配资产' in page.locator('#tbody').inner_text()
+                page.locator('#q').fill('')
+                page.locator('#fMarket').select_option('')
+                page.locator('#fSort').select_option('code')
                 page.go_back()
                 page.locator('#view-drawdown').wait_for()
+                page.locator('#topnav [data-view="allocation"]').click()
+                assert page.locator('#cfgGrid .cfg-card').count() == 3
+                page.locator('#cfgTabs [data-m="US"]').click()
+                assert '成份股穿透暴露待核验' in page.locator('#pfCard').inner_text()
+                checkbox = page.locator('#checklist input').first
+                checkbox.check()
+                page.reload(wait_until='networkidle')
+                assert page.locator('#checklist input').first.is_checked()
+                page.locator('#topnav [data-view="archive"]').click()
+                assert page.locator('#reportCatalog a').count() == 7
+                assert '2026-W44' in page.locator('#reportCatalog a').first.inner_text()
+                page.locator('.wrp details').first.locator('summary').click()
+                assert page.locator('.wrp details').first.get_attribute('open') == ''
+                page.screenshot(path=str(OUT/f'archive-{width}.png'), full_page=True)
                 assert not errors,errors
                 results.append({'width':width,'errors':errors,'A':24,'US':17,'drawdown':9})
                 page.close()
-            page=browser.new_page()
+            page=context.new_page()
             page.route('**/data.js',lambda route:route.fulfill(status=200,body='/* unavailable */'))
             page.goto(url,wait_until='networkidle')
             assert '数据加载失败' in page.locator('#statbar').inner_text()
             results.append({'missingAssets':'visible error'})
             page.close()
 
-            page = browser.new_page()
+            page = context.new_page()
+            page.goto(url + '#assets', wait_until='networkidle')
+            page.locator('#addDraftBtn').click()
+            page.locator('#dfCode').fill('TESTX')
+            page.locator('#dfMarket').select_option('US')
+            payload = '<img src=x onerror="window.__injected=true">'
+            page.locator('#dfName').fill(payload)
+            page.locator('#dfCat').fill('<svg/onload=alert(1)>')
+            page.locator('#dfSave').click()
+            page.locator('#q').fill('TESTX')
+            assert page.locator('#tbody tr').count() == 1
+            assert payload in page.locator('#tbody').inner_text()
+            assert page.locator('#tbody img,#tbody svg').count() == 0
+            assert page.evaluate('window.__injected === undefined')
+            page.reload(wait_until='networkidle')
+            page.locator('#q').fill('TESTX')
+            assert page.locator('#tbody tr.draft-row').count() == 1
+            page.locator('#tbody .del-draft').click()
+            assert '无匹配资产' in page.locator('#tbody').inner_text()
+            results.append({'draftPersistenceAndInjection': 'stored as text, reload and delete verified'})
+            page.close()
+
+            page = context.new_page()
             page.route('**/data.js', lambda route: route.fulfill(
                 content_type='application/javascript',
                 body=(ROOT / 'data.js').read_text(encoding='utf-8') +
@@ -124,7 +188,7 @@ def run():
             results.append({'invalidWeights': 'views blocked including direct allocation link'})
             page.close()
 
-            page = browser.new_page()
+            page = context.new_page()
             page.route('**/validate.js', lambda route: route.fulfill(
                 content_type='application/javascript', body='/* unavailable */'))
             page.goto(url + '#assets', wait_until='networkidle')
@@ -134,7 +198,7 @@ def run():
             results.append({'missingValidator': 'views blocked'})
             page.close()
 
-            page = browser.new_page()
+            page = context.new_page()
             page.route('**/data.js', lambda route: route.fulfill(
                 content_type='application/javascript',
                 body=(ROOT / 'data.js').read_text(encoding='utf-8') + '''
@@ -156,6 +220,19 @@ def run():
             assert us_coverage.locator('.n').inner_text() == '0 / 17'
             assert us_coverage.locator('.s').inner_text() == '无已核验价格'
             results.append({'mixedDatesAndMissingPrices': 'coverage and date range verified'})
+            page.close()
+            page=context.new_page()
+            def static_public(route):
+                rel=urlsplit(route.request.url).path.lstrip('/') or 'index.html'
+                allowed=('index.html','data.js','drawdown.js','validate.js','release-policy.js','market-board.js','reports/catalog.js')
+                assert rel in allowed, 'Unexpected public request: '+rel
+                route.fulfill(body=(ROOT/rel).read_bytes(),content_type='text/html' if rel.endswith('.html') else 'application/javascript')
+            page.route('https://asset-library.example/**',static_public)
+            page.goto('https://asset-library.example/#market',wait_until='networkidle')
+            assert '公开站点' in page.locator('#marketStatus').inner_text()
+            assert not page.locator('#marketRefresh').is_visible()
+            assert page.locator('#marketRows tr').count()==24
+            results.append({'publicMode':'dated snapshots, no private quote requests'})
             browser.close()
             (OUT/'smoke.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
             print(json.dumps(results,ensure_ascii=False))

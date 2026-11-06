@@ -23,10 +23,14 @@ RETRY_LIMIT = dt.timedelta(minutes=45)
 
 
 class Feishu:
-    def __init__(self, env=os.environ):
-        self.app_id = env.get("ASSET_FEISHU_APP_ID", "")
-        self.secret = env.get("ASSET_FEISHU_APP_SECRET", "")
-        self.recipient = env.get("ASSET_FEISHU_RECEIVE_ID", "")
+    def __init__(self, env=os.environ, config=None):
+        config = config or {}
+        prefix = config.get('envPrefix', 'ASSET_FEISHU')
+        if not re.fullmatch(r'[A-Z][A-Z0-9_]*', prefix):
+            raise ValueError('Invalid credential environment prefix')
+        self.app_id = env.get(prefix + "_APP_ID", "")
+        self.secret = env.get(prefix + "_APP_SECRET", "")
+        self.recipient = env.get("ASSET_FEISHU_RECEIVE_ID", "") or config.get('receiveId', '')
         if not self.app_id or not self.secret or not re.fullmatch(r"(?:ou|oc)_[a-zA-Z0-9]+", self.recipient):
             raise ValueError("Set the three ASSET_FEISHU_* variables for the Asset Library bot and approved recipient")
         self.receive_type = "chat_id" if self.recipient.startswith("oc_") else "open_id"
@@ -84,6 +88,11 @@ def deliver(client, ledger, key, text, now):
 
 
 def report_messages(root, mode, now):
+    if mode == "test":
+        key = "test-" + now.astimezone(dt.timezone(dt.timedelta(hours=8))).date().isoformat()
+        text = ("【资产库验收测试】\n机器人发送链路测试。收到本条消息后，维护程序将核对飞书回执。\n"
+                "本轮页面与行情优化正在本地验收，发布进度以交接记录为准。\n" + SITE)
+        return [(key, text, None)]
     if mode == "weekly":
         assets = asset_data(root)
         meta = assets["meta"]
@@ -128,8 +137,10 @@ def run(root, mode, send):
         if not send:
             print("\n\n".join(text for _, text, _ in messages))
             return
-        client = Feishu()
-        ledger = root / ".tmp/feishu-delivery.json"
+        config_file = root / '.local/feishu-config.json'
+        config = json.loads(config_file.read_text(encoding='utf-8')) if config_file.exists() else None
+        client = Feishu(config=config)
+        ledger = root / ".local/feishu-delivery.json"
         for key, text, event_id in messages:
             message_id = deliver(client, ledger, key, text, utc_now())
             if event_id:
@@ -139,7 +150,7 @@ def run(root, mode, send):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("weekly", "drawdown"))
+    parser.add_argument("mode", choices=("test", "weekly", "drawdown"))
     parser.add_argument("--send", action="store_true", help="send to the configured Feishu recipient")
     args = parser.parse_args()
     run(ROOT, args.mode, args.send)

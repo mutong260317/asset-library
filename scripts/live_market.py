@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STATIC = {"/": "index.html", "/index.html": "index.html", "/data.js": "data.js",
           "/validate.js": "validate.js", "/drawdown.js": "drawdown.js",
           "/release-policy.js": "release-policy.js", "/market-board.js": "market-board.js"}
+STATIC["/reports/catalog.js"] = "reports/catalog.js"
 POLL_SECONDS = 15
 FRESH_SECONDS = 120
 

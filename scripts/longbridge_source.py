@@ -38,6 +38,12 @@ def _read_rpc(method, params, timeout=75):
     try:
         output = subprocess.run([exe, "serve"], input="".join(json.dumps(r) + "\n" for r in requests),
                                 capture_output=True, text=True, encoding="utf-8", timeout=timeout, env=env)
+        if output.returncode and 'Connect' in output.stderr and env['LONGBRIDGE_REGION'] == 'global':
+            # The same authenticated provider exposes a mainland route. Retry
+            # only a transport failure, keeping the method and parameters intact.
+            env = {**env, 'LONGBRIDGE_REGION': 'cn'}
+            output = subprocess.run([exe, "serve"], input="".join(json.dumps(r) + "\n" for r in requests),
+                                    capture_output=True, text=True, encoding="utf-8", timeout=timeout, env=env)
         if output.returncode:
             raise ValueError("Longbridge CLI request failed; check login/network/entitlement")
         messages = [json.loads(line) for line in output.stdout.splitlines() if line.strip()]

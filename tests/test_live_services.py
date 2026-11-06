@@ -10,11 +10,29 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from live_market import normalize_quotes
-from longbridge_source import fetch_product_candles
+from longbridge_source import fetch_product_candles, fetch_quotes
 from send_feishu import Feishu, deliver
+from market_quality import checked_rows
 
 
 class QuoteChecks(unittest.TestCase):
+    def test_reviewed_split_preserves_raw_close_and_still_checks_market_move(self):
+        rows=[('2026-11-04',450.0,450.0,451.0,449.0),('2026-11-05',149.0,148.0,150.0,147.0)]
+        now=dt.datetime.fromisoformat('2026-11-06T12:00:00+00:00')
+        with self.assertRaises(ValueError):checked_rows(rows,'US',now,minimum_rows=1)
+        accepted,quality=checked_rows(rows,'US',now,minimum_rows=1,split_ratios={'2026-11-05':3})
+        self.assertEqual(accepted[-1][2],148.0)
+        self.assertEqual(quality['reviewedSplits'],['2026-11-05'])
+        with self.assertRaises(ValueError):checked_rows(rows,'US',now,minimum_rows=1,split_ratios={'2026-11-05':2})
+    @patch('longbridge_source.shutil.which', return_value='longbridge')
+    @patch('longbridge_source.subprocess.run')
+    @patch.dict('os.environ', {'LONGBRIDGE_REGION': 'global'})
+    def test_connection_failure_retries_same_read_on_official_cn_route(self, run, _which):
+        run.side_effect=[Mock(returncode=1,stderr='client error (Connect)'),
+                         Mock(returncode=0,stdout='{"id":0,"result":[{"symbol":"QQQ.US"}]}\n')]
+        self.assertEqual(fetch_quotes(['QQQ.US']),[{'symbol':'QQQ.US'}])
+        self.assertEqual(run.call_args_list[0].kwargs['input'],run.call_args_list[1].kwargs['input'])
+        self.assertEqual(run.call_args_list[1].kwargs['env']['LONGBRIDGE_REGION'],'cn')
     def test_extended_quote_does_not_replace_close_and_stale_is_visible(self):
         now = dt.datetime.fromisoformat("2026-11-04T14:41:00+00:00")
         assets = [{"c": "QQQ", "m": "US"}, {"c": "SPY", "m": "US"}, {"c": "510300", "m": "A"}]
@@ -46,7 +64,7 @@ class QuoteChecks(unittest.TestCase):
 class FeishuChecks(unittest.TestCase):
     def test_persisted_uuid_and_text_reused_and_delivery_needs_id(self):
         now = dt.datetime.fromisoformat("2026-11-04T12:00:00+00:00")
-        with TemporaryDirectory() as directory:
+        with TemporaryDirectory(dir=ROOT / '.tmp') as directory:
             ledger = Path(directory) / "feishu.json"
             client = Mock(destination="approved-chat")
             client.send.side_effect = [TimeoutError, "om_confirmed"]
@@ -60,7 +78,7 @@ class FeishuChecks(unittest.TestCase):
 
     def test_ambiguous_old_delivery_does_not_resend(self):
         now = dt.datetime.fromisoformat("2026-11-04T12:00:00+00:00")
-        with TemporaryDirectory() as directory:
+        with TemporaryDirectory(dir=ROOT / '.tmp') as directory:
             ledger = Path(directory) / "feishu.json"
             client = Mock(destination="approved-chat")
             client.send.side_effect = TimeoutError

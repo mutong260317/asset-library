@@ -33,7 +33,7 @@ def _product_df_to_rows(df):
     return out
 
 
-def fetch_price_rows(code,market,symbol,now,limit,provider):
+def fetch_price_rows(code,market,symbol,now,limit,provider,split_ratios=None):
     """Return checked close rows for the selected provider."""
     if provider=="akshare":
         import akshare as ak
@@ -49,7 +49,7 @@ def fetch_price_rows(code,market,symbol,now,limit,provider):
         raw=[r for r in all_rows if r[0]>=cutoff]
     else:
         raw=fetch_longbridge(symbol,market,now,recent=True)
-    return checked_rows(raw,market,now,minimum_rows=1,max_daily_move=limit)
+    return checked_rows(raw,market,now,minimum_rows=1,max_daily_move=limit,split_ratios=split_ratios)
 
 
 def refresh(root=ROOT, input_file=None, provider="longbridge", require_complete=False):
@@ -61,6 +61,10 @@ def refresh(root=ROOT, input_file=None, provider="longbridge", require_complete=
             raise ValueError('Recover pending drawdown transaction before price refresh')
         A=asset_data(root);now=utc_now();prices=[];original=(root/'data.js').read_text(encoding='utf-8')
         source_name='Longbridge' if provider=='longbridge' else 'AkShare(新浪)'
+        actions=json.loads((root/'scripts/reviewed_splits.json').read_text(encoding='utf-8'))
+        splits={}
+        for action in actions['entries']:
+            splits.setdefault(action['code'],{})[action['date']]=action['newSharesPerOldShare']
         candles = fetch_product_candles(A['assets'], now) if provider == 'longbridge' and not input_file else [None] * len(A['assets'])
         for asset, bars in zip(A['assets'], candles):
             code=asset['c'];market=asset['m']
@@ -72,11 +76,12 @@ def refresh(root=ROOT, input_file=None, provider="longbridge", require_complete=
                 # this is an engineering guard, not an investment risk limit.
                 limit=.60 if asset['cat']=='杠杆' else .15
                 if provider == 'longbridge' and not input_file:
-                    rows,_=checked_rows(rows_from_candles(bars, market), market, now, minimum_rows=1, max_daily_move=limit)
+                    rows,quality=checked_rows(rows_from_candles(bars, market), market, now, minimum_rows=1, max_daily_move=limit,split_ratios=splits.get(code))
                 else:
-                    rows,_=fetch_price_rows(code,market,symbol,now,limit,provider)
+                    rows,quality=fetch_price_rows(code,market,symbol,now,limit,provider,split_ratios=splits.get(code))
                 item.update(value=rows[-1][2],asOf=rows[-1][0],source=source_name,status='checked')
                 item['dailyMoveReviewLimit']=limit
+                if quality.get('reviewedSplits'):item['reviewedSplits']=quality['reviewedSplits']
             except Exception as error:item['reason']=str(error)
             prices.append(item)
         final_now=utc_now()

@@ -45,8 +45,14 @@
     rows.filter(a => (a.c + ' ' + a.n).toLowerCase().includes(query)).forEach(a => {
       const q = quotes.get(a.c);
       const row = board.insertRow();
-      const name = cell(row, a.n === a.c ? a.c : `${a.n} · ${a.c}`);
+      const name = cell(row, '');
       name.className = 'market-name';
+      const open = document.createElement('button');
+      open.type = 'button';
+      open.className = 'asset-open';
+      open.textContent = a.n === a.c ? a.c : `${a.n} · ${a.c}`;
+      open.addEventListener('click', () => window.dispatchEvent(new CustomEvent('asset-detail', {detail:a.c})));
+      name.append(open);
       cell(row, q?.price != null ? priceFormat[market].format(q.price) : '—');
       const change = q?.change;
       cell(row, change == null ? '—' : `${change > 0 ? '+' : ''}${(100 * change).toFixed(2)}%`);
@@ -67,10 +73,20 @@
     if (!active() || loading) return;
     loading = true;
     refresh.disabled = true;
+    refresh.textContent = '读取中…';
     try {
       const req = await fetch('/api/quotes', {cache: 'no-store', signal: AbortSignal.timeout(18000)});
       if (!req.ok) throw Error('quote service unavailable');
       response = await req.json();
+      if (!Array.isArray(response.quotes) || !Number.isFinite(Date.parse(response.observedAt))) {
+        throw Error('invalid quote response');
+      }
+      if (response.quotes.some(q => !q || typeof q.code !== 'string' ||
+          (q.price != null && (!Number.isFinite(q.price) || q.price <= 0)) ||
+          (q.change != null && !Number.isFinite(q.change)) ||
+          (q.timestamp != null && !Number.isFinite(Date.parse(q.timestamp))))) {
+        throw Error('invalid quote row');
+      }
       failed = false;
     } catch (_) {
       response = null;
@@ -78,6 +94,7 @@
     } finally {
       loading = false;
       refresh.disabled = false;
+      refresh.textContent = '读取报价';
       draw();
       if (active()) timer = setTimeout(poll, (response?.pollSeconds || 15) * 1000);
     }
