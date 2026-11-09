@@ -1,5 +1,12 @@
 # HANDOFF.md — 当前交接
 
+## 2026-11-09 豆包回归全量体检（本地，无远程提交）
+
+- 基线：本地 main 已从旧 `c54d720` reset 对齐远程 HEAD `10f6f75`（Codex PR#6），工作区干净。逐项核实 PR#6 正确修复了豆包 W45 提交 `32dff87` 丢失 5 只 A 股（511090/511520/511010/511380/563300）的缺陷；当前 41 只、三档权重各 100%、mode=live，cyc/val 回到 W45 前已验收口径，价格 A 股截至 11-09、美股截至 11-06。
+- 本轮实测全绿：node validate.js、validate-cli.js（0 errors/0 warnings）、node --test 25 项、Python unittest 36 项全通过；index.html 仅外部引用 data.js、无内嵌数据副本；Edge headless 截图确认线上页面渲染正常、无 NaN 或数据保护。
+- 本轮唯一改动：删除 gitignore 忽略的本地过期残留 `scripts/alerts.json`（旧 generationId 29b7d81e，权威为 c4ce366a），删除后 validate-cli 恢复 0 错误；不入库、不影响远程。
+- 待用户拍板（均未动手）：① 6 个远程分支全部确认无独有功能、可清理（codex/archive-overflow、data-visibility、reliability-review、restore-validated-w45，doubao/drawdown-jump-review、live-data-restore）；② core.autocrlf=true 且无 .gitattributes 是空白 diff 噪音根因，可加 .gitattributes 规范行尾；③ 豆包 W45 对 14 资产的 cyc/val 研究更新被整体回滚，是否补全后重做；④ 每日回撤 cron 已停止、drawdownAlertsEnabled=false，是否恢复；⑤ 每周估值 cron 的 query 含已失效的理杏仁源和旧项目名，可小幅更新。
+
 ## 2026-11-09 恢复资产配置页面
 
 - W45 提交 `32dff87b` 遗漏了 511520、511090、511010、511380、563300 五只 A 股资产，并改动了部分权重。A 股三档合计变成 85%、88%、99%，触发页面数据保护。
