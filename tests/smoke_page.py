@@ -2,6 +2,7 @@
 from functools import partial
 import http.server
 import json
+import re
 from pathlib import Path
 import threading
 from urllib.parse import urlsplit
@@ -138,8 +139,9 @@ def run():
                 page.reload(wait_until='networkidle')
                 assert page.locator('#checklist input').first.is_checked()
                 page.locator('#topnav [data-view="archive"]').click()
-                assert page.locator('#reportCatalog a').count() == 7
-                assert '2026-W44' in page.locator('#reportCatalog a').first.inner_text()
+                reports=sorted((p.stem for p in (ROOT/'reports').glob('*.md') if re.fullmatch(r'\d{4}-W\d{2}',p.stem)),reverse=True)
+                assert page.locator('#reportCatalog a').count() == len(reports)
+                assert reports[0] in page.locator('#reportCatalog a').first.inner_text()
                 page.locator('.wrp details').first.locator('summary').click()
                 assert page.locator('.wrp details').first.get_attribute('open') == ''
                 page.screenshot(path=str(OUT/f'archive-{width}.png'), full_page=True)

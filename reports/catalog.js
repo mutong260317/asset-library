@@ -1,5 +1,6 @@
 /* Generated from the actual weekly report files. */
 window.RESEARCH_REPORTS = [
+  "2026-W45.md",
   "2026-W44.md",
   "2026-W43.md",
   "2026-W40.md",
