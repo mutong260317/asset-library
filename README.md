@@ -22,6 +22,7 @@
 
 1. 拉取核心资产估值/价格/宏观数据 → 更新 `data.js` 的 `signal`（周期/估值/溢价/回撤）与 `decision`（权重/动作/条件）
 2. **发布前必须自检**：`node validate.js` 和 `node validate-cli.js --publish`。普通离线校验仅检查结构，不能替代交易日新鲜度和完整性闸门。权重非 100% 禁止发布。
+   GitHub Pages 由 `Validated Pages` 工作流发布。PR 和 main 提交均执行 `node validate-cli.js --site-release`。live 模式仍要求最近已收盘交易日，校验失败时保留上一版网站。线上 `version.txt` 记录实际部署的提交。
 3. 更新研究日期后运行 `node scripts/archive_weekly.js`，完整保存 41 只资产（含未调整项）；`history` 继续用于页面变化对比，不能代替全量快照。日常价格更新不修改研究日期。
 4. 生成本周周报 `reports/2026-Wxx.md`，同步关键结论到飞书文档
 5. 在本地/独立分支检查、测试并提交。用户已授权常规更新通过测试后推送、合并和部署，数据与状态必须同一提交，上线后核对实际版本与页面。

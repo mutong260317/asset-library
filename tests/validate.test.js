@@ -43,6 +43,16 @@ test('composite security code cannot pass asset validation',()=>{
   const A=structuredClone(loadJS(path.join(root,'data.js'),'ASSETS'));A.assets.find(x=>x.c==='XLK').c='XLK/VGT';
   assert.ok(require('../validate.js').validateAssets(A).errors.some(e=>e.includes('单一可报价证券代码')));
 });
+test('a missing asset fails validation even when portfolio weights still sum to 100%',()=>{
+  const A=structuredClone(loadJS(path.join(root,'data.js'),'ASSETS'));
+  const removed=A.assets.shift();
+  const sameMarket=A.assets.find(x=>x.m===removed.m);
+  for(const tier of ['c','y','a']) sameMarket.decision.w[tier]+=removed.decision.w[tier];
+  const result=require('../validate.js').validateAssets(A);
+  assert.equal(result.ok,false);
+  assert.ok(result.errors.some(error=>error.includes('数量')));
+  assert.ok(!result.errors.some(error=>error.includes('档合计')));
+});
 test('publication rejects stale product closes independently of research date',()=>{
   const A=structuredClone(loadJS(path.join(root,'data.js'),'ASSETS'));
   const check=require('../validate-cli.js').validateProductPrices;
