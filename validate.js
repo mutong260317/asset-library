@@ -34,8 +34,8 @@
       if (x.m === "A") aCount++; else if (x.m === "US") usCount++;
       else errors.push(x.c + " market 非法: " + x.m + "（只能 A/US）");
     });
-    if (aCount !== 24) warnings.push("A股数量 " + aCount + "（预期24）");
-    if (usCount !== 17) warnings.push("美股数量 " + usCount + "（预期17）");
+    if (aCount !== 24) errors.push("A股数量 " + aCount + "（预期24）");
+    if (usCount !== 17) errors.push("美股数量 " + usCount + "（预期17）");
 
     // 4) 字段与范围校验
     L.forEach(function (x) {

@@ -1,0 +1,68 @@
+name: Validated Pages
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install the trading calendar
+        run: python -m pip install "$(grep '^exchange-calendars==' requirements.txt)"
+      - name: Validate site release
+        run: node validate-cli.js --site-release
+      - name: Prepare public files
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          for file in index.html data.js validate.js drawdown.js release-policy.js market-board.js reports/catalog.js; do
+            install -D "$file" "_site/$file"
+          done
+          cp reports/????-W??.md _site/reports/
+          printf '%s\n' "$GITHUB_SHA" > _site/version.txt
+      - uses: actions/upload-pages-artifact@v4
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Confirm this run still represents main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+          if [ "$current" != "$GITHUB_SHA" ]; then
+            echo 'main has advanced. Deploy its validated run instead.'
+            exit 1
+          fi
+      - uses: actions/deploy-pages@v4
+        id: deployment

@@ -2,7 +2,7 @@
 window.DRAWDOWN = {
   "meta": {
     "schemaVersion": 2,
-    "asOf": "2026-11-09T11:54:59.666613+00:00",
+    "asOf": "2026-11-10T01:55:52.206552+00:00",
     "generatedBy": "scripts/fetch_drawdown.py",
     "refreshCadence": "按需运行；实际定时任务需独立核验",
     "sources": {
@@ -10,7 +10,7 @@ window.DRAWDOWN = {
       "A": "优先长桥；备用腾讯 / AkShare 新浪；不补实时价"
     },
     "note": "窗口最多2000交易日；不足时明确标注。历史最高价未核验则为null。仅描述回撤深度，不自动判定投资机会。",
-    "generationId": "c4ce366a87f574d189478b09"
+    "generationId": "2e2ca0e426cfcb9b698f1b0e"
   },
   "indices": [
     {
@@ -19,16 +19,16 @@ window.DRAWDOWN = {
       "market": "US",
       "ccy": "USD",
       "source": "Longbridge",
-      "asOf": "2026-11-06",
-      "price": 656.1,
+      "asOf": "2026-11-09",
+      "price": 679.35,
       "peak": {
         "value": 762.86,
         "date": "2026-10-06",
         "kind": "rolling_2000_sessions",
         "windowLimit": 2000,
         "sampleSessions": 2000,
-        "windowStart": "2018-11-21",
-        "windowEnd": "2026-11-06",
+        "windowStart": "2018-11-23",
+        "windowEnd": "2026-11-09",
         "fullWindow": true,
         "field": "intradayHigh"
       },
@@ -39,50 +39,50 @@ window.DRAWDOWN = {
       "priceBasis": "qfq",
       "quality": {
         "status": "checked",
-        "expectedSession": "2026-11-06",
+        "expectedSession": "2026-11-09",
         "calendar": "XNYS",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 2000,
-        "start": "2018-11-21",
-        "end": "2026-11-06",
+        "start": "2018-11-23",
+        "end": "2026-11-09",
         "approvedJumps": [],
         "reviewedSplits": []
       },
-      "drawdown": -0.1399,
+      "drawdown": -0.1095,
       "ma200": {
-        "value": 680.89,
-        "dist": -0.0364
+        "value": 681.17,
+        "dist": -0.0027
       },
       "levels": [
         {
           "d": -0.1,
           "price": 686.57,
-          "dist": 0.0464,
+          "dist": 0.0106,
           "hit": true
         },
         {
           "d": -0.2,
           "price": 610.29,
-          "dist": -0.0698,
+          "dist": -0.1017,
           "hit": false
         },
         {
           "d": -0.3,
           "price": 534.0,
-          "dist": -0.1861,
+          "dist": -0.214,
           "hit": false
         },
         {
           "d": -0.4,
           "price": 457.72,
-          "dist": -0.3024,
+          "dist": -0.3262,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 381.43,
-          "dist": -0.4186,
+          "dist": -0.4385,
           "hit": false
         }
       ],
@@ -95,17 +95,17 @@ window.DRAWDOWN = {
           "first": "2026-05-08",
           "last": "2026-10-29",
           "type": "resistance",
-          "dist": 0.0914
+          "dist": 0.054
         },
         {
           "low": 599.75,
           "high": 626.65,
-          "mid": 613.98,
-          "days": 80,
-          "first": "2025-11-10",
+          "mid": 613.86,
+          "days": 79,
+          "first": "2025-11-11",
           "last": "2026-04-13",
           "type": "support",
-          "dist": -0.0642
+          "dist": -0.0964
         },
         {
           "low": 739.77,
@@ -115,7 +115,7 @@ window.DRAWDOWN = {
           "first": "2026-06-01",
           "last": "2026-10-13",
           "type": "resistance",
-          "dist": 0.1325
+          "dist": 0.0937
         }
       ],
       "zone": "回撤10–20%",
@@ -126,17 +126,17 @@ window.DRAWDOWN = {
       "name": "标普500",
       "market": "US",
       "ccy": "USD",
-      "source": "Yahoo Finance",
-      "asOf": "2026-11-06",
-      "price": 735.29,
+      "source": "AkShare(新浪)",
+      "asOf": "2026-11-09",
+      "price": 752.69,
       "peak": {
         "value": 781.62,
         "date": "2026-10-06",
         "kind": "rolling_2000_sessions",
         "windowLimit": 2000,
         "sampleSessions": 2000,
-        "windowStart": "2018-11-21",
-        "windowEnd": "2026-11-06",
+        "windowStart": "2018-11-23",
+        "windowEnd": "2026-11-09",
         "fullWindow": true,
         "field": "intradayHigh"
       },
@@ -147,50 +147,53 @@ window.DRAWDOWN = {
       "priceBasis": "unadjusted",
       "quality": {
         "status": "checked",
-        "expectedSession": "2026-11-06",
+        "expectedSession": "2026-11-09",
         "calendar": "XNYS",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 2000,
-        "start": "2018-11-21",
-        "end": "2026-11-06",
+        "start": "2018-11-23",
+        "end": "2026-11-09",
         "approvedJumps": [],
-        "reviewedSplits": []
+        "reviewedSplits": [],
+        "sourceChangeAccepted": true,
+        "previousSource": "Yahoo Finance",
+        "baselineRevision": 0.0
       },
-      "drawdown": -0.0593,
+      "drawdown": -0.037,
       "ma200": {
-        "value": 730.38,
-        "dist": 0.0067
+        "value": 730.7,
+        "dist": 0.0301
       },
       "levels": [
         {
           "d": -0.1,
           "price": 703.46,
-          "dist": -0.0433,
+          "dist": -0.0654,
           "hit": false
         },
         {
           "d": -0.2,
           "price": 625.3,
-          "dist": -0.1496,
+          "dist": -0.1692,
           "hit": false
         },
         {
           "d": -0.3,
           "price": 547.13,
-          "dist": -0.2559,
+          "dist": -0.2731,
           "hit": false
         },
         {
           "d": -0.4,
           "price": 468.97,
-          "dist": -0.3622,
+          "dist": -0.3769,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 390.81,
-          "dist": -0.4685,
+          "dist": -0.4808,
           "hit": false
         }
       ],
@@ -198,22 +201,22 @@ window.DRAWDOWN = {
         {
           "low": 676.33,
           "high": 695.49,
-          "mid": 686.25,
-          "days": 76,
-          "first": "2025-11-10",
+          "mid": 686.32,
+          "days": 75,
+          "first": "2025-11-11",
           "last": "2026-04-14",
           "type": "support",
-          "dist": -0.0667
+          "dist": -0.0882
         },
         {
           "low": 738.18,
           "high": 754.95,
-          "mid": 746.23,
-          "days": 46,
+          "mid": 746.37,
+          "days": 47,
           "first": "2026-05-11",
-          "last": "2026-11-03",
-          "type": "resistance",
-          "dist": 0.0149
+          "last": "2026-11-09",
+          "type": "current",
+          "dist": -0.0084
         },
         {
           "low": 761.69,
@@ -223,7 +226,7 @@ window.DRAWDOWN = {
           "first": "2026-08-04",
           "last": "2026-11-04",
           "type": "resistance",
-          "dist": 0.0438
+          "dist": 0.0197
         }
       ],
       "zone": "回撤不足10%",
@@ -234,17 +237,17 @@ window.DRAWDOWN = {
       "name": "道琼斯工业",
       "market": "US",
       "ccy": "USD",
-      "source": "Yahoo Finance",
-      "asOf": "2026-11-06",
-      "price": 512.22,
+      "source": "AkShare(新浪)",
+      "asOf": "2026-11-09",
+      "price": 523.33,
       "peak": {
         "value": 546.75,
         "date": "2026-08-05",
         "kind": "rolling_2000_sessions",
         "windowLimit": 2000,
         "sampleSessions": 2000,
-        "windowStart": "2018-11-21",
-        "windowEnd": "2026-11-06",
+        "windowStart": "2018-11-23",
+        "windowEnd": "2026-11-09",
         "fullWindow": true,
         "field": "intradayHigh"
       },
@@ -255,50 +258,53 @@ window.DRAWDOWN = {
       "priceBasis": "unadjusted",
       "quality": {
         "status": "checked",
-        "expectedSession": "2026-11-06",
+        "expectedSession": "2026-11-09",
         "calendar": "XNYS",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 2000,
-        "start": "2018-11-21",
-        "end": "2026-11-06",
+        "start": "2018-11-23",
+        "end": "2026-11-09",
         "approvedJumps": [],
-        "reviewedSplits": []
+        "reviewedSplits": [],
+        "sourceChangeAccepted": true,
+        "previousSource": "Yahoo Finance",
+        "baselineRevision": 0.0
       },
-      "drawdown": -0.0632,
+      "drawdown": -0.0428,
       "ma200": {
-        "value": 506.65,
-        "dist": 0.011
+        "value": 506.81,
+        "dist": 0.0326
       },
       "levels": [
         {
           "d": -0.1,
           "price": 492.07,
-          "dist": -0.0393,
+          "dist": -0.0597,
           "hit": false
         },
         {
           "d": -0.2,
           "price": 437.4,
-          "dist": -0.1461,
+          "dist": -0.1642,
           "hit": false
         },
         {
           "d": -0.3,
           "price": 382.72,
-          "dist": -0.2528,
+          "dist": -0.2687,
           "hit": false
         },
         {
           "d": -0.4,
           "price": 328.05,
-          "dist": -0.3596,
+          "dist": -0.3731,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 273.38,
-          "dist": -0.4663,
+          "dist": -0.4776,
           "hit": false
         }
       ],
@@ -311,17 +317,17 @@ window.DRAWDOWN = {
           "first": "2025-12-11",
           "last": "2026-05-19",
           "type": "support",
-          "dist": -0.0402
+          "dist": -0.0606
         },
         {
           "low": 515.41,
           "high": 528.03,
-          "mid": 521.17,
-          "days": 63,
+          "mid": 521.2,
+          "days": 64,
           "first": "2026-06-04",
-          "last": "2026-11-03",
-          "type": "resistance",
-          "dist": 0.0175
+          "last": "2026-11-09",
+          "type": "current",
+          "dist": -0.0041
         },
         {
           "low": 479.07,
@@ -331,7 +337,7 @@ window.DRAWDOWN = {
           "first": "2025-11-11",
           "last": "2026-04-10",
           "type": "support",
-          "dist": -0.0635
+          "dist": -0.0834
         }
       ],
       "zone": "回撤不足10%",
@@ -342,17 +348,17 @@ window.DRAWDOWN = {
       "name": "罗素2000",
       "market": "US",
       "ccy": "USD",
-      "source": "Yahoo Finance",
-      "asOf": "2026-11-06",
-      "price": 273.67,
+      "source": "AkShare(新浪)",
+      "asOf": "2026-11-09",
+      "price": 282.51,
       "peak": {
         "value": 305.18,
         "date": "2026-08-14",
         "kind": "rolling_2000_sessions",
         "windowLimit": 2000,
         "sampleSessions": 2000,
-        "windowStart": "2018-11-21",
-        "windowEnd": "2026-11-06",
+        "windowStart": "2018-11-23",
+        "windowEnd": "2026-11-09",
         "fullWindow": true,
         "field": "intradayHigh"
       },
@@ -363,50 +369,53 @@ window.DRAWDOWN = {
       "priceBasis": "unadjusted",
       "quality": {
         "status": "checked",
-        "expectedSession": "2026-11-06",
+        "expectedSession": "2026-11-09",
         "calendar": "XNYS",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 2000,
-        "start": "2018-11-21",
-        "end": "2026-11-06",
+        "start": "2018-11-23",
+        "end": "2026-11-09",
         "approvedJumps": [],
-        "reviewedSplits": []
+        "reviewedSplits": [],
+        "sourceChangeAccepted": true,
+        "previousSource": "Yahoo Finance",
+        "baselineRevision": 0.0
       },
-      "drawdown": -0.1033,
+      "drawdown": -0.0743,
       "ma200": {
-        "value": 279.0,
-        "dist": -0.0191
+        "value": 279.09,
+        "dist": 0.0123
       },
       "levels": [
         {
           "d": -0.1,
           "price": 274.66,
-          "dist": 0.0036,
-          "hit": true
+          "dist": -0.0278,
+          "hit": false
         },
         {
           "d": -0.2,
           "price": 244.14,
-          "dist": -0.1079,
+          "dist": -0.1358,
           "hit": false
         },
         {
           "d": -0.3,
           "price": 213.63,
-          "dist": -0.2194,
+          "dist": -0.2438,
           "hit": false
         },
         {
           "d": -0.4,
           "price": 183.11,
-          "dist": -0.3309,
+          "dist": -0.3518,
           "hit": false
         },
         {
           "d": -0.5,
           "price": 152.59,
-          "dist": -0.4424,
+          "dist": -0.4599,
           "hit": false
         }
       ],
@@ -419,17 +428,17 @@ window.DRAWDOWN = {
           "first": "2026-05-26",
           "last": "2026-09-09",
           "type": "resistance",
-          "dist": 0.0791
+          "dist": 0.0453
         },
         {
           "low": 276.48,
           "high": 285.33,
-          "mid": 280.65,
-          "days": 50,
+          "mid": 280.68,
+          "days": 51,
           "first": "2026-04-20",
-          "last": "2026-11-04",
-          "type": "resistance",
-          "dist": 0.0255
+          "last": "2026-11-09",
+          "type": "current",
+          "dist": -0.0065
         },
         {
           "low": 247.41,
@@ -439,7 +448,7 @@ window.DRAWDOWN = {
           "first": "2025-11-28",
           "last": "2026-04-07",
           "type": "support",
-          "dist": -0.0853
+          "dist": -0.1139
         },
         {
           "low": 261.3,
@@ -449,10 +458,10 @@ window.DRAWDOWN = {
           "first": "2026-01-12",
           "last": "2026-04-13",
           "type": "support",
-          "dist": -0.0375
+          "dist": -0.0676
         }
       ],
-      "zone": "回撤10–20%",
+      "zone": "回撤不足10%",
       "zoneDesc": "仅描述窗口高点回撤深度，不构成加仓或投资机会判断"
     },
     {
@@ -484,7 +493,7 @@ window.DRAWDOWN = {
         "expectedSession": "2026-11-09",
         "calendar": "XSHG",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 2000,
         "start": "2018-08-08",
         "end": "2026-11-09",
@@ -592,7 +601,7 @@ window.DRAWDOWN = {
         "expectedSession": "2026-11-09",
         "calendar": "XSHG",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 2000,
         "start": "2018-08-08",
         "end": "2026-11-09",
@@ -680,7 +689,7 @@ window.DRAWDOWN = {
         "expectedSession": "2026-11-09",
         "calendar": "XSHG",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 514,
         "start": "2024-09-23",
         "end": "2026-11-09",
@@ -788,7 +797,7 @@ window.DRAWDOWN = {
         "expectedSession": "2026-11-09",
         "calendar": "XSHG",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 2000,
         "start": "2018-08-08",
         "end": "2026-11-09",
@@ -899,7 +908,7 @@ window.DRAWDOWN = {
         "expectedSession": "2026-11-09",
         "calendar": "XSHG",
         "settlementDelayMinutes": 20,
-        "observedAt": "2026-11-09T11:54:59.666613+00:00",
+        "observedAt": "2026-11-10T01:55:52.206552+00:00",
         "rows": 1659,
         "start": "2020-01-02",
         "end": "2026-11-09",
@@ -986,19 +995,19 @@ window.DRAWDOWN = {
     "state": {
       "QQQ": {
         "maxHit": 0.1,
-        "asOf": "2026-11-06"
+        "asOf": "2026-11-09"
       },
       "SPY": {
         "maxHit": 0,
-        "asOf": "2026-11-06"
+        "asOf": "2026-11-09"
       },
       "DIA": {
         "maxHit": 0,
-        "asOf": "2026-11-06"
+        "asOf": "2026-11-09"
       },
       "IWM": {
-        "maxHit": 0.1,
-        "asOf": "2026-11-06"
+        "maxHit": 0,
+        "asOf": "2026-11-09"
       },
       "SH000001": {
         "maxHit": 0.1,
