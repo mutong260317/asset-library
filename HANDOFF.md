@@ -1,5 +1,19 @@
 # HANDOFF.md — 当前交接
 
+## 2026-11-13 豆包接手审阅 Codex PR#7（已同步远程）
+
+- 基线：网络恢复（github.com 443 阻断解除），`git fetch` 后本地从旧 `99c5511` reset 对齐远程 HEAD `10c7baf`（Codex PR#7，11-10 合并），工作区干净；确认本地旧 commit 与工作区改动均已被远程包含，无内容丢失。
+- 逐项审查 PR#7，结论为质量高、可直接保留，无需返工：
+  1. 新增 `.github/workflows/pages.yml`：Pages 从直读 main 改为先过 `node validate-cli.js --site-release` 再部署；最小权限（validate 仅 contents:read，deploy 加 pages/id-token）、concurrency 防并发、部署前用 gh api 再确认 main 未漂移。已核 Pages `build_type=workflow`、状态 built。
+  2. 资产数量由 warning 升级为硬 error，并新增"权重合计仍 100% 但删除一只资产"的回归测试，精准防止 W45 丢资产事故重演。
+  3. `data.js` 实质 diff（-w）仅快照指针与 17 只美股价格/priceAsOf 刷新到 11-09；cyc/val、cycleReason、decision 权重与动作、drawdown 字段逐字节零变化，未混入主观判断。
+  4. `drawdown.js` 三个美股宽基（SPY/DIA/IWM）显式从 Yahoo 切到 AkShare 新浪源，带 `sourceChangeAccepted`/`previousSource` 留痕、未复权；generationId 更新为 `2e2ca0e4`，与 `scripts/level_state.json` 镜像一致。
+  5. 部署清单核对：index.html 仅外部引用 6 个 JS（全在复制列表）、favicon 内联、无外部 CSS/图片，无 404 风险。
+- 本轮实测全绿：node validate.js / validate-cli.js（0 errors/0 warnings）、node --test 26 项、Python unittest 36 项全通过。
+- 线上回查：`version.txt` = `10c7baf…` 与 main HEAD 完全一致；Edge headless 截图确认页面渲染正常、41 只、三档 100%、温度计散点与多因子雷达齐全、无 NaN 或数据保护。
+- 分支卫生：删除远程 `codex/validated-pages-deploy`（tree 与 main 完全一致，squash 合并残留）与本地 `doubao/drawdown-jump-review-20261104`（其日历边界/复核例外修复已在主干），现本地与远程均仅余 main。
+- 本轮无代码逻辑改动，仅文档留档与分支清理。遗留：每日回撤 cron 维持不恢复（云端仅 AkShare 与 live Yahoo/腾讯源未统一的前置卡点未解决）；7 项回避+正目标权重含义仍待研究作者解释，不猜测不调权重。
+
 ## 2026-11-10 发布前校验
 
 - GitHub Pages 改由 `Validated Pages` 工作流发布。PR、main 更新和手动运行都会检查数据。main 的同一提交通过 `node validate-cli.js --site-release` 后才能上传网页并部署。
