@@ -57,6 +57,20 @@ class CalendarChecks(unittest.TestCase):
     def test_timezone(self):
         c=[dict(timestamp='2026-10-29T16:00:00Z',open='10',close='11',high='12',low='9')]
         self.assertEqual(lb.rows_from_candles(c,'A')[0][0],'2026-10-30')
+    def test_dedupe_exact_bars(self):
+        base=[('2021-05-25',1,1,2,0.5),('2021-05-26',1.1,1.1,2.1,0.6),
+              ('2021-05-26',1.1,1.1,2.1,0.6),('2021-05-27',1.2,1.2,2.2,0.7)]
+        out,removed=lb.dedupe_exact_bars(base)
+        self.assertEqual(removed,1);self.assertEqual(len(out),3)
+        self.assertEqual([r[0] for r in out],['2021-05-25','2021-05-26','2021-05-27'])
+        # 同日期但数值不同：保留，不静默去重，交给通用校验拒绝
+        conflict=[('2021-05-26',1.1,1.1,2.1,0.6),('2021-05-26',1.9,1.9,2.1,0.6)]
+        out2,removed2=lb.dedupe_exact_bars(conflict)
+        self.assertEqual(removed2,0);self.assertEqual(len(out2),2)
+        # 非相邻但内容相同：保守保留
+        gap=[('2021-05-25',1,1,2,0.5),('2021-05-26',1.1,1.1,2.1,0.6),('2021-05-27',1,1,2,0.5)]
+        out3,removed3=lb.dedupe_exact_bars(gap)
+        self.assertEqual(removed3,0);self.assertEqual(len(out3),3)
     def test_fallback_is_checked_without_realtime(self):
         with patch.object(fetch,'fetch_longbridge',side_effect=ValueError('offline')),patch.object(fetch,'fetch_us_yahoo',return_value=bars()[:-1]),patch.object(fetch,'fetch_us_akshare',return_value=bars()):
             r,s,_,_=fetch.fetch_daily('QQQ','US',NOW)

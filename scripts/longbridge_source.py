@@ -82,6 +82,23 @@ def fetch_product_candles(assets, now):
     return results
 
 
+def dedupe_exact_bars(rows):
+    """Drop only adjacent fully-identical bars.
+
+    Longbridge occasionally repeats a daily candle (same date and OHLC), which
+    otherwise fails the generic unique/ascending check. Same-date bars with
+    different values are kept so checked_rows can still reject a real conflict.
+    """
+    out = []
+    removed = 0
+    for row in rows:
+        if out and tuple(row) == tuple(out[-1]):
+            removed += 1
+            continue
+        out.append(tuple(row))
+    return out, removed
+
+
 def rows_from_candles(candles, market):
     if not isinstance(candles, list) or not candles:
         raise ValueError("Longbridge returned no candles")
@@ -101,6 +118,7 @@ def rows_from_candles(candles, market):
             raise ValueError("Longbridge timestamp lacks timezone")
         day = stamp.astimezone(zone).date().isoformat()
         out.append((day, *(float(c[k]) for k in ("open", "close", "high", "low"))))
+    out, _removed = dedupe_exact_bars(out)
     return out
 
 
