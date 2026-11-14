@@ -147,7 +147,7 @@ class AlertChecks(unittest.TestCase):
 
 class TransactionChecks(unittest.TestCase):
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory(dir=ROOT/'.tmp');self.root=Path(self.tmp.name);(self.root/'scripts').mkdir()
+        self.tmp=tempfile.TemporaryDirectory(prefix='asset-library-');self.root=Path(self.tmp.name);(self.root/'scripts').mkdir()
         for rel in ('validate-cli.js','validate.js'):shutil.copyfile(ROOT/rel,self.root/rel)
     def tearDown(self):self.tmp.cleanup()
     def journal(self):

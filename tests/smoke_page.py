@@ -38,6 +38,7 @@ def run():
                 assert page.evaluate('document.documentElement.scrollWidth') <= width+2
                 assert page.locator('#stBadge').inner_text()=='✓ 结构校验通过'
                 assert '研究日期' in page.locator('#updBadge').inner_text()
+                assert '收盘快照采集于' in page.locator('#marketSnapshotAge').inner_text()
                 for market in ('A', 'US'):
                     coverage = page.locator(f'[data-price-market="{market}"]')
                     assert coverage.is_visible()
@@ -229,13 +230,30 @@ def run():
                 rel=urlsplit(route.request.url).path.lstrip('/') or 'index.html'
                 allowed=('index.html','data.js','drawdown.js','validate.js','release-policy.js','market-board.js','reports/catalog.js')
                 assert rel in allowed, 'Unexpected public request: '+rel
-                route.fulfill(body=(ROOT/rel).read_bytes(),content_type='text/html' if rel.endswith('.html') else 'application/javascript')
+                body = (ROOT/rel).read_bytes()
+                if rel == 'data.js':
+                    body += b'\nwindow.ASSETS.meta.marketUpdated = new Date(Date.now() - 5 * 86400000).toISOString();'
+                route.fulfill(body=body,content_type='text/html' if rel.endswith('.html') else 'application/javascript')
             page.route('https://asset-library.example/**',static_public)
             page.goto('https://asset-library.example/#market',wait_until='networkidle')
             assert '公开站点' in page.locator('#marketStatus').inner_text()
+            assert '已过 5 天' in page.locator('#marketStatus').inner_text()
             assert not page.locator('#marketRefresh').is_visible()
             assert page.locator('#marketRows tr').count()==24
-            results.append({'publicMode':'dated snapshots, no private quote requests'})
+            assert page.locator('#marketHead th').all_text_contents() == ['标的', '正式收盘价与交易日', '收盘价来源']
+            page.locator('#marketTabs button[data-m="US"]').click()
+            page.locator('#marketSearch').fill('SOXX')
+            row = page.locator('#marketRows tr')
+            assert row.count() == 1
+            assert row.locator('td').count() == 3
+            source = page.evaluate("window.ASSETS.assets.find(a => a.c === 'SOXX').signal.priceSource")
+            assert row.locator('td').last.inner_text() == source
+            page.set_viewport_size({'width':390,'height':850})
+            assert page.evaluate('document.documentElement.scrollWidth') <= 392
+            page.locator('#marketSearch').fill('NO_SUCH_PRODUCT_123')
+            assert row.inner_text() == '没有匹配资产'
+            assert row.locator('td').get_attribute('colspan') == '3'
+            results.append({'publicMode':'close-only table, source, snapshot age, mobile search, no private quote requests'})
             browser.close()
             (OUT/'smoke.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
             print(json.dumps(results,ensure_ascii=False))

@@ -95,6 +95,7 @@
   #marketStatus{color:var(--sub);font-size:13px}
   .market-table{width:100%;min-width:650px;font-variant-numeric:tabular-nums}
   .market-table th{cursor:default}
+  .market-table.close-only{min-width:0}
   .market-name{font-weight:700}
   .market-note{color:var(--sub);font-size:12px;margin-top:10px}
   @media(max-width:560px){
@@ -109,9 +110,12 @@
     .market-table tr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);padding:7px 0}
     .market-table td{display:block;border:0;padding:4px 8px;white-space:normal}
     .market-table td:first-child,.market-table td:nth-child(4),.market-table td:nth-child(5){grid-column:1/-1}
+    .market-table.close-only tr{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
     .market-table td:nth-child(2)::before{content:'最新报价 ';color:var(--sub)}
     .market-table td:nth-child(3)::before{content:'涨跌幅 ';color:var(--sub)}
     .market-table td:nth-child(5)::before{content:'正式收盘 ';color:var(--sub)}
+    .market-table.close-only td:nth-child(2)::before{content:'正式收盘 '}
+    .market-table.close-only td:nth-child(3)::before{content:'来源 '}
   }
   @media(prefers-reduced-motion:reduce){.view.active{animation:none}*,*::before,*::after{scroll-behavior:auto!important}}
   .tab.on{background:#fff;color:var(--blue);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08)}
@@ -349,6 +353,7 @@
 
   <div class="view active" id="view-overview">
   <div class="stats" id="stats"></div>
+  <p class="market-note" id="marketSnapshotAge" hidden></p>
 
   <div class="sec" id="secSummary">
     <div class="sec-h">
@@ -414,7 +419,7 @@
   <div class="view" id="view-market">
     <div class="sec">
       <div class="sec-h"><h2><span class="ic" aria-hidden="true">↗</span>产品行情与收盘快照</h2></div>
-      <p id="marketStatus">准备读取行情状态…</p>
+      <p id="marketStatus" role="status">准备读取行情状态…</p>
       <div class="market-tools">
         <div class="tabs" id="marketTabs" role="group" aria-label="选择市场">
           <button class="tab on" type="button" data-m="A" aria-pressed="true">A 股 · CNY</button>
@@ -424,7 +429,7 @@
         <button id="marketRefresh" type="button" class="cancel-btn" hidden>读取报价</button>
       </div>
       <div class="tblwrap"><table class="market-table">
-        <thead><tr><th scope="col">标的</th><th scope="col">最新报价</th><th scope="col">相对该时段参考价</th><th scope="col">报价时段与时间（北京时间）</th><th scope="col">正式收盘快照</th></tr></thead>
+        <thead><tr id="marketHead"><th scope="col">标的</th><th scope="col">最新报价</th><th scope="col">相对该时段参考价</th><th scope="col">报价时段与时间（北京时间）</th><th scope="col">正式收盘快照</th></tr></thead>
         <tbody id="marketRows"></tbody>
       </table></div>
       <p class="market-note">报价和正式收盘各自记录。宽基回撤和飞书档位提醒使用经校验的收盘日线。</p>
@@ -728,6 +733,19 @@
       encodeURIComponent(report) + '">' + escapeText(report.replace('.md', '')) + ' · 阅读原文 ↗</a>';
   }).join('') : '周报索引暂不可用，请查看 GitHub reports 目录。';
   var release = window.RELEASE_POLICY;
+  var marketUpdated = Date.parse(A.meta.marketUpdated);
+  var snapshotLabel = "收盘快照采集时间未记录。";
+  if (Number.isFinite(marketUpdated)) {
+    var observed = new Intl.DateTimeFormat("zh-CN", {
+      timeZone: "Asia/Shanghai", dateStyle: "medium", timeStyle: "short"
+    }).format(marketUpdated);
+    var elapsedDays = Math.floor((Date.now() - marketUpdated) / 86400000);
+    snapshotLabel = "收盘快照采集于 " + observed + "（北京时间）" +
+      (elapsedDays >= 1 ? " · 已过 " + elapsedDays + " 天" : "") + "。";
+  }
+  var ageNote = document.getElementById("marketSnapshotAge");
+  ageNote.textContent = snapshotLabel;
+  ageNote.hidden = false;
   if (release && release.mode === "live" && release.drawdownAnalysisEnabled === true) {
     document.getElementById("releaseNotice").textContent = "已核验收盘快照 · 各市场收盘日期见总览，盘中报价见行情页。" +
       (release.drawdownAlertsEnabled === true ? "档位提醒按收盘数据生成，实际送达以飞书回执为准。" : "回撤提醒未启用。");

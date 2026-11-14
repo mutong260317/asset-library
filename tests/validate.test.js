@@ -26,11 +26,11 @@ const mutations={
 for(const [name,change]of Object.entries(mutations))test(name,()=>{const d=structuredClone(base);change(d);assert.ok(check(d).errors.length);});
 test('publish rejects legacy or stale data',()=>assert.ok(validateDrawdown(base,{now,publish:true,expected:{US:'2026-10-30',A:'2026-10-30'}}).errors.length));
 for(const content of [null,'window.DRAWDOWN = {};','/* missing required global */','window.DRAWDOWN = {'])test('missing/invalid required drawdown fails: '+content,()=>{
-  const tmp=fs.mkdtempSync(path.join(root,'.tmp','validator-'));
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'asset-library-validator-'));
   try{fs.copyFileSync(path.join(root,'data.js'),path.join(tmp,'data.js'));if(content!==null)fs.writeFileSync(path.join(tmp,'drawdown.js'),content);const r=spawnSync(process.execPath,[path.join(root,'validate-cli.js'),'--root',tmp,'--now',now.toISOString()],{encoding:'utf8'});assert.equal(r.status,1);}finally{fs.rmSync(tmp,{recursive:true,force:true});}
 });
 test('node validate.js actually checks non-100 weights',()=>{
-  const tmp=fs.mkdtempSync(path.join(root,'.tmp','weights-'));
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'asset-library-weights-'));
   try{const A=structuredClone(loadJS(path.join(root,'data.js'),'ASSETS'));A.assets[0].decision.w.c+=1;fs.writeFileSync(path.join(tmp,'data.js'),'module.exports='+JSON.stringify(A));fs.copyFileSync(path.join(root,'validate.js'),path.join(tmp,'validate.js'));const r=spawnSync(process.execPath,[path.join(tmp,'validate.js')],{encoding:'utf8'});assert.equal(r.status,1);assert.match(r.stdout,/拒绝发布/);}finally{fs.rmSync(tmp,{recursive:true,force:true});}
 });
 test('product prices preserve decisions and have actual product provenance',()=>{
@@ -64,7 +64,7 @@ test('publication rejects stale product closes independently of research date',(
 });
 test('snapshot site release requires disabled analysis and alerts',()=>{
   const check=require('../validate-cli.js').validateSiteRelease;
-  const tmp=fs.mkdtempSync(path.join(root,'.tmp','policy-'));
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'asset-library-policy-'));
   try{
     // 真实 index.html 仍保留 releaseNotice / dd-quarantined 标记，复制到临时目录
     fs.copyFileSync(path.join(root,'index.html'),path.join(tmp,'index.html'));
