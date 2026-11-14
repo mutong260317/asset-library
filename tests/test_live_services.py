@@ -64,7 +64,7 @@ class QuoteChecks(unittest.TestCase):
 class FeishuChecks(unittest.TestCase):
     def test_persisted_uuid_and_text_reused_and_delivery_needs_id(self):
         now = dt.datetime.fromisoformat("2026-11-04T12:00:00+00:00")
-        with TemporaryDirectory(dir=ROOT / '.tmp') as directory:
+        with TemporaryDirectory(prefix='asset-library-') as directory:
             ledger = Path(directory) / "feishu.json"
             client = Mock(destination="approved-chat")
             client.send.side_effect = [TimeoutError, "om_confirmed"]
@@ -78,7 +78,7 @@ class FeishuChecks(unittest.TestCase):
 
     def test_ambiguous_old_delivery_does_not_resend(self):
         now = dt.datetime.fromisoformat("2026-11-04T12:00:00+00:00")
-        with TemporaryDirectory(dir=ROOT / '.tmp') as directory:
+        with TemporaryDirectory(prefix='asset-library-') as directory:
             ledger = Path(directory) / "feishu.json"
             client = Mock(destination="approved-chat")
             client.send.side_effect = TimeoutError

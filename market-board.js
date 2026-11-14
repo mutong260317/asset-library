@@ -9,6 +9,16 @@
   const filter = document.getElementById('marketSearch');
   const refresh = document.getElementById('marketRefresh');
   const local = location.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(location.hostname);
+  if (!local) {
+    board.closest('table').classList.add('close-only');
+    const head = document.getElementById('marketHead');
+    head.replaceChildren(...['标的', '正式收盘价与交易日', '收盘价来源'].map(label => {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = label;
+      return th;
+    }));
+  }
   const sessions = {regular: '常规', pre_market: '盘前', post_market: '盘后', overnight: '夜盘'};
   const statuses = {recent: '近 2 分钟', stale: '成交已过 2 分钟', last_quote: '最近一笔', restricted: '交易状态异常'};
   const priceFormat = {A: new Intl.NumberFormat('zh-CN', {minimumFractionDigits: 3, maximumFractionDigits: 4}),
@@ -38,7 +48,7 @@
     } else if (local) {
       notice.textContent = failed ? '暂未收到长桥报价，当前只显示已有的正式收盘快照。' : '连接本机长桥行情，收盘快照可先查看。';
     } else {
-      notice.textContent = '公开站点显示有日期的收盘快照。盘中报价可在本机版查看。';
+      notice.textContent = '公开站点 · ' + document.getElementById('marketSnapshotAge').textContent;
     }
     board.replaceChildren();
     const query = filter.value.trim().toLowerCase();
@@ -53,15 +63,19 @@
       open.textContent = a.n === a.c ? a.c : `${a.n} · ${a.c}`;
       open.addEventListener('click', () => window.dispatchEvent(new CustomEvent('asset-detail', {detail:a.c})));
       name.append(open);
-      cell(row, q?.price != null ? priceFormat[market].format(q.price) : '—');
-      const change = q?.change;
-      cell(row, change == null ? '—' : `${change > 0 ? '+' : ''}${(100 * change).toFixed(2)}%`);
-      const when = q?.timestamp ? timeFormat.format(new Date(q.timestamp)) : '';
-      cell(row, when ? `${sessions[q.session] || '—'} · ${when} · ${statuses[q.status] || '—'}` : '—');
+      if (local) {
+        cell(row, q?.price != null ? priceFormat[market].format(q.price) : '—');
+        const change = q?.change;
+        cell(row, change == null ? '—' : `${change > 0 ? '+' : ''}${(100 * change).toFixed(2)}%`);
+        const when = q?.timestamp ? timeFormat.format(new Date(q.timestamp)) : '';
+        cell(row, when ? `${sessions[q.session] || '—'} · ${when} · ${statuses[q.status] || '—'}` : '—');
+      }
       const s = a.signal;
-      cell(row, s.priceStatus === 'checked' ? `${priceFormat[market].format(s.price)} · ${s.priceAsOf}` : '未知');
+      const checked = s.priceStatus === 'checked';
+      cell(row, checked ? `${priceFormat[market].format(s.price)} · ${s.priceAsOf}` : '未知');
+      if (!local) cell(row, checked ? s.priceSource : '—');
     });
-    if (!board.rows.length) cell(board.insertRow(), '没有匹配资产').colSpan = 5;
+    if (!board.rows.length) cell(board.insertRow(), '没有匹配资产').colSpan = local ? 5 : 3;
   }
 
   function active() {
