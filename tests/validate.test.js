@@ -89,3 +89,22 @@ test('report catalog points to every existing weekly report',()=>{
   const actual=fs.readdirSync(path.join(root,'reports')).filter(f=>/^\d{4}-W\d{2}\.md$/.test(f)).sort().reverse();
   assert.deepEqual(Array.from(loadJS(path.join(root,'reports/catalog.js'),'RESEARCH_REPORTS')),actual);
 });
+
+test('market brief has dated adjusted closes and linkable evidence', () => {
+  const brief = loadJS(path.join(root, 'data.js'), 'ASSETS').marketBrief;
+  assert.ok(brief.asOf <= brief.reviewedAt);
+  for (const day of [brief.asOf, brief.reviewedAt]) {
+    assert.match(day, /^\d{4}-\d{2}-\d{2}$/);
+    assert.equal(new Date(day).toISOString().slice(0, 10), day);
+  }
+  assert.equal(brief.sections.length, 3);
+  assert.ok(brief.sections.every(section => section.title && section.evidence && section.interpretation && section.watch));
+  assert.ok(brief.prices.length > 0);
+  assert.equal(new Set(brief.prices.map(price => price.symbol)).size, brief.prices.length);
+  for (const price of brief.prices) {
+    assert.ok(price.label && price.symbol);
+    assert.ok([price.close, price.base5, price.base20].every(value => Number.isFinite(value) && value > 0));
+  }
+  assert.ok(brief.sources.length > 0);
+  assert.ok(brief.sources.every(source => source.label && new URL(source.url).protocol === 'https:'));
+});
