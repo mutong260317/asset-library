@@ -43,6 +43,23 @@ def run():
                     coverage = page.locator(f'[data-price-market="{market}"]')
                     assert coverage.is_visible()
                     assert '收盘快照覆盖' in coverage.locator('.l').inner_text()
+                brief = page.locator('#marketBrief')
+                brief_data = page.evaluate('window.ASSETS.marketBrief')
+                assert brief.locator('h3').all_text_contents() == ['全球大盘与联动', '宏观与利率', '风格与个股']
+                assert float(brief.locator('.brief-card p').first.evaluate('el => getComputedStyle(el).fontSize').removesuffix('px')) >= 15
+                assert brief_data['asOf'] in page.locator('#briefDate').inner_text()
+                brief.locator('summary').click()
+                assert brief.locator('tbody tr').count() == len(brief_data['prices'])
+                sample = brief_data['prices'][0]
+                expected = f"{(sample['close'] / sample['base5'] - 1) * 100:+.2f}%"
+                assert brief.locator('tbody tr').first.locator('td').first.inner_text() == expected
+                assert brief.locator('a').count() == len(brief_data['sources'])
+                assert page.evaluate('document.documentElement.scrollWidth') <= width+2
+                brief.locator('summary').click()
+                page.locator('#secSummary').screenshot(path=str(OUT/f'market-brief-{width}.png'))
+                page.locator('#priorSummary summary').click()
+                assert page.locator('#sumGrid .sum-card').count() == page.evaluate('window.ASSETS.summary.length')
+                page.locator('#priorSummary summary').click()
                 assert page.locator('#chartlist .li[data-cd]').count()==24
                 assert page.locator('#chartlist').get_attribute('data-market')=='A'
                 page.locator('#chartMarkets button[data-m="US"]').click()
@@ -224,6 +241,15 @@ def run():
             assert us_coverage.locator('.n').inner_text() == '0 / 17'
             assert us_coverage.locator('.s').inner_text() == '无已核验价格'
             results.append({'mixedDatesAndMissingPrices': 'coverage and date range verified'})
+            page.close()
+            page = context.new_page()
+            page.route('**/data.js', lambda route: route.fulfill(
+                content_type='application/javascript',
+                body=(ROOT / 'data.js').read_text(encoding='utf-8') +
+                "\nconst A = window.ASSETS; A.marketBrief.asOf = '2026-09-01';"))
+            page.goto(url, wait_until='networkidle')
+            assert '历史解读' in page.locator('#briefDate').inner_text()
+            results.append({'olderMarketBrief': 'historical badge when newer closes are available'})
             page.close()
             page=context.new_page()
             def static_public(route):

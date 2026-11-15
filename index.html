@@ -78,6 +78,27 @@
   .sum-card .k{font-size:11.5px;font-weight:800;color:var(--blue);margin-bottom:5px;display:flex;align-items:center;gap:6px}
   .sum-card .k::before{content:"";width:4px;height:12px;border-radius:2px;background:var(--blue)}
   .sum-card .v{font-size:12px;color:#3C4A63;line-height:1.65}
+  #secSummary h2{font-size:clamp(20px,2.2vw,25px)}
+  .brief-lead{margin:0 0 16px;padding:13px 16px;border-left:4px solid var(--blue);border-radius:8px;background:var(--blue-soft);font-size:17px;font-weight:750;line-height:1.6}
+  .brief-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .brief-card{padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--gray-soft)}
+  .brief-card h3{margin:0 0 12px;font-size:18px;line-height:1.4}
+  .brief-card p{margin:8px 0;font-size:15px;line-height:1.7}
+  .brief-card strong{color:var(--blue)}
+  .brief-card p:last-of-type{margin-bottom:0}
+  .brief-details{padding-top:12px;margin-top:14px;border-top:1px solid var(--line)}
+  .brief-details summary{font-size:15px;font-weight:700;color:var(--blue);cursor:pointer}
+  .brief-details .sum-grid,.brief-details .tblwrap{margin-top:12px}
+  #sumGrid .sum-card .k{font-size:14px}
+  #sumGrid .sum-card .v{font-size:15px}
+  .brief-notes{margin:10px 0;color:var(--sub);font-size:14px;line-height:1.65}
+  .brief-data{width:100%;font-variant-numeric:tabular-nums}
+  .brief-data th{cursor:default;white-space:normal;text-align:left;padding:8px}
+  .brief-data th:not(:first-child),.brief-data td:not(:first-child){text-align:right}
+  .brief-data td{font-size:14px}
+  .brief-up{color:#14784D}.brief-down{color:#B52F3B}
+  .brief-links{display:flex;flex-wrap:wrap;gap:8px 14px}
+  @media(max-width:860px){.brief-grid{grid-template-columns:1fr}.brief-card p{font-size:16px}}
   .tabs{display:inline-flex;background:var(--gray-soft);border-radius:10px;padding:3px;border:1px solid var(--line);margin-bottom:12px}
   .tab{padding:6px 16px;font-size:12.5px;border-radius:8px;cursor:pointer;color:var(--sub);transition:.15s;user-select:none}
   button.tab{border:0;background:transparent;font-family:inherit}
@@ -357,10 +378,14 @@
 
   <div class="sec" id="secSummary">
     <div class="sec-h">
-      <h2><span class="ic">★</span>本周资产配置结论</h2>
-      <span class="hint" id="snapD">—</span>
+      <h2><span class="ic" aria-hidden="true">★</span>全球市场与风格分析</h2>
+      <span class="hint" id="briefDate"></span>
     </div>
-    <div class="sum-grid" id="sumGrid"></div>
+    <div id="marketBrief"></div>
+    <details class="brief-details" id="priorSummary">
+      <summary>资产配置研究 <span id="snapD"></span></summary>
+      <div class="sum-grid" id="sumGrid"></div>
+    </details>
   </div>
 
   <div class="sec">
@@ -726,7 +751,7 @@
 
   /* ---- 顶部数据状态 ---- */
   document.getElementById("updBadge").textContent = "研究日期 " + A.meta.updated;
-  document.getElementById("snapD").textContent = (A.snap ? A.snap.d + " · " + A.snap.t : "—");
+  document.getElementById("snapD").textContent = A.snap ? "· " + A.snap.d + " · " + A.snap.t : "";
   var reports = window.RESEARCH_REPORTS;
   document.getElementById("reportCatalog").innerHTML = Array.isArray(reports) && reports.length ? reports.map(function(report) {
     return '<a class="sum-card" target="_blank" rel="noopener" href="https://github.com/mutong260317/asset-library/blob/main/reports/' +
@@ -785,10 +810,55 @@
     var box = document.getElementById("sumGrid");
     if (!A.summary || !A.summary.length) { box.innerHTML = '<div class="sum-card"><div class="k">本周</div><div class="v">暂无摘要</div></div>'; return; }
     box.innerHTML = A.summary.map(function (s) {
-      return '<div class="sum-card"><div class="k">' + s.k + '</div><div class="v">' + s.v + '</div></div>';
+      return '<div class="sum-card"><div class="k">' + escapeText(s.k) + '</div><div class="v">' + escapeText(s.v) + '</div></div>';
     }).join("");
   }
   try { renderSummary(); } catch (e) { console.error("summary", e); }
+
+  function renderMarketBrief() {
+    var brief = A.marketBrief;
+    var box = document.getElementById("marketBrief");
+    if (!brief) {
+      box.textContent = "暂无已核验的市场分析，可展开查看资产配置研究。";
+      document.getElementById("priorSummary").open = true;
+      return;
+    }
+    var newerClose = L.some(function (asset) { return asset.signal.priceAsOf > brief.asOf; });
+    document.getElementById("briefDate").textContent = (newerClose ? "历史解读 · " : "") +
+      "收盘截至 " + brief.asOf + " · AI 解读 " + brief.reviewedAt;
+    function move(end, start) {
+      var percent = (end / start - 1) * 100;
+      var color = percent > 0 ? "brief-up" : percent < 0 ? "brief-down" : "";
+      return '<td class="' + color + '">' + (percent > 0 ? "+" : "") + percent.toFixed(2) + "%</td>";
+    }
+    var cards = brief.sections.map(function (s) {
+      return '<article class="brief-card"><h3>' + escapeText(s.title) + '</h3>' +
+        '<p><strong>数据</strong>　' + escapeText(s.evidence) + '</p>' +
+        '<p><strong>AI 判断</strong>　' + escapeText(s.interpretation) + '</p>' +
+        '<p><strong>接下来观察</strong>　' + escapeText(s.watch) + '</p></article>';
+    }).join("");
+    var rows = brief.prices.map(function (p) {
+      return '<tr><th scope="row">' + escapeText(p.label) + ' <small>' + escapeText(p.symbol) + '</small></th>' +
+        move(p.close, p.base5) + move(p.close, p.base20) + '</tr>';
+    }).join("");
+    var links = brief.sources.map(function (s) {
+      if (!s.url.startsWith("https://")) return "";
+      return '<a href="' + escapeText(s.url) + '" target="_blank" rel="noopener noreferrer">' + escapeText(s.label) + ' ↗</a>';
+    }).join("");
+    box.innerHTML = '<p class="brief-lead">' + escapeText(brief.headline) + '</p>' +
+      '<div class="brief-grid">' + cards + '</div>' +
+      '<details class="brief-details"><summary>展开涨跌对照、口径与来源</summary>' +
+      '<p class="brief-notes">' + escapeText(brief.priceMethod) + '</p>' +
+      '<div class="tblwrap" tabindex="0" role="region" aria-label="市场和个股涨跌对照"><table class="brief-data" aria-label="近 5 日及 20 日涨跌对照">' +
+      '<thead><tr><th scope="col">市场、风格与个股</th><th scope="col">近 5 个交易日</th><th scope="col">近 20 个交易日</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table></div><p class="brief-notes">' + escapeText(brief.linkageMethod) + '</p>' +
+      '<div class="brief-links brief-notes">' + links + '</div></details>';
+  }
+  try { renderMarketBrief(); } catch (e) {
+    document.getElementById("marketBrief").textContent = "市场解读暂不可用，可展开查看资产配置研究。";
+    document.getElementById("priorSummary").open = true;
+    console.error("market brief", e);
+  }
 
   /* ---- 资产总表（分页 + 视图切换 + 草稿） ---- */
   function parseSizeNum(x) { return (x.aum && typeof x.aum.value === "number") ? x.aum.value : -1; }
