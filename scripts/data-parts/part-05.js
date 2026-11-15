@@ -17,7 +17,7 @@
       rk: 3, ret: { low: 0.06, high: 0.09 },
       signal: { asOf: "2026-11-13", cyc: 28, cycleType: "盈利+估值周期", cycleMethod: "PE分位+新经济权重+盈利", cycleReason: "周-4.37%至4793，PE10.99、股息率4.49%，估值极低", cycleConfidence: "high", val: 20, valSource: "中证指数官网", valAsOf: "2026-11-13", premium: { value: null, asOf: null, status: "unverified" }, purchaseLimit: "", price: 1.096, priceAsOf: "2026-11-13", priceSource: "Longbridge", priceSymbol: "563360.SH", priceBasis: "unadjusted", priceStatus: "checked", drawdown: { fromATH: -12, p1y: -4, historicalMax: -35 } },
       decision: { w: { c: 7, y: 8, a: 10 }, action: "分批", buyZone: "分位<25%继续加", trimZone: "分位>75%减", invalidation: "指数样本规则重大变更/盈利下修", reason: "代表新经济更均衡，长期底仓" },
-      vd: "PE分位23.7%，低估，可作底仓", hz: ["同沪深300", "代表新经济", "长期底仓"] },
+      vd: "PE分位23.7%，低估，可作底仓", hz: ["同沪深300", "代表新经济更均衡", "长期底仓"] },
     { c: "563300", n: "中证2000ETF", m: "A", cat: "宽基", u: "中证2000小盘", structure: "ETF", overlap: "low", overlapWith: "",
       fee: { value: 0.60, unit: "%", asOf: "2026-09-04" }, aum: { value: 34, unit: "亿", currency: "CNY", asOf: "2026-09-01" },
       rk: 4, ret: { low: 0.07, high: 0.11 },
