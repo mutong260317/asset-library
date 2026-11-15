@@ -1,0 +1,306 @@
+        "cyc": 62,
+        "cycleType": "小盘+利率周期",
+        "cycleMethod": "小盘PE分位+利率敏感度",
+        "cycleReason": "IWM周+1.30%逆势收涨至279.33，小盘对利率敏感，等利率见顶",
+        "cycleConfidence": "medium",
+        "val": 64,
+        "valSource": "Vanguard/GuruFocus",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 112.13,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "VTWO.US",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -10,
+          "p1y": -6,
+          "historicalMax": -45
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 4,
+          "y": 4,
+          "a": 4
+        },
+        "action": "持有",
+        "buyZone": "利率见顶+小盘周期启动",
+        "trimZone": "高利率持续+小盘盈利下修",
+        "invalidation": "衰退+信用收缩",
+        "reason": "小盘弹性，利率敏感"
+      },
+      "vd": "罗素2000 PE 17，相对GF Value高估47.7%",
+      "hz": [
+        "小盘周期",
+        "利率敏感",
+        "高弹性"
+      ]
+    },
+    {
+      "c": "SOXX",
+      "n": "SOXX",
+      "m": "US",
+      "cat": "行业",
+      "u": "费城半导体",
+      "structure": "ETF",
+      "overlap": "high",
+      "overlapWith": "SMH/SOXL/QQQM（半导体科技重叠）",
+      "fee": {
+        "value": 0.35,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 13,
+        "unit": "十亿美元",
+        "currency": "USD",
+        "asOf": "2026-09-01"
+      },
+      "rk": 5,
+      "ret": {
+        "low": 0.06,
+        "high": 0.12
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 72,
+        "cycleType": "半导体库存周期",
+        "cycleMethod": "库存+CapEx+PE分位",
+        "cycleReason": "费半周五-7.2%单日暴跌，周期已过，等库存见底",
+        "cycleConfidence": "high",
+        "val": 70,
+        "valSource": "iShares/GuruFocus",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 149.3,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "SOXX.US",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -5,
+          "p1y": -3,
+          "historicalMax": -60
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 3,
+          "a": 3
+        },
+        "action": "回避",
+        "buyZone": "PE分位<40%且库存见底",
+        "trimZone": "反弹减仓",
+        "invalidation": "AI资本开支见顶",
+        "reason": "周期高位，等回落"
+      },
+      "vd": "周期已过，不追",
+      "hz": [
+        "半导体周期见顶",
+        "AI资本开支支撑但贵",
+        "等周期回落"
+      ]
+    },
+    {
+      "c": "SMH",
+      "n": "SMH",
+      "m": "US",
+      "cat": "行业",
+      "u": "MVIS半导体（含台积电）",
+      "structure": "ETF",
+      "overlap": "high",
+      "overlapWith": "SOXX/SOXL（半导体科技重叠）",
+      "fee": {
+        "value": 0.35,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 20,
+        "unit": "十亿美元",
+        "currency": "USD",
+        "asOf": "2026-09-01"
+      },
+      "rk": 5,
+      "ret": {
+        "low": 0.06,
+        "high": 0.12
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 72,
+        "cycleType": "半导体库存周期",
+        "cycleMethod": "库存+CapEx+PE分位",
+        "cycleReason": "随费半暴跌，与SOXX高度相关，可合并",
+        "cycleConfidence": "high",
+        "val": 71,
+        "valSource": "VanEck/GuruFocus",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 486.75,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "SMH.US",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -5,
+          "p1y": -3,
+          "historicalMax": -60
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 3,
+          "a": 3
+        },
+        "action": "回避",
+        "buyZone": "与SOXX合并计算，二选一",
+        "trimZone": "—",
+        "invalidation": "AI资本开支见顶",
+        "reason": "与SOXX二选一"
+      },
+      "vd": "与SOXX高度相关，可合并",
+      "hz": [
+        "同半导体",
+        "含台积电更集中",
+        "二选一"
+      ]
+    },
+    {
+      "c": "XLK",
+      "n": "XLK",
+      "aliases": [
+        "XLK/VGT"
+      ],
+      "m": "US",
+      "cat": "行业",
+      "u": "标普信息技术",
+      "structure": "ETF",
+      "overlap": "high",
+      "overlapWith": "VGT/QQQM（科技重叠）",
+      "fee": {
+        "value": 0.08,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 70,
+        "unit": "十亿美元",
+        "currency": "USD",
+        "asOf": "2026-09-01"
+      },
+      "rk": 4,
+      "ret": {
+        "low": 0.07,
+        "high": 0.12
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 69,
+        "cycleType": "科技+估值周期",
+        "cycleMethod": "PE分位+AI资本开支",
+        "cycleReason": "随risk-off回调，与VGT高度重叠，合并计算",
+        "cycleConfidence": "medium",
+        "val": 76,
+        "valSource": "SSGA/ETF.run",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 170.28,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "XLK.US",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -4,
+          "p1y": -3,
+          "historicalMax": -45
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 3,
+          "a": 3
+        },
+        "action": "持有",
+        "buyZone": "科技回调15%+",
+        "trimZone": "PE分位>85%减",
+        "invalidation": "AI叙事证伪",
+        "reason": "与VGT合并计算，勿重复加码"
+      },
+      "vd": "与VGT高度重叠，二选一或合并计算，勿重复加码",
+      "hz": [
+        "科技周期中后段",
+        "AI主线",
+        "高弹性"
+      ]
+    },
+    {
+      "c": "VGT",
+      "n": "VGT",
+      "m": "US",
+      "cat": "行业",
+      "u": "MSCI US IMI 信息技术25/50（319只，含中小盘科技）",
+      "structure": "ETF",
+      "overlap": "high",
+      "overlapWith": "XLK/QQQM（科技重叠）",
+      "fee": {
+        "value": 0.09,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 147,
+        "unit": "十亿美元",
+        "currency": "USD",
+        "asOf": "2026-09-01"
+      },
+      "rk": 4,
+      "ret": {
+        "low": 0.07,
+        "high": 0.12
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 69,
+        "cycleType": "科技+估值周期",
+        "cycleMethod": "PE分位+AI资本开支",
+        "cycleReason": "随risk-off回调，与VGT高度重叠，合并计算",
+        "cycleConfidence": "medium",
+        "val": 76,
+        "valSource": "Vanguard/ETF.run",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 111.18,
