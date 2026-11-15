@@ -1,5 +1,15 @@
 # HANDOFF.md — 当前交接
 
+## 2026-11-15 豆包 W46 估值研究更新与分片/CI 组装机制（已同步远程并部署）
+
+- 基线：`git fetch` 后远程 main 在已知 `3078394` 之上多出 Codex 两个提交——PR#8 `6fa6a9d`（41 产品+9 宽基同批更新到 11-13 收盘、新增价格快照、公开页展示正式收盘价）与 PR#9 `ee9271c`（总览新增重点结论与三段分析，新增顶层 `data.js.marketBrief`）。本地 reset 对齐 `ee9271c`，确认 41 资产 priceAsOf 全 11-13、marketBrief 独立于原研究、原 cyc/val 仍停在 W44（10-30）、三档各 100。
+- 研究更新（核心，Codex 未动原研究字段）：41 只资产 cyc/val 及 signal asOf/valAsOf 全部更新到 2026-11-13；meta.updated/week/generatedBy 改 W46；summary 五条重写；history 新增 36 条 W46 条目（5 只无变化：511520/513520/513290/512400/162411），现共 86 条；log 追加 1 条共 18 条；archive 生成 `snapshots/research/2026-W46.json` 并刷新 catalog。更新经 `apply_w46.js` 以 assets 数组锚点限定、从后往前精确替换，未触碰 history。
+- 客观数据要点：美债收益率大幅反弹（10年 5.15% +29bp、2年 4.88% +37bp、30年 5.47% +21bp），W45"利率见顶下行"判断被短期逆转；美股强反弹且价格分位 89-99（VOO 94、QQQM 89.8、RSP 99.2），与利率上行背离、不追高；A股绝对估值仍低（A500 PE9.1、沪深300 PE13.83、股息3.03%）；上海金 837.55 元/克周 -3.57%；中证银行价格分位 97.5 但 PE7.54/股息4.66%，价格高位与估值仍低须区分。本周无加减仓、权重与持仓不变。
+- 测试基线修复：`tests/validate.test.js` 硬编码依赖 `reports/audits/upstream-research.json`，研究更新后重新生成该审计基线（researchAsOf=2026-11-13、41 资产、decision/ret 不变）。本地全绿：node validate.js、validate-cli.js（含日历闸门，三档各 100、0 errors/0 warnings）、node --test 27/27、python unittest 37/37。
+- 交付：`reports/2026-W46.md` 六部分周报；飞书文档《资产配置方案 v2》已写入（revision 16）；群「资产配置推送」三类消息（markdown 总结+线上页面截图+周报文件，均带 message_id），另私聊用户精简通知（含文档链接）。
+- **分片/CI 组装临时机制（重要，需知悉）**：云主机无法可靠经 MCP 一次性推送完整 data.js（长 content 两次失败——一次截断为 2477 字节损坏版 `4a376c2`、一次凭记忆重建篡改权重/市场字段 191 错误 `b8e7ffb`）。故把正确 data.js（89174 字节，sha256 `08061ffb…`）切成 `scripts/data-parts/part-01.js`～`part-10.js`（均 <10KB）逐片推送，新增 `scripts/assemble_data.js` 在 Pages 工作流 checkout 后、校验前无损拼接回 data.js。CI 已验证通过并部署，线上 data.js 与本地规范字节完全一致（41 资产、86 history、18 log、三档各 100）。
+- 遗留与拆除条件：分片机制为云主机大文件传输限制下的临时方案；**Windows 本地 gh 恢复在线后，应用其 credential 直接推送完整 data.js，随后删除 `scripts/data-parts/`、`scripts/assemble_data.js` 与 pages.yml 组装步骤，恢复标准流程**。`snapshots/research/2026-W46.json`（80KB 纯归档、前端不读取）远程未推，可延后或分片处理。每日回撤 cron 维持不恢复（前置卡点未解决）；创业板指 csindex 返回 404，PE 沿用约 27 倍口径。
+
 ## 2026-11-14 Codex 全球市场与风格分析
 
 - 基于远程与线上 `6fa6a9d`。总览增加重点结论和三段分析，桌面并排、手机纵向展示。数据、AI 判断和观察条件分行，涨跌、口径与来源可展开。原资产配置研究保留原日期并可展开查看。
@@ -111,11 +121,11 @@
 - 重启登录入口与网址已固化到 `LOCAL-ACCESS.md`，重启后按该文件确认，无需再问 AI。
 
 ## 版本与交付状态
-- 首次远程基线：3c3dd4ac8f4f2b5787d685cd063a2e3c0e1b300d。结束前发现远程更新到 c6fac5040f9498bcaabdfcf21de756057a8bcee4，已读取并合入其 data.js 和 reports/2026-W44.md；完整保留新的 W44 研究、权重与判断。
+- 首次远程基线：3c3dd4ac8f42b5787d68823810/3c3dd4ac8f42b5787d68823810。结束前发现远程更新到 c6fac5040f9498bcaabdfcf21de756057a8bcee4，已读取并合入其 data.js 和 reports/2026-W44.md；完整保留新的 W44 研究、权重与判断。
 - 固定审查基线：685c8a9128b7341e0e85ec34d2a648fef4647d88。后续 W41 比较/日志、措辞修正已合入；其组合代码 XLK/VGT 规范化为可报价 XLK，原字符串保留为 aliases，VGT 单独资产与权重不变。
 - 本地工作分支：reliability-review，目录 E:\codex\投资\asset-library。实际本地 HEAD 用 git log -1 核对，不在本文件里循环写自身提交号。
 - 交付分支：`codex/reliability-review-20261101`，本文件、源码、测试与审查证据同批交付到 GitHub。用户现已授权合并并部署快照站点，部署结果在 PR #1 记录；定时任务未修改、外部提醒未发送。
-- 直接 git fetch 连接重置后，通过 GitHub 回读 18 个 blob 和提交元数据，逐个校验 blob SHA，并重建出完全一致的远程 commit 685c8a9 与 tree fd4cb785d35e16d2ca3d97c2104c9c33c315952d。本地分支现在实际以该远程提交为父基线（浅历史），不再是独立根提交；工作改动完整保留。
+- 直接 git fetch 连接重置后，通过 GitHub 回读 18 个 blob 和提交元数据，逐个校验 blob SHA，并重建出完全一致的远程 commit 685c8a9 与 tree fd4cb785d35e216d2ca3d97c2104c9c33c315952d。本地分支现在实际以该远程提交为父基线（浅历史），不再是独立根提交；工作改动完整保留。
 
 ## 已完成
 1. 所有提供商统一使用交易日历和收盘缓冲，去除腾讯/新浪实时补日线；增加交易日完整性、OHLC、日期、陈旧、跳变和来源修订闸门。长桥为优先只读源，支持 CLI 和新鲜的连接器导出。
