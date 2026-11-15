@@ -1,0 +1,299 @@
+      },
+      "vd": "百元溢价率93分位偏高、平价20分位，中性偏贵，等回落",
+      "hz": [
+        "股市回暖受益",
+        "股债双性增强",
+        "随A股长期慢牛"
+      ]
+    },
+    {
+      "c": "510300",
+      "n": "沪深300ETF",
+      "m": "A",
+      "cat": "宽基",
+      "u": "沪深300，PE约13.6倍",
+      "structure": "ETF",
+      "overlap": "low",
+      "overlapWith": "",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 949,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-06-30"
+      },
+      "rk": 3,
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 28,
+        "cycleType": "盈利+估值周期",
+        "cycleMethod": "PE分位+盈利增速+流动性与政策",
+        "cycleReason": "周-2.92%至3985，PE13.76、股息率3.05%，估值历史极低",
+        "cycleConfidence": "high",
+        "val": 20,
+        "valSource": "中证指数官网/同花顺",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 4.083,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "510300.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -18,
+          "p1y": -9,
+          "historicalMax": -46
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 13,
+          "y": 13,
+          "a": 16
+        },
+        "action": "分批",
+        "buyZone": "PE<12或分位<20%时加大",
+        "trimZone": "PE>16或分位>80%时减",
+        "invalidation": "盈利增速持续负增长+政策收紧",
+        "reason": "核心底仓，估值修复窗口"
+      },
+      "vd": "9月收官月跌3.62%至4358，估值更便宜，可作底仓",
+      "hz": [
+        "估值修复窗口",
+        "宽基周期向上",
+        "核心底仓"
+      ]
+    },
+    {
+      "c": "563360",
+      "n": "A500ETF",
+      "m": "A",
+      "cat": "宽基",
+      "u": "中证A500，PE约16.4倍",
+      "structure": "ETF",
+      "overlap": "medium",
+      "overlapWith": "510300（宽基重叠，行业更均衡）",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 499,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-01"
+      },
+      "rk": 3,
+      "ret": {
+        "low": 0.06,
+        "high": 0.09
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 28,
+        "cycleType": "盈利+估值周期",
+        "cycleMethod": "PE分位+新经济权重+盈利",
+        "cycleReason": "周-4.37%至4793，PE10.99、股息率4.49%，估值极低",
+        "cycleConfidence": "high",
+        "val": 20,
+        "valSource": "中证指数官网",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 1.096,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "563360.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -12,
+          "p1y": -4,
+          "historicalMax": -35
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 7,
+          "y": 8,
+          "a": 10
+        },
+        "action": "分批",
+        "buyZone": "分位<25%继续加",
+        "trimZone": "分位>75%减",
+        "invalidation": "指数样本规则重大变更/盈利下修",
+        "reason": "代表新经济更均衡，长期底仓"
+      },
+      "vd": "PE分位23.7%，低估，可作底仓",
+      "hz": [
+        "同沪深300",
+        "代表新经济更均衡",
+        "长期底仓"
+      ]
+    },
+    {
+      "c": "563300",
+      "n": "中证2000ETF",
+      "m": "A",
+      "cat": "宽基",
+      "u": "中证2000小盘",
+      "structure": "ETF",
+      "overlap": "low",
+      "overlapWith": "",
+      "fee": {
+        "value": 0.6,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 34,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-01"
+      },
+      "rk": 4,
+      "ret": {
+        "low": 0.07,
+        "high": 0.11
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 41,
+        "cycleType": "小盘流动性周期",
+        "cycleMethod": "PB分位+成交活跃度+小盘风格周期",
+        "cycleReason": "随A股调整，小盘流动性周期走弱，PB中性，等回落",
+        "cycleConfidence": "medium",
+        "val": 41,
+        "valSource": "中证指数官网",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 1.252,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "563300.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -25,
+          "p1y": -10,
+          "historicalMax": -45
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 4,
+          "y": 4,
+          "a": 4
+        },
+        "action": "持有",
+        "buyZone": "PB分位<30%",
+        "trimZone": "PB分位>80%",
+        "invalidation": "流动性持续收紧+小盘风格逆转",
+        "reason": "小盘弹性大但波动显著，中性仓位"
+      },
+      "vd": "PE 120倍因盈利下滑虚高，PB 2.6历史65%分位中性",
+      "hz": [
+        "小盘弹性大",
+        "波动显著",
+        "流动性折价修复"
+      ]
+    },
+    {
+      "c": "588000",
+      "n": "科创50ETF",
+      "m": "A",
+      "cat": "成长",
+      "u": "科创板50（半导体权重高）",
+      "structure": "ETF",
+      "overlap": "high",
+      "overlapWith": "512480/159995（半导体权重）",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 508,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-06-30"
+      },
+      "rk": 4,
+      "ret": {
+        "low": 0.08,
+        "high": 0.13
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 62,
+        "cycleType": "半导体+估值周期",
+        "cycleMethod": "PE分位+半导体库存周期+流动性",
+        "cycleReason": "周-13.73%暴跌至1160，PE降至77.34，杀估值不抄底",
+        "cycleConfidence": "medium",
+        "val": 66,
+        "valSource": "上交所/中证指数",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 1.354,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "588000.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -32,
+          "p1y": -22,
+          "historicalMax": -50
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 2,
+          "y": 2,
+          "a": 4
+        },
+        "action": "回避",
+        "buyZone": "PE回落至<50倍且半导体周期见底信号",
+        "trimZone": "PE>100倍继续减",
+        "invalidation": "AI国产替代逻辑证伪",
+        "reason": "高波动成长，PE仍77倍不接飞刀"
+      },
+      "vd": "周-7.42%至1530，PE仍99.5倍，开始回调但估值仍高，不接飞刀",
+      "hz": [
+        "半导体周期见顶回落",
+        "AI国产替代长期主线",
+        "高波动成长"
+      ]
+    },
+    {
+      "c": "159915",
+      "n": "创业板ETF",
