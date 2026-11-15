@@ -1,0 +1,289 @@
+      "m": "A",
+      "cat": "成长",
+      "u": "创业板指，PE约38倍",
+      "structure": "ETF",
+      "overlap": "low",
+      "overlapWith": "",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 649,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-02"
+      },
+      "rk": 4,
+      "ret": {
+        "low": 0.08,
+        "high": 0.12
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 22,
+        "cycleType": "盈利+估值周期",
+        "cycleMethod": "PE分位+盈利增速+成长风格周期",
+        "cycleReason": "周-10.08%暴跌至2413，PE27.20、5年分位31%，等右侧不抄底",
+        "cycleConfidence": "high",
+        "val": 19,
+        "valSource": "深交所/同花顺",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 2.442,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "159915.SZ",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -38,
+          "p1y": -22,
+          "historicalMax": -55
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 5,
+          "a": 6
+        },
+        "action": "分批",
+        "buyZone": "分位<30%分批加",
+        "trimZone": "分位>70%减",
+        "invalidation": "新能源/医药权重盈利持续恶化",
+        "reason": "估值下修+盈利上修，左侧分批"
+      },
+      "vd": "9月月跌8.82%至3135，估值更低，中报盈利+32%，偏低估",
+      "hz": [
+        "估值下修+盈利上修",
+        "新能源/医药权重",
+        "高弹性"
+      ]
+    },
+    {
+      "c": "513180",
+      "n": "恒生科技ETF",
+      "m": "A",
+      "cat": "跨境",
+      "u": "恒生科技指数",
+      "structure": "ETF",
+      "overlap": "high",
+      "overlapWith": "513770（港股互联网重叠）",
+      "fee": {
+        "value": 0.65,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 416,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-01"
+      },
+      "rk": 4,
+      "ret": {
+        "low": 0.08,
+        "high": 0.14
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 13,
+        "cycleType": "港股盈利+政策周期",
+        "cycleMethod": "估值分位+南向资金+政策风险+盈利预期",
+        "cycleReason": "周-3.02%至3754，PE20.01，底部磨，维持左侧不加仓",
+        "cycleConfidence": "high",
+        "val": 7,
+        "valSource": "同花顺",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": -0.009,
+          "asOf": "2026-10-16"
+        },
+        "purchaseLimit": "",
+        "price": 0.478,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "513180.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -41,
+          "p1y": -36,
+          "historicalMax": -75
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 7,
+          "y": 9,
+          "a": 11
+        },
+        "action": "持有",
+        "buyZone": "指数停止创新低+20日趋势企稳后加仓",
+        "trimZone": "反弹至4311前高压力位且盈利未改善",
+        "invalidation": "盈利预期明显下修/政策风险进一步恶化",
+        "reason": "估值历史低位，但政策风险未出清，已布局不加仓"
+      },
+      "vd": "破位大跌至4158（一年累跌近40%），中资券商限制买入政策风险；已左侧布局不再加仓，等企稳",
+      "hz": [
+        "周期底部，修复弹性大",
+        "盈利与估值双修复",
+        "长期互联网龙头"
+      ]
+    },
+    {
+      "c": "513770",
+      "n": "港股通互联网ETF",
+      "m": "A",
+      "cat": "跨境",
+      "u": "中证港股通互联网，PE约20倍、近1年<10%分位",
+      "structure": "ETF",
+      "overlap": "high",
+      "overlapWith": "513180（恒生科技重叠）",
+      "fee": {
+        "value": 0.6,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 47,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-01"
+      },
+      "rk": 4,
+      "ret": {
+        "low": 0.08,
+        "high": 0.14
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 13,
+        "cycleType": "港股盈利+政策周期",
+        "cycleMethod": "估值分位+南向资金+政策风险",
+        "cycleReason": "随恒科周-3.02%走弱，估值历史低位，维持左侧",
+        "cycleConfidence": "high",
+        "val": 7,
+        "valSource": "同花顺",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": -0.0103,
+          "asOf": "2026-10-16"
+        },
+        "purchaseLimit": "",
+        "price": 0.311,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "513770.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -46,
+          "p1y": -39,
+          "historicalMax": -60
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 6,
+          "a": 6
+        },
+        "action": "持有",
+        "buyZone": "与恒生科技同步企稳信号",
+        "trimZone": "互联网板块盈利下修",
+        "invalidation": "平台经济监管再度收紧",
+        "reason": "估值历史低位，已布局不加仓"
+      },
+      "vd": "随恒生科技破位更底部，估值历史低位，但券商限制买入政策风险，已布局不加仓",
+      "hz": [
+        "估值历史低位",
+        "平台经济回暖",
+        "高弹性"
+      ]
+    },
+    {
+      "c": "513520",
+      "n": "日经ETF",
+      "m": "A",
+      "cat": "跨境",
+      "u": "日经225",
+      "structure": "ETF",
+      "overlap": "low",
+      "overlapWith": "",
+      "fee": {
+        "value": 0.25,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 24,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-01"
+      },
+      "rk": 3,
+      "ret": {
+        "low": 0.05,
+        "high": 0.08
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 48,
+        "cycleType": "日股盈利+汇率周期",
+        "cycleMethod": "PE分位+日元汇率+企业治理改革",
+        "cycleReason": "日经周+0.95%至63290逆势收涨，折价安全垫，中等配置",
+        "cycleConfidence": "medium",
+        "val": 48,
+        "valSource": "东证/同花顺",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": -0.0556,
+          "asOf": "2026-10-04"
+        },
+        "purchaseLimit": "",
+        "price": 2.09,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "513520.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -12,
+          "p1y": -6,
+          "historicalMax": -35
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 6,
+          "a": 6
+        },
+        "action": "分批",
+        "buyZone": "折价>5%或日经回调10%以上",
+        "trimZone": "溢价>3%或日股过热",
+        "invalidation": "日元大幅贬值+日企盈利下修",
+        "reason": "折价安全垫+治理改革，中等配置"
+      },
+      "vd": "折价-5.56%有安全垫，本周回调后更合理",
+      "hz": [
+        "企业治理改革",
+        "日元汇率波动",
+        "中等配置"
+      ]
+    },
+    {
+      "c": "159920",
+      "n": "恒生ETF",
+      "m": "A",
+      "cat": "跨境",
+      "u": "恒生指数",
+      "structure": "ETF",
