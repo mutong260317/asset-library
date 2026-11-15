@@ -1,0 +1,287 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-15T14:35:29.563Z",
+  "researchAsOf": "2026-11-13",
+  "week": "W46",
+  "note": "Full 41-asset research snapshot captured from data.js; not proof of independently verified prices or a historical backfill.",
+  "assets": [
+    {
+      "c": "511520",
+      "n": "政金债ETF",
+      "m": "A",
+      "cat": "债券",
+      "u": "政策性金融债（国开/进出/农发）",
+      "structure": "ETF",
+      "overlap": "low",
+      "overlapWith": "",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 422,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-04"
+      },
+      "rk": 2,
+      "ret": {
+        "low": 0.03,
+        "high": 0.04
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 82,
+        "cycleType": "利率周期",
+        "cycleMethod": "10年国开收益率+央行政策方向+久期测算",
+        "cycleReason": "中国10年1.65%/30年2.08%微升，债牛已走完，防御底仓",
+        "cycleConfidence": "high",
+        "val": 78,
+        "valSource": "中债登/同花顺",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 119.099,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "511520.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -3,
+          "p1y": -2,
+          "historicalMax": -5
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 16,
+          "y": 12,
+          "a": 8
+        },
+        "action": "持有",
+        "buyZone": "估值分位<30或国开收益率显著上行后加",
+        "trimZone": "收益率跌破前低或久期风险加剧时减",
+        "invalidation": "政策转向宽信用+利率大幅上行",
+        "reason": "防御底仓，债牛走完"
+      },
+      "vd": "债牛走完，防御底仓",
+      "hz": [
+        "降息尾声，债市震荡",
+        "利率中枢下行有支撑",
+        "跟随利率长周期温和上行"
+      ]
+    },
+    {
+      "c": "511090",
+      "n": "30年国债ETF",
+      "m": "A",
+      "cat": "债券",
+      "u": "30年期国债，久期约19年",
+      "structure": "ETF",
+      "overlap": "medium",
+      "overlapWith": "511520/511010（同利率债，久期更长）",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 337,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-04"
+      },
+      "rk": 3,
+      "ret": {
+        "low": 0.035,
+        "high": 0.05
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 81,
+        "cycleType": "利率周期",
+        "cycleMethod": "30年收益率+久期19年弹性+央行宽松力度",
+        "cycleReason": "30年收益率2.08%微升，长端低位震荡，久期长需谨慎",
+        "cycleConfidence": "medium",
+        "val": 80,
+        "valSource": "中债登",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 121.013,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "511090.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -3,
+          "p1y": -4,
+          "historicalMax": -7
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 6,
+          "y": 4,
+          "a": 1
+        },
+        "action": "持有",
+        "buyZone": "30年收益率>2.4%时可分批左侧",
+        "trimZone": "收益率快速下行至1.8%以下或债市过热时减",
+        "invalidation": "利率上行周期确立（长端持续抬升）",
+        "reason": "久期最长波动最大，激进档降至1%控久期风险"
+      },
+      "vd": "30年收益率2.10%微升，节后债市调整压力，久期长需谨慎",
+      "hz": [
+        "久期波动，加息即回撤",
+        "长端中枢低位，上行风险累积",
+        "利率长周期下行，但波动加大"
+      ]
+    },
+    {
+      "c": "511010",
+      "n": "国债ETF",
+      "m": "A",
+      "cat": "债券",
+      "u": "5-10年期国债，久期约4.5年",
+      "structure": "ETF",
+      "overlap": "low",
+      "overlapWith": "",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 51,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-04"
+      },
+      "rk": 2,
+      "ret": {
+        "low": 0.025,
+        "high": 0.035
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 76,
+        "cycleType": "利率周期",
+        "cycleMethod": "10年国债收益率+久期",
+        "cycleReason": "10年国债1.65%历史低位，债牛走完，防御底仓",
+        "cycleConfidence": "high",
+        "val": 70,
+        "valSource": "中债登",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 141.339,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "511010.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -1,
+          "p1y": -1,
+          "historicalMax": -4
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 3,
+          "y": 2,
+          "a": 1
+        },
+        "action": "持有",
+        "buyZone": "收益率上行后加",
+        "trimZone": "收益率创新低时减",
+        "invalidation": "利率快速上行周期",
+        "reason": "中短久期，稳健防御"
+      },
+      "vd": "10年国债1.69%历史低位，债牛走完，防御底仓",
+      "hz": [
+        "中短久期，稳健",
+        "跟随利率温和",
+        "防御底仓"
+      ]
+    },
+    {
+      "c": "511380",
+      "n": "可转债ETF",
+      "m": "A",
+      "cat": "债券",
+      "u": "中证转债及可交债指数",
+      "structure": "ETF",
+      "overlap": "medium",
+      "overlapWith": "与A股宽基/成长类弱重叠（股债双性）",
+      "fee": {
+        "value": 0.2,
+        "unit": "%",
+        "asOf": "2026-09-04"
+      },
+      "aum": {
+        "value": 604,
+        "unit": "亿",
+        "currency": "CNY",
+        "asOf": "2026-09-04"
+      },
+      "rk": 3,
+      "ret": {
+        "low": 0.04,
+        "high": 0.06
+      },
+      "signal": {
+        "asOf": "2026-11-13",
+        "cyc": 52,
+        "cycleType": "股债混合周期",
+        "cycleMethod": "百元溢价率+平价分位+正股周期",
+        "cycleReason": "A股成长暴跌，转债跟随正股走弱，中性偏贵等回落",
+        "cycleConfidence": "medium",
+        "val": 52,
+        "valSource": "集思录/同花顺",
+        "valAsOf": "2026-11-13",
+        "premium": {
+          "value": null,
+          "asOf": null,
+          "status": "unverified"
+        },
+        "purchaseLimit": "",
+        "price": 12.44,
+        "priceAsOf": "2026-11-13",
+        "priceSource": "Longbridge",
+        "priceSymbol": "511380.SH",
+        "priceBasis": "unadjusted",
+        "priceStatus": "checked",
+        "drawdown": {
+          "fromATH": -5,
+          "p1y": -6,
+          "historicalMax": -12
+        }
+      },
+      "decision": {
+        "w": {
+          "c": 5,
+          "y": 4,
+          "a": 3
+        },
+        "action": "持有",
+        "buyZone": "百元溢价率回落至<60或正股底部",
+        "trimZone": "溢价率>110且股市过热",
+        "invalidation": "转债信用风险事件扩散",
+        "reason": "股债双性，中性偏贵等回落"
