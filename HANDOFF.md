@@ -1,5 +1,11 @@
 # HANDOFF.md — 当前交接
 
+## 2026-11-21 W47 行情刷新（至 2026-11-20 收盘）
+
+- 运行条件：本机 Windows 设置 `LONGBRIDGE_REGION=cn`（`longbridge` CLI `v0.28.6`），执行 `.venv\Scripts\python scripts/refresh_market.py --provider longbridge --accept-source-change --apply`。
+- 数据变更：41/41 只产品与 9/9 只宽基指数（`QQQ`/`SH000001`/`SH000300`/`SH000510`/`SZ399006` 为 `Longbridge`，`SPY`/`DIA`/`IWM` 为 `Yahoo Finance`，`SH000688` 为 `腾讯证券`，均与前次基准一致、无数据源切换）全部更新至 `2026-11-20` 收盘；生成价格快照 `snapshots/prices/2026-11-21T131217.json`；`pending alerts=0`。
+- 边界与验证：研究日期维持 `2026-11-13`、A股/美股三档目标权重各 100% 与所有研究结论均未改动；已通过 `node validate.js`、`node validate-cli.js --site-release`、`node validate-cli.js --publish`（`0 errors, 0 warnings`）、`node --test tests/validate.test.js`（27/27）及 Python `unittest`（37/37）。
+
 ## 2026-11-21 拆除 MCP 临时分片机制并恢复完整提交（本机 Windows gh）
 
 - 背景：此前受限于云主机经 MCP 推送大文件截断，W46 `data.js` 与 `HANDOFF.md` 曾临时拆分为 `scripts/data-parts/`（10 片）与 `scripts/handoff-parts/`（5 片）并在 Pages CI 中组装，导致 `main` 上的 `data.js` 仍停留在损坏版。
