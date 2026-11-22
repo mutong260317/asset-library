@@ -1,5 +1,14 @@
 # HANDOFF.md — 当前交接
 
+## 2026-11-22 W47 估值研究更新（至研究日 2026-11-20，已同步并部署；飞书外发受阻）
+
+- 基线：远程 main 最新 `fcd38c4`（W47 收盘行情已就绪，本任务只做研究/估值/周报，不重复刷行情）；研究日期自 W46（2026-11-13）推进到 2026-11-20。
+- 研究更新：41 只资产 signal 的 asOf/cyc/val/valAsOf/cycleReason 全部更新到 2026-11-20（经 `.tmp/apply_w47.js`，assets 数组锚定限定、`.test()` 判匹配、同值不报错）；顶层 meta（updated/week/generatedBy=asset-library-weekly-47）、snap、summary 五条、marketBrief 头部（asOf/headline/reviewedAt）、history 追加 41 条 W47（现共 127 条）、log 追加 1 条（现共 19 条）；archive 生成 `snapshots/research/2026-W47.json` 并刷新 catalog。decision/权重/持仓/ret 全部未动。
+- 客观数据要点：本周是集中在最后两个交易日（11-19/11-20）的全球 risk-off/去杠杆——标普 6910.39（周 -8.61%）、纳指100 -10.43%、SMH -17.81%、SOXX -17.35%、TQQQ -28.57%、SOXL -47.05%；美债收益率不升反降（10年 5.15→4.92%、2年 4.88→4.63%、30年 5.47→5.31%），系避险/降息预期而非宽松确认；上海金 837.55→764.55（周 -8.72%）与股票同跌，疑流动性/保证金抛售；A股相对抗跌（沪深300 -1.59%、银行 +3.23%），绝对估值低（沪深300 PE12.74/PB1.33、A500 PE15.57、银行 PE7.70/股息4.49%）。关键判断：美股宽基 5 年价格分位仍 82–90，暴跌释放部分估值但未到便宜；SOXX/MTUM/VGT 的 0.1 分位为拆分失真、A股半导体为低价格高估值（PE84–95），均不可误读为低估。
+- 测试基线修复：研究更新后重新生成 `reports/audits/upstream-research.json`（researchAsOf=2026-11-20、41 资产、decision/ret 不变、upstream=d7ee3ca）。本地全绿：node validate.js、validate-cli.js（三档各 100、0 errors/0 warnings）、node --test 27/27、python unittest 37/37。
+- 交付：`reports/2026-W47.md` 七部分周报；提交 `d7ee3ca`（研究）+ `bf0eb32`（审计基线），均已 push 到 origin/main，Pages 工作流 `45021634906` 成功，线上已显示 W47（研究日 2026-11-20）。
+- **飞书外发受阻（重要遗留，需用户处理）**：当前 lark-cli 身份为 app `cli_aa8dba7010f8dcde`、用户「龚皓轩」（open_id `ou_3bc25…`、tenant `1bb5b972`），与本任务目标资源所属的旧 app/tenant 不匹配，三个目标均已实测失败：① 飞书文档《资产配置方案 v2》报 3380004 无权限；② 群「资产配置推送」报 230002「Bot/User can NOT be out of the chat」（当前用户不在该群，chat-list 仅见杨康平/盘前合集/牧童说三个群）；③ 私聊 open_id `ou_7812…` 报 99992361 open_id 对当前 app 无效（open_id 随 app 隔离）。**需用户重新登录/切换到拥有这些资源的原飞书账号后，再补做：写文档 + 群推三类（markdown/截图/文件，截图已备于 `.tmp/shots/w47-live.png`）+ 私聊**。本地周报与数据均已就绪，补外发无需重跑研究。
+
 ## 2026-11-21 W47 行情刷新（至 2026-11-20 收盘）
 
 - 运行条件：本机 Windows 设置 `LONGBRIDGE_REGION=cn`（`longbridge` CLI `v0.28.6`），执行 `.venv\Scripts\python scripts/refresh_market.py --provider longbridge --accept-source-change --apply`。
